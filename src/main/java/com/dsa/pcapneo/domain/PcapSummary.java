@@ -1,13 +1,8 @@
 package com.dsa.pcapneo.domain;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,7 +14,7 @@ public class PcapSummary {
 	private static final String COMMA = ",";
 	private static final ConcurrentHashMap<String, String> ipCache = new ConcurrentHashMap<String, String>();
 	private long dtoi;
-	private String protocol;
+	private String[] protocols;
 	private String ipSrc;
 	private String ipDest;
 	private int length;
@@ -30,21 +25,20 @@ public class PcapSummary {
 	private String httpUrl;
 	private String httpReferer;
 	private String httpLocation;
-	private int count;
 
 	private static final String DOT = ".";
 	private static final String COLON = ":";
 
 
 	//-e frame.time_epoch -e frame.protocols -e ip.addr -e ip.len -e tcp.port  -e udp.port 
-	//-f "not arp" -e http.url -e http.referer -e http.location
+	//-e http.url -e http.referer -e http.location
 	
 	public void parseCsvString(String val)
 			throws ParseException {
 		try {
 			StringTokenizer tokenizer = new StringTokenizer(val.toString(),	COMMA);
 			this.setDtoi(Long.parseLong(tokenizer.nextToken().split("\\.")[0]));
-			this.setProtocol(tokenizer.nextToken());
+			this.setProtocols(tokenizer.nextToken().split(COLON));
 			this.setIpSrc(tokenizer.nextToken());
 			this.setIpDest(tokenizer.nextToken());
 			this.setLength(Integer.parseInt(tokenizer.nextToken()));
@@ -58,34 +52,6 @@ public class PcapSummary {
 		} catch (Exception e) {
 			log.error("Failed to parse pcap entry: " + val.toString(), e);
 		}
-
-//		String[] parts = csv.split(COMMA);
-//		if (parts.length < 3) {
-//			throw new ParseException(
-//					"Expected a string containing at least 3 csvs but got: "
-//							+ csv, 0);
-//		}
-//		if (parts[0] == null) {
-//			throw new ParseException("Got a null ipsrc: " + csv, 0);
-//		}
-//		setIpSrc(parts[0]);
-//		if (parts[1] == null) {
-//			throw new ParseException("Got a null ipdest: " + csv, 1);
-//		}
-//		setIpDest(parts[1]);
-//		setProtocol(parts[2]);
-//		if (parts.length > 4) {
-//			if (parts[3] != null) {
-//				setCount(Integer.parseInt(parts[3].trim()));
-//				setLength(Integer.parseInt(parts[4].trim()));
-//			}
-//		} else if (parts.length == 4 && parts[3] != null) {
-//			// Its a date string
-//			if (formatter == null) {
-//				formatter = getPcapDateFormatter();
-//			}
-//			setDtoi(formatter.parse(parts[3]));
-//		}
 	}
 
 	public long getDtoi() {
@@ -120,12 +86,12 @@ public class PcapSummary {
 		this.ipDest = ipDest;
 	}
 
-	public String getProtocol() {
-		return protocol;
+	public String[] getProtocols() {
+		return protocols;
 	}
 
-	public void setProtocol(String protocol) {
-		this.protocol = protocol;
+	public void setProtocols(String[] protocols) {
+		this.protocols = protocols;
 	}
 
 	public int getLength() {
@@ -202,8 +168,11 @@ public class PcapSummary {
 		builder.append(ipSrc);
 		builder.append(", ipDest=");
 		builder.append(ipDest);
-		builder.append(", protocol=");
-		builder.append(protocol);
+		builder.append(", protocols=");
+		for (String proto : protocols) {
+			builder.append(proto);
+			builder.append(":");
+		}
 		builder.append(", length=");
 		builder.append(length);
 		builder.append("]");
