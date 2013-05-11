@@ -7,21 +7,18 @@
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context-3.0.xsd" >
 
-	<context:component-scan base-package="org.dsa.amq.amqstats" /> 
+	<context:component-scan base-package="org.dsa" /> 
  	<context:annotation-config ></context:annotation-config>
 
-	<bean id="jmxCamel" class="org.dsa.amq.amqstats.jmx.JmxCamel">
+	<bean id="graphDbFactory" class="org.neo4j.graphdb.factory.GraphDatabaseFactory">
 	</bean>
 
-	<bean id="routeService" class="org.dsa.amq.amqstats.service.RouteService">
+	<bean id="dbPath" class="java.lang.String">
+		<constructor-arg>/home/danny/Neo4J/PcapDb</constructor-arg>
 	</bean>
 
-	<bean id="routeFactoryService" class="org.dsa.amq.amqstats.service.RouteFactoryService">
+	<bean id="dbPropertiesFile" class="java.lang.String">
+		<constructor-arg>pcapdb.properties</constructor-arg>
 	</bean>
-
-	<bean id="queueService" class="org.dsa.amq.amqstats.service.QueueService">
-	</bean>
-
-	<bean id="uriEnrichmentFactoryService" class="org.dsa.amq.amqstats.service.UriEnrichmentFactoryService">
-	</bean>
+	
 </beans>

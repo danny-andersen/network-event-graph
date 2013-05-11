@@ -26,10 +26,6 @@ public class PcapSummary {
 	private String httpReferer;
 	private String httpLocation;
 
-	private static final String DOT = ".";
-	private static final String COLON = ":";
-
-
 	//-e frame.time_epoch -e frame.protocols -e ip.addr -e ip.len -e tcp.port  -e udp.port 
 	//-e http.url -e http.referer -e http.location
 	
@@ -38,7 +34,7 @@ public class PcapSummary {
 		try {
 			StringTokenizer tokenizer = new StringTokenizer(val.toString(),	COMMA);
 			this.setDtoi(Long.parseLong(tokenizer.nextToken().split("\\.")[0]));
-			this.setProtocols(tokenizer.nextToken().split(COLON));
+			this.setProtocols(tokenizer.nextToken().split(":"));
 			this.setIpSrc(tokenizer.nextToken());
 			this.setIpDest(tokenizer.nextToken());
 			this.setLength(Integer.parseInt(tokenizer.nextToken()));
@@ -52,6 +48,7 @@ public class PcapSummary {
 		} catch (Exception e) {
 			log.error("Failed to parse pcap entry: " + val.toString(), e);
 		}
+		Session session = Session.createSession(this);
 	}
 
 	public long getDtoi() {
@@ -197,37 +194,5 @@ public class PcapSummary {
 		return hostname;
 	}
 
-	private byte[] getIpBytes(String ipaddr) throws NumberFormatException {
-		// Check delimiter
-		byte[] retBytes = null;
-		boolean isIpV4 = ipaddr.indexOf(DOT) > 0;
-		if (isIpV4) {
-			retBytes = new byte[4];
-			int i = 0;
-			for (String net : ipaddr.split(DOT)) {
-				try {
-					retBytes[i++] = Byte.parseByte(net);
-				} catch (NumberFormatException e) {
-					throw new NumberFormatException(ipaddr + ": " + net
-							+ " is not a number");
-				}
-			}
-		} else {
-			retBytes = new byte[16];
-			int i = 0;
-			for (String net : ipaddr.split(COLON)) {
-				short net2;
-				try {
-					net2 = Short.parseShort(net);
-				} catch (NumberFormatException e) {
-					throw new NumberFormatException(ipaddr + ": " + net
-							+ " is not a number");
-				}
-				retBytes[i++] = (byte) ((net2 & 0xff00) >> 8);
-				retBytes[i++] = (byte) (net2 & 0x00ff);
-			}
-		}
-		return retBytes;
-	}
-
+	
 }
