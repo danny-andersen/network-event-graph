@@ -47,6 +47,7 @@ public class InsertGraphFromPcapFile {
 			try {
 				pcap.parseCsvString(line);
 			} catch (ParseException e) {
+				reader.close();
 				throw new IOException(e);
 			}
 			createNodes(pcap);
