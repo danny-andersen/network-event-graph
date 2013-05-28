@@ -30,7 +30,6 @@ public class IpSession extends Session {
 
 	@Override
 	public void insertSelfIntoGraph() {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -65,6 +64,54 @@ public class IpSession extends Session {
 			}
 		}
 		return retBytes;
+	}
+
+	public String getIpSrc() {
+		return ipSrc;
+	}
+
+	public void setIpSrc(String ipSrc) {
+		this.ipSrc = ipSrc;
+	}
+
+	public String getIpDest() {
+		return ipDest;
+	}
+
+	public void setIpDest(String ipDest) {
+		this.ipDest = ipDest;
+	}
+
+	public int getLength() {
+		return length;
+	}
+
+	public void setLength(int length) {
+		this.length = length;
+	}
+
+	public String getTransport() {
+		return transport;
+	}
+
+	public void setTransport(String transport) {
+		this.transport = transport;
+	}
+
+	public String getSrcPort() {
+		return srcPort;
+	}
+
+	public void setSrcPort(String srcPort) {
+		this.srcPort = srcPort;
+	}
+
+	public String getDestPort() {
+		return destPort;
+	}
+
+	public void setDestPort(String destPort) {
+		this.destPort = destPort;
 	}
 
 }

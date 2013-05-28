@@ -1,5 +1,8 @@
 package com.dsa.pcapneo.domain;
 
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.springframework.beans.factory.annotation.Autowired;
+
 /**
  * A session that represents a summary event captured by some network analyser, e.g. tshark
  * @author danny
@@ -8,6 +11,9 @@ package com.dsa.pcapneo.domain;
 public abstract class Session {
 	private long dtoi;
 	private String[] protocols;
+	
+	@Autowired
+	GraphDatabaseService graphDb;
 	
 	public static Session createSession(PcapSummary pcap) {
 		Session session = null;
