@@ -25,6 +25,9 @@ public class LoadPcapSummaryFile {
 	@Autowired
 	private PcapSummaryFactory pcapSummaryFactory;
 	
+	@Autowired
+	private GraphDatabase graphDb;
+	
 	/**
 	 * @param args
 	 * @throws IOException 
@@ -55,7 +58,7 @@ public class LoadPcapSummaryFile {
 				reader.close();
 				throw new IOException(e);
 			}
-			pcap.insertIntoGraph(graphDb);
+//			pcap.insertIntoGraph(graphDb);
 		} while (line != null);
 		reader.close();
 	}

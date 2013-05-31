@@ -2,12 +2,14 @@ package com.dsa.pcapneo.domain;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.neo4j.annotation.NodeEntity;
 
 /**
  * A session that represents a summary event captured by some network analyser, e.g. tshark
  * @author danny
  *
  */
+@NodeEntity
 public abstract class Session {
 	private long dtoi;
 	private String[] protocols;

@@ -10,11 +10,12 @@
 	http://www.springframework.org/schema/data/neo4j
     http://www.springframework.org/schema/data/neo4j/spring-neo4j.xsd" >
 
-	<context:component-scan base-package="org.dsa" /> 
+	<context:component-scan base-package="com.dsa" /> 
  	<context:annotation-config ></context:annotation-config>
 
 	<neo4j:config storeDirectory="/home/danny/Neo4j/Pcap.db"/>
 
+<!-- 
 	<bean id="graphDbFactory" class="org.neo4j.graphdb.factory.GraphDatabaseFactory">
 	</bean>
 
@@ -27,5 +28,5 @@
 	<bean id="dbPropertiesFile" class="java.lang.String">
 		<constructor-arg>pcapdb.properties</constructor-arg>
 	</bean>
-	
+ -->
 </beans>
