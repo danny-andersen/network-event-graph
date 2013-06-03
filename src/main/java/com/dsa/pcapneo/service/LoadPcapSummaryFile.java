@@ -14,7 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.dsa.pcapneo.domain.PcapSummary;
+import com.dsa.pcapneo.domain.session.PcapSummary;
 
 public class LoadPcapSummaryFile {
 	private static final Log log = LogFactory.getLog(LoadPcapSummaryFile.class);

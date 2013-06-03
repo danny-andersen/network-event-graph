@@ -14,6 +14,7 @@
  	<context:annotation-config ></context:annotation-config>
 
 	<neo4j:config storeDirectory="/home/danny/Neo4j/Pcap.db"/>
+	<neo4j:repositories base-package="com.dsa.pcapneo.graph.repositories"/>
 
 <!-- 
 	<bean id="graphDbFactory" class="org.neo4j.graphdb.factory.GraphDatabaseFactory">
