@@ -22,9 +22,10 @@ public class Device {
 	@RelatedTo(type = "IS_A")
 	@Fetch private DeviceType deviceType;
 
-	@RelatedTo(type = "USED_BY")
-	@Fetch private User user;
+	@RelatedTo(type = "USED_BY", direction = Direction.OUTGOING)
+	@Fetch private Set<User> users;
 	
+	//TODO - improve ip address relationship by adding date valid
 	@RelatedTo(type = "CONNECTS_USING", direction = Direction.OUTGOING)
 	@Fetch private Set<IpAddress> ipaddr;
 	
@@ -40,9 +41,16 @@ public class Device {
 	public Device(String name, DeviceType type, User user) {
 		this.hostName = name;
 		this.deviceType = type;
-		this.user = user;
+		this.addUser(user);
 	}
 
+	public void addUser(User user) {
+		if (this.users == null) {
+			this.users = new HashSet<User>();
+		}
+		this.users.add(user);
+	}
+	
 	public Long getDeviceId() {
 		return deviceId;
 	}
@@ -67,12 +75,12 @@ public class Device {
 		this.deviceType = type;
 	}
 
-	public User getUser() {
-		return user;
+	public Set<User> getUsers() {
+		return users;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUsers(Set<User> users) {
+		this.users = users;
 	}
 
 	public Set<IpAddress> getIpaddr() {

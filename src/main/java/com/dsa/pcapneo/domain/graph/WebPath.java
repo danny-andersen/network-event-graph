@@ -1,21 +1,25 @@
 package com.dsa.pcapneo.domain.graph;
 
 import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 @NodeEntity
-public class WebResource {
+public class WebPath {
 	@GraphId
 	Long id;
 	
-	private String uri;
+	//Used in index lookup
+	public static final String PATH = "path";
+	@Indexed
+	private String path;
 	
-	public WebResource() {
+	public WebPath() {
 		
 	}
 	
-	public WebResource(String uri) {
-		this.uri = uri;
+	public WebPath(String uri) {
+		this.path = uri;
 	}
 
 	public Long getId() {
@@ -26,12 +30,12 @@ public class WebResource {
 		this.id = id;
 	}
 
-	public String getUri() {
-		return uri;
+	public String getPath() {
+		return path;
 	}
 
-	public void setUri(String uri) {
-		this.uri = uri;
+	public void setPath(String uri) {
+		this.path = uri;
 	}
 
 	@Override
@@ -50,7 +54,7 @@ public class WebResource {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		WebResource other = (WebResource) obj;
+		WebPath other = (WebPath) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

@@ -1,6 +1,7 @@
 package com.dsa.pcapneo.domain.graph;
 
 import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 @NodeEntity
@@ -10,6 +11,8 @@ public class IpAddress {
 	@GraphId
 	private Long id;
 	
+	public static final String IPADDR = "ipAddr";
+	@Indexed
 	private String ipAddr;
 
 	private Location location;

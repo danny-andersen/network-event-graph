@@ -1,7 +1,5 @@
 package com.dsa.pcapneo.domain.graph;
 
-import java.util.Date;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.neo4j.annotation.NodeEntity;
@@ -28,24 +26,28 @@ public class IpSession extends Session {
 	private IpAddress destIp;
 
 	@RelatedTo(type = "CONNECTS_TO")
-	private String destPort;
+	private Port destPort;
 
 	private int length;
 	private String transport;
 
+	public IpSession() {
+		super();
+	}
+	
 	public IpSession(PcapSummary pcap) {
 		super(pcap);
 		try {
-			this.destIp = new IpAddress(pcap.getIpDest());
-			this.srcIp = new IpAddress(pcap.getIpSrc());
+			this.destIp = factory.getIpAddress(pcap.getIpDest());
+			this.srcIp = factory.getIpAddress(pcap.getIpSrc());
 			this.length = pcap.getLength();
 			this.transport = getTransport();
 			if (this.transport.compareTo(TCP) == 0) {
-				this.srcPort = new Port(pcap.getTcpSrcPort());
-				this.destPort = pcap.getTcpSrcPort();
+				this.srcPort = factory.getPort(pcap.getTcpSrcPort());
+				this.destPort = factory.getPort(pcap.getTcpSrcPort());
 			} else if (this.transport.compareTo(UDP) == 0) {
-				this.srcPort = new Port(pcap.getUdpSrcPort());
-				this.destPort = pcap.getUdpDestPort();
+				this.srcPort = factory.getPort(pcap.getUdpSrcPort());
+				this.destPort = factory.getPort(pcap.getUdpDestPort());
 			}
 		} catch (Exception e) {
 			log.error("Failed to create IpSession from pcap: " + pcap.toString(), e);
@@ -125,11 +127,11 @@ public class IpSession extends Session {
 		this.srcPort = srcPort;
 	}
 
-	public String getDestPort() {
+	public Port getDestPort() {
 		return destPort;
 	}
 
-	public void setDestPort(String destPort) {
+	public void setDestPort(Port destPort) {
 		this.destPort = destPort;
 	}
 

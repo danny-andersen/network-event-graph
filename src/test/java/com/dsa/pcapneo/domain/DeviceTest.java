@@ -31,13 +31,15 @@ public class DeviceTest //extends AbstractTransactionalJUnit4SpringContextTests
 	@Transactional
 	@Test
 	public void devicePersistence() {
-		Device device = new Device("test1", new DeviceType("test"));
+		Device device = new Device("test1", template.save(new DeviceType("test")), template.save(new User("user1")));
 		Assert.assertNull(device.getDeviceId());
 		template.save(device);
 		Assert.assertNotNull(device.getDeviceId());
 		//Check in graph
 		Device retrieved = template.findOne(device.getDeviceId(), Device.class);
 		Assert.assertEquals(retrieved, device);
+		assertThat(retrieved.getUsers().iterator().next().getName(), is("user1"));
+		assertThat(retrieved.getDeviceType().getName(), is("test"));
 	}
 
 	@Test
@@ -66,7 +68,9 @@ public class DeviceTest //extends AbstractTransactionalJUnit4SpringContextTests
 		//Check type
 		assertThat(dev.getDeviceType().getName(), is("test"));
 		//Check user
-		assertThat(dev.getUser().getName(), is("user"));
+		Set<User> users = dev.getUsers();
+		assertThat(users.size(), is(1));
+		assertThat(users.iterator().next().getName(), is("user"));
 		//Check ipaddrs
 		Set<IpAddress> ips = dev.getIpaddr();
 		assertThat(ips.size(), is(2));

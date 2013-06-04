@@ -1,9 +1,11 @@
 package com.dsa.pcapneo.domain.graph;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 import com.dsa.pcapneo.domain.session.PcapSummary;
+import com.dsa.pcapneo.domain.session.SessionArtefactFactory;
 
 
 /**
@@ -16,9 +18,12 @@ import com.dsa.pcapneo.domain.session.PcapSummary;
 public abstract class Session {
 	@GraphId
 	private Long sessionId;
+	
 	private long startTime;
 
 	private String[] protocols;
+	
+	@Autowired protected SessionArtefactFactory factory;
 	
 	public static Session createSession(PcapSummary pcap) {
 		Session session = null;
@@ -33,6 +38,7 @@ public abstract class Session {
 		return session;
 	}
 	
+	public Session() {};
 	public Session(PcapSummary pcap) {
 		this.startTime = pcap.getDtoi();
 		this.protocols = pcap.getProtocols();

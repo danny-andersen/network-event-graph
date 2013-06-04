@@ -15,7 +15,6 @@ import com.dsa.pcapneo.domain.session.PcapSummary;
 @NodeEntity
 public class HttpSession extends IpSession {
 	private static final Log log = LogFactory.getLog(HttpSession.class);
-	private String url;
 	
 	@RelatedTo(type="CAME_FROM", direction=Direction.OUTGOING)
 	private WebSite referer;
@@ -27,37 +26,63 @@ public class HttpSession extends IpSession {
 	private WebSite webSite;
 
 	@RelatedTo(type="VIEWS", direction=Direction.OUTGOING)
-	private WebResource resource;
+	private WebPath resource;
 
+	public HttpSession() {
+		super();
+	};
+	
+	public HttpSession(String url) {
+		parseLocation(url);
+	}
+	
 	public HttpSession(PcapSummary pcap) {
 		super(pcap);
-		this.url = pcap.getHttpUrl();
-		if (referer != null) {
-			this.referer = new WebSite(pcap.getHttpReferer());
+		
+		if (pcap.getHttpReferer() != null) {
+			this.referer = factory.getWebSite(pcap.getHttpReferer());
 		}
-		parseLocation(pcap.getHttpLocation());
-		//TODO
-		//Find device associated with this session
-		//this.getIpSrc();
+		//Use URL if set otherwise use location
+		if (pcap.getHttpUrl() != null) {
+			parseLocation(pcap.getHttpUrl());
+		} else if (pcap.getHttpLocation() != null) {
+			parseLocation(pcap.getHttpLocation());
+		}
+		this.device = factory.getDeviceFromIpAddr(this.getIpSrc());
 	}
 
 	private void parseLocation(String location) {
-		URI uri;
+		if (location == null) {
+			return;
+		}
+		URI uri = null;
 		try {
 			uri = new URI(location);
-			this.webSite = new WebSite(uri.getHost());
-			this.resource = new WebResource(uri.getPath());
+			this.webSite = factory.getWebSite(uri.getHost());
+			this.resource = factory.getWebPath(uri.getPath());
 		} catch (URISyntaxException e) {
 			log.error("Could not parse uri string: " + location, e);
 		}
 	}
 	
-	public String getUrl() {
-		return url;
+	public void setUrl(String url) {
+		parseLocation(url);
+	}
+	
+	public Device getDevice() {
+		return device;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setDevice(Device device) {
+		this.device = device;
+	}
+
+	public WebSite getWebSite() {
+		return webSite;
+	}
+
+	public void setWebSite(WebSite webSite) {
+		this.webSite = webSite;
 	}
 
 	public WebSite getReferer() {
@@ -68,11 +93,11 @@ public class HttpSession extends IpSession {
 		this.referer = referer;
 	}
 
-	public WebResource getResource() {
+	public WebPath getResource() {
 		return this.resource;
 	}
 
-	public void setResource(WebResource location) {
+	public void setResource(WebPath location) {
 		this.resource = location;
 	}
 	

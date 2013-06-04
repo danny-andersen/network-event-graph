@@ -4,19 +4,23 @@ import java.util.Set;
 
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 @NodeEntity
 public class WebSite {
 	@GraphId
-	long id;
+	Long id;
 	
+	//Used in index lookup
+	public static final String ADDRESS = "address";
+	@Indexed
 	private String address;
 	
 	//Uris hosted on this site
 	@RelatedTo(type="HOSTS", direction=Direction.OUTGOING)
-	Set<WebResource> uris;
+	Set<WebPath> uris;
 
 	public WebSite() {
 		
@@ -42,11 +46,11 @@ public class WebSite {
 		this.address = address;
 	}
 
-	public Set<WebResource> getUris() {
+	public Set<WebPath> getUris() {
 		return uris;
 	}
 
-	public void setUris(Set<WebResource> uris) {
+	public void setUris(Set<WebPath> uris) {
 		this.uris = uris;
 	}
 

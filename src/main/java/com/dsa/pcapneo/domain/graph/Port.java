@@ -1,6 +1,7 @@
 package com.dsa.pcapneo.domain.graph;
 
 import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 @NodeEntity
@@ -8,10 +9,12 @@ public class Port {
 	@GraphId
 	Long portId;
 	
+	public static final String PORT = "port";
+	@Indexed
 	int port;
 	
-	public Port(String port) {
-		this.port = Integer.parseInt(port);
+	public Port(int port) {
+		this.port = port;
 	}
 
 	public Long getPortId() {
