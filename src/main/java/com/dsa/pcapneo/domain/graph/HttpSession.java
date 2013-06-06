@@ -32,43 +32,7 @@ public class HttpSession extends IpSession {
 		super();
 	};
 	
-	public void init(PcapSummary pcap) {
-		super.init(pcap);
-		
-		if (pcap.getHttpReferer() != null) {
-			this.referer = factory.getWebSite(pcap.getHttpReferer());
-		}
-		//Use URL if set otherwise use location
-		if (pcap.getHttpUrl() != null) {
-			parseUri(pcap.getHttpUrl());
-		} else if (pcap.getHttpLocation() != null) {
-			parseUri(pcap.getHttpLocation());
-		}
-		this.device = factory.getDeviceFromIpAddr(this.getIpSrc());
-	}
 
-	public void setUri(String url) {
-		parseUri(url);
-	}
-	
-	private void parseUri(String location) {
-		if (location == null) {
-			return;
-		}
-		URI uri = null;
-		try {
-			uri = new URI(location);
-			this.webSite = factory.getWebSite(uri.getHost());
-			this.resource = factory.getWebPath(uri.getPath());
-		} catch (URISyntaxException e) {
-			log.error("Could not parse uri string: " + location, e);
-		}
-	}
-	
-	public void setUrl(String url) {
-		parseUri(url);
-	}
-	
 	public Device getDevice() {
 		return device;
 	}

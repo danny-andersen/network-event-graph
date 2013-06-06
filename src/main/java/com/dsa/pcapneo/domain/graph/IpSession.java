@@ -35,25 +35,6 @@ public class IpSession extends Session {
 		super();
 	}
 	
-	public void init(PcapSummary pcap) {
-		super.init(pcap);
-		try {
-			this.destIp = factory.getIpAddress(pcap.getIpDest());
-			this.srcIp = factory.getIpAddress(pcap.getIpSrc());
-			this.length = pcap.getLength();
-			this.transport = getTransport();
-			if (this.transport.compareTo(TCP) == 0) {
-				this.srcPort = factory.getPort(pcap.getTcpSrcPort());
-				this.destPort = factory.getPort(pcap.getTcpSrcPort());
-			} else if (this.transport.compareTo(UDP) == 0) {
-				this.srcPort = factory.getPort(pcap.getUdpSrcPort());
-				this.destPort = factory.getPort(pcap.getUdpDestPort());
-			}
-		} catch (Exception e) {
-			log.error("Failed to create IpSession from pcap: " + pcap.toString(), e);
-		}
-	}
-
 	public byte[] getIpBytes(String ipaddr) throws NumberFormatException {
 		// Check delimiter
 		byte[] retBytes = null;

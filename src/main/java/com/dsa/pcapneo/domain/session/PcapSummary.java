@@ -51,7 +51,7 @@ public class PcapSummary {
 		} catch (Exception e) {
 			log.error("Failed to parse pcap entry: " + val.toString(), e);
 		}
-		Session session = Session.createSession(this);
+//		Session session = Session.createSession(this);
 	}
 
 	public long getDtoi() {
