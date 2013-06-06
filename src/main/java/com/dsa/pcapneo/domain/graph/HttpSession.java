@@ -32,26 +32,26 @@ public class HttpSession extends IpSession {
 		super();
 	};
 	
-	public HttpSession(String url) {
-		parseLocation(url);
-	}
-	
-	public HttpSession(PcapSummary pcap) {
-		super(pcap);
+	public void init(PcapSummary pcap) {
+		super.init(pcap);
 		
 		if (pcap.getHttpReferer() != null) {
 			this.referer = factory.getWebSite(pcap.getHttpReferer());
 		}
 		//Use URL if set otherwise use location
 		if (pcap.getHttpUrl() != null) {
-			parseLocation(pcap.getHttpUrl());
+			parseUri(pcap.getHttpUrl());
 		} else if (pcap.getHttpLocation() != null) {
-			parseLocation(pcap.getHttpLocation());
+			parseUri(pcap.getHttpLocation());
 		}
 		this.device = factory.getDeviceFromIpAddr(this.getIpSrc());
 	}
 
-	private void parseLocation(String location) {
+	public void setUri(String url) {
+		parseUri(url);
+	}
+	
+	private void parseUri(String location) {
 		if (location == null) {
 			return;
 		}
@@ -66,7 +66,7 @@ public class HttpSession extends IpSession {
 	}
 	
 	public void setUrl(String url) {
-		parseLocation(url);
+		parseUri(url);
 	}
 	
 	public Device getDevice() {

@@ -5,9 +5,10 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.dsa.pcapneo.domain.graph.Device;
 import com.dsa.pcapneo.domain.graph.IpAddress;
@@ -16,13 +17,17 @@ import com.dsa.pcapneo.domain.graph.WebPath;
 import com.dsa.pcapneo.domain.graph.WebSite;
 import com.dsa.pcapneo.graph.repositories.DeviceRepository;
 
-@Component
+@Repository
 public class SessionArtefactFactory {
 	private static final Log log = LogFactory.getLog(SessionArtefactFactory.class);
 
 	@Autowired Neo4jTemplate template;
 	@Autowired private DeviceRepository deviceRepo;
 
+	public SessionArtefactFactory sessionArtefactFactory() {
+		return new SessionArtefactFactory();
+	}
+	
 	public WebSite getWebSite(String site) {
 		GraphRepository<WebSite> repo = template.repositoryFor(WebSite.class);
 		WebSite website = repo.findByPropertyValue(WebSite.ADDRESS, site);

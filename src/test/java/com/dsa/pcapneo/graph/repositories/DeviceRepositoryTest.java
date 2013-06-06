@@ -77,10 +77,12 @@ public class DeviceRepositoryTest {
 	public void findWebsitesFromDevice() {
 		Device device = new Device("test1", template.save(new DeviceType("laptop")), template.save(new User("user1")));
 		template.save(device);
-		HttpSession http = new HttpSession("http://www.facebook.com/friend/bill");
+		HttpSession http = new HttpSession();
+		http.setUri("http://www.facebook.com/friend/bill");
 		http.setDevice(device);
 		template.save(http);
-		http = new HttpSession("http://www.yahoo.com/mail");
+		http = new HttpSession();
+		http.setUri("http://www.yahoo.com/mail");
 		http.setDevice(device);
 		template.save(http);
 		

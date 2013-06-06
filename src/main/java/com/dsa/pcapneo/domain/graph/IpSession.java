@@ -35,8 +35,8 @@ public class IpSession extends Session {
 		super();
 	}
 	
-	public IpSession(PcapSummary pcap) {
-		super(pcap);
+	public void init(PcapSummary pcap) {
+		super.init(pcap);
 		try {
 			this.destIp = factory.getIpAddress(pcap.getIpDest());
 			this.srcIp = factory.getIpAddress(pcap.getIpSrc());
@@ -134,5 +134,6 @@ public class IpSession extends Session {
 	public void setDestPort(Port destPort) {
 		this.destPort = destPort;
 	}
+
 
 }

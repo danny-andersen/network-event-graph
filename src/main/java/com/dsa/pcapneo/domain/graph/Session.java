@@ -1,8 +1,10 @@
 package com.dsa.pcapneo.domain.graph;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.stereotype.Component;
 
 import com.dsa.pcapneo.domain.session.PcapSummary;
 import com.dsa.pcapneo.domain.session.SessionArtefactFactory;
@@ -22,23 +24,9 @@ public abstract class Session {
 	private long startTime;
 
 	private String[] protocols;
+
+	public Session() {}
 	
-	@Autowired protected SessionArtefactFactory factory;
-	
-	public static Session createSession(PcapSummary pcap) {
-		Session session = null;
-		//Determine the most specific session type
-		if (!pcap.getHttpUrl().isEmpty() || !pcap.getHttpReferer().isEmpty() || !pcap.getHttpLocation().isEmpty()) {
-			//Its a Http session
-			session = new HttpSession(pcap);
-		} else {
-			//Plain ip session
-			session = new IpSession(pcap);
-		}
-		return session;
-	}
-	
-	public Session() {};
 	public Session(PcapSummary pcap) {
 		this.startTime = pcap.getDtoi();
 		this.protocols = pcap.getProtocols();
