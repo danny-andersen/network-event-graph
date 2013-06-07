@@ -13,8 +13,11 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.neo4j.support.Neo4jTemplate;
 
+import com.dsa.pcapneo.domain.graph.Session;
 import com.dsa.pcapneo.domain.session.PcapSummary;
+import com.dsa.pcapneo.domain.session.SessionFactory;
 
 public class LoadPcapSummaryFile {
 	private static final Log log = LogFactory.getLog(LoadPcapSummaryFile.class);
@@ -22,11 +25,9 @@ public class LoadPcapSummaryFile {
 	protected Map<Integer, StringBuffer> nodesById = new HashMap<Integer, StringBuffer>();
 	protected List<String> edges = new ArrayList<String>();
 	
-	@Autowired
-	private PcapSummaryFactory pcapSummaryFactory;
-	
-	@Autowired
-	private GraphDatabase graphDb;
+//	@Autowired private GraphDatabase graphDb;
+	@Autowired SessionFactory sessionFactory;
+	@Autowired Neo4jTemplate template;
 	
 	/**
 	 * @param args
@@ -51,21 +52,24 @@ public class LoadPcapSummaryFile {
 			if (line == null) {
 				break;
 			}
-			PcapSummary pcap = this.pcapSummaryFactory.createPcapSummary();
+//			PcapSummary pcap = this.pcapSummaryFactory.createPcapSummary();
 			try {
-				pcap.parseCsvString(line);
+				PcapSummary pcap = new PcapSummary(line);
+				Session session = sessionFactory.createSession(pcap);
+				//Persist session
+				template.save(session).getSessionId();
 			} catch (ParseException e) {
-				reader.close();
-				throw new IOException(e);
+				log.error(String.format("Line failed: %s caused by: %s",line,e.getMessage()),e);
+//				reader.close();
+//				throw new IOException(e);
 			}
-//			pcap.insertIntoGraph(graphDb);
 		} while (line != null);
 		reader.close();
 	}
 
-	public void setPcapSummaryFactory(PcapSummaryFactory pcapSummaryFactory) {
-		this.pcapSummaryFactory = pcapSummaryFactory;
-	}
+//	public void setPcapSummaryFactory(PcapSummaryFactory pcapSummaryFactory) {
+//		this.pcapSummaryFactory = pcapSummaryFactory;
+//	}
 	
 
 }

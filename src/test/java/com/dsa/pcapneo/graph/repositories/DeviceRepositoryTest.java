@@ -19,8 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dsa.pcapneo.domain.graph.Device;
 import com.dsa.pcapneo.domain.graph.DeviceType;
 import com.dsa.pcapneo.domain.graph.HttpSession;
+import com.dsa.pcapneo.domain.graph.IpAddress;
 import com.dsa.pcapneo.domain.graph.User;
 import com.dsa.pcapneo.domain.graph.WebSite;
+import com.dsa.pcapneo.domain.session.SessionArtefactFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(("/applicationContext.xml"))
@@ -28,6 +30,7 @@ public class DeviceRepositoryTest {
 	
 	@Autowired DeviceRepository deviceRepository;
 	@Autowired Neo4jTemplate template;
+	@Autowired SessionArtefactFactory factory;
 	
 	@Test
 	@Transactional
@@ -77,12 +80,12 @@ public class DeviceRepositoryTest {
 	public void findWebsitesFromDevice() {
 		Device device = new Device("test1", template.save(new DeviceType("laptop")), template.save(new User("user1")));
 		template.save(device);
-		HttpSession http = new HttpSession();
-//		http.setUri("http://www.facebook.com/friend/bill");
+		HttpSession http = new HttpSession(this.factory);
+		http.setUri("http://www.facebook.com/friend/bill");
 		http.setDevice(device);
 		template.save(http);
-		http = new HttpSession();
-//		http.setUri("http://www.yahoo.com/mail");
+		http = new HttpSession(this.factory);
+		http.setUri("http://www.yahoo.com/mail");
 		http.setDevice(device);
 		template.save(http);
 		
@@ -94,5 +97,31 @@ public class DeviceRepositoryTest {
 		}
 		assertThat(sites.size(), is(2));
 		assertThat(sites, hasItems("www.yahoo.com", "www.facebook.com"));
+	}
+
+	@Test
+	@Transactional
+	public void getDevicesUsingIpAddress() {
+		Device device = new Device("test1", template.save(new DeviceType("laptop")), template.save(new User("user1")));
+		Device dev2 = new Device("test2", template.save(new DeviceType("laptop")), template.save(new User("user1")));
+		Device dev3 = new Device("test3", template.save(new DeviceType("netbook")), template.save(new User("user1")));
+		String ip1 = "192.168.1.1";
+		String ip2 = "192.168.1.2";
+		IpAddress ip = template.save(new IpAddress(ip1));
+		device.addIpAddr(ip);
+		template.save(device);
+		dev2.addIpAddr(template.save(new IpAddress(ip2)));
+		template.save(dev2);
+		dev3.addIpAddr(ip);
+		template.save(dev3);
+		
+		//Find devs using 192.168.1.
+		Iterable<Device> devices = deviceRepository.getDevicesUsingIpAddress("192.168.1.1");
+		List<String> devs = new ArrayList<String>();
+		for (Device dev : devices) {
+			devs.add(dev.getHostName());
+		}
+		assertThat(devs.size(), is(2));
+		assertThat(devs, hasItems("test1", "test3"));
 	}
 }

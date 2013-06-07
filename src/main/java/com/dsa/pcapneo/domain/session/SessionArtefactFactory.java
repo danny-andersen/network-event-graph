@@ -5,7 +5,6 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.neo4j.repository.GraphRepository;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.stereotype.Repository;
@@ -88,7 +87,7 @@ public class SessionArtefactFactory {
 		Port port = null;
 		if (portNum != -1) {
 			GraphRepository<Port> repo = template.repositoryFor(Port.class);
-			port = repo.findByPropertyValue(IpAddress.IPADDR, portNum);
+			port = repo.findByPropertyValue(Port.PORT, portNum);
 			if (port == null) {
 				port = template.save(new Port(portNum));
 			}

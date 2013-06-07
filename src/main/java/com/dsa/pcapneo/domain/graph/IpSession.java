@@ -2,10 +2,12 @@ package com.dsa.pcapneo.domain.graph;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import com.dsa.pcapneo.domain.session.PcapSummary;
+import com.dsa.pcapneo.domain.session.SessionArtefactFactory;
 
 @NodeEntity
 public class IpSession extends Session {
@@ -16,17 +18,17 @@ public class IpSession extends Session {
 	private static final String TCP = "tcp";
 	private static final String UDP = "udp";
 
-	@RelatedTo(type = "CONNECTS_FROM")
-	private IpAddress srcIp;
+	@RelatedTo(type = "CONNECTS_FROM_IP")
+	@Fetch private IpAddress srcIp;
 
-	@RelatedTo(type = "CONNECTS_FROM")
-	private Port srcPort;
+	@RelatedTo(type = "CONNECTS_FROM_PORT")
+	@Fetch private Port srcPort;
 
-	@RelatedTo(type = "CONNECTS_TO")
-	private IpAddress destIp;
+	@RelatedTo(type = "CONNECTS_TO_IP")
+	@Fetch private IpAddress destIp;
 
-	@RelatedTo(type = "CONNECTS_TO")
-	private Port destPort;
+	@RelatedTo(type = "CONNECTS_TO_PORT")
+	@Fetch private Port destPort;
 
 	private int length;
 	private String transport;
@@ -35,6 +37,32 @@ public class IpSession extends Session {
 		super();
 	}
 	
+	public IpSession(SessionArtefactFactory factory) {
+		super(factory);
+	}
+	
+	public IpSession(SessionArtefactFactory factory, PcapSummary pcap) {
+		super(factory, pcap);
+		if (pcap == null) {
+			return;
+		}
+		try {
+			this.destIp = factory.getIpAddress(pcap.getIpDest());
+			this.srcIp = factory.getIpAddress(pcap.getIpSrc());
+			this.length = pcap.getLength();
+			this.transport = getTransport();
+			if (this.transport.compareTo(TCP) == 0) {
+				this.srcPort = factory.getPort(pcap.getTcpSrcPort());
+				this.destPort = factory.getPort(pcap.getTcpSrcPort());
+			} else if (this.transport.compareTo(UDP) == 0) {
+				this.srcPort = factory.getPort(pcap.getUdpSrcPort());
+				this.destPort = factory.getPort(pcap.getUdpDestPort());
+			}
+		} catch (Exception e) {
+			log.error("Failed to create IpSession from pcap: " + pcap.toString(), e);
+		}
+	}
+
 	public byte[] getIpBytes(String ipaddr) throws NumberFormatException {
 		// Check delimiter
 		byte[] retBytes = null;

@@ -10,6 +10,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import com.dsa.pcapneo.domain.session.PcapSummary;
+import com.dsa.pcapneo.domain.session.SessionArtefactFactory;
 
 
 @NodeEntity
@@ -32,7 +33,48 @@ public class HttpSession extends IpSession {
 		super();
 	};
 	
+	public HttpSession(SessionArtefactFactory factory) {
+		super(factory);
+	};
 
+	public HttpSession(SessionArtefactFactory factory, PcapSummary pcap) {
+		super(factory, pcap);
+		if (pcap.getHttpReferer() != null) {
+			this.setReferer(factory.getWebSite(pcap.getHttpReferer()));
+		}
+		//Use URL if set otherwise use location
+		if (pcap.getHttpUrl() != null) {
+			parseUri(pcap.getHttpUrl());
+		} else if (pcap.getHttpLocation() != null) {
+			parseUri(pcap.getHttpLocation());
+		}
+		this.setDevice(factory.getDeviceFromIpAddr(this.getIpSrc()));
+	}
+
+	public void setUri(String url) {
+		parseUri(url);
+	}
+	
+	private void parseUri(String location) {
+		if (location == null) {
+			return;
+		}
+		if (this.factory == null) {
+			log.warn("Cannot parse uri as SessionArtfactFactory is not set");
+		}
+		URI uri = null;
+		try {
+			uri = new URI(location);
+			this.webSite = factory.getWebSite(uri.getHost());
+			this.resource = factory.getWebPath(uri.getPath());
+		} catch (URISyntaxException e) {
+			log.error("Could not parse uri string: " + location, e);
+		}
+	}
+	
+	public void setUrl(String url) {
+		parseUri(url);
+	}
 	public Device getDevice() {
 		return device;
 	}

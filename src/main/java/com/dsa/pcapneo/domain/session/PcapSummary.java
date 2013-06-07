@@ -9,9 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.dsa.pcapneo.domain.graph.Session;
-
-
 public class PcapSummary {
 	private static final Log log = LogFactory.getLog(PcapSummary.class);
 	private static final String COMMA = ",";
@@ -28,9 +25,15 @@ public class PcapSummary {
 	private String httpUrl;
 	private String httpReferer;
 	private String httpLocation;
-
+	
 	//-e frame.time_epoch -e frame.protocols -e ip.addr -e ip.len -e tcp.port  -e udp.port 
 	//-e http.url -e http.referer -e http.location
+	
+	public PcapSummary() {}
+	
+	public PcapSummary(String pcapStr) throws ParseException {
+		parseCsvString(pcapStr);
+	}
 	
 	public void parseCsvString(String val)
 			throws ParseException {
@@ -41,6 +44,8 @@ public class PcapSummary {
 			this.setIpSrc(tokenizer.nextToken());
 			this.setIpDest(tokenizer.nextToken());
 			this.setLength(Integer.parseInt(tokenizer.nextToken()));
+			//Ignore next length field
+			tokenizer.nextToken();
 			this.setTcpSrcPort(tokenizer.nextToken());
 			this.setTcpDestPort(tokenizer.nextToken());
 			this.setUdpSrcPort(tokenizer.nextToken());
@@ -51,7 +56,6 @@ public class PcapSummary {
 		} catch (Exception e) {
 			log.error("Failed to parse pcap entry: " + val.toString(), e);
 		}
-//		Session session = Session.createSession(this);
 	}
 
 	public long getDtoi() {

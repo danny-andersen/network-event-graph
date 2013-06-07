@@ -18,13 +18,18 @@ public interface DeviceRepository extends GraphRepository<Device> {
 	@Query ("START device=node:Device(hostName={0}) MATCH device-[:USED_BY]->user return user")
 	Iterable<User> getUsersOfDevice(String hostName);
 	
-	@Query ("START device=node:Device(hostName={0}) " +
-			"MATCH device<-[:CONNECTS_FROM]-httpsession->[:CONNECTS_TO]-site" +
+	@Query ("START device=node:Device(hostName={0}) " + 
+			"MATCH device<-[:CONNECTS_FROM]-httpsession-[:CONNECTS_TO]->site " +
 			"RETURN site")
 	Iterable<WebSite> getAllWebSitesVisitedByDevice(String hostName);
 	
 	@Query ("START ip=node:IpAddress({0}) " +
-			"MATCH ip<-[:CONNECTS_USING]-device" +
+			"MATCH ip<-[:CONNECTS_USING]-device " +
 			"RETURN device")
 	Iterable<Device> getDevicesUsingIpAddress(IpAddress ipaddr);
+
+	@Query ("START ip=node:IpAddress(ipAddr={0}) " +
+			"MATCH ip<-[:CONNECTS_USING]-device " +
+			"RETURN device")
+	Iterable<Device> getDevicesUsingIpAddress(String ipaddr);
 }
