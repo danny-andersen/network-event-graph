@@ -11,13 +11,13 @@
     http://www.springframework.org/schema/data/neo4j/spring-neo4j.xsd" >
 
 	<context:component-scan base-package="com.dsa" /> 
- 	<context:annotation-config ></context:annotation-config>
 
-	<neo4j:config graphDatabaseService="gds"/>
+	<neo4j:config graphDatabaseService="graphDatabaseService"/>
 	<neo4j:repositories base-package="com.dsa.pcapneo.graph.repositories"/>
 
-	<bean id="gds" class="org.neo4j.graphdb.ImpermanentGraphDatabase">
+	<bean id="graphDatabaseService" class="org.neo4j.test.ImpermanentGraphDatabase">
 	</bean>
+
 	
 <!-- 
 	<bean id="graphDbFactory" class="org.neo4j.graphdb.factory.GraphDatabaseFactory">

@@ -23,7 +23,7 @@ import com.dsa.pcapneo.domain.graph.IpAddress;
 import com.dsa.pcapneo.domain.graph.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(("/applicationContext.xml"))
+@ContextConfiguration(("/testContext.xml"))
 public class DeviceTest //extends AbstractTransactionalJUnit4SpringContextTests
 {
 	@Autowired Neo4jTemplate template;
@@ -38,8 +38,8 @@ public class DeviceTest //extends AbstractTransactionalJUnit4SpringContextTests
 		//Check in graph
 		Device retrieved = template.findOne(device.getDeviceId(), Device.class);
 		Assert.assertEquals(retrieved, device);
-		assertThat(retrieved.getUsers().iterator().next().getName(), is("user1"));
-		assertThat(retrieved.getDeviceType().getName(), is("test"));
+		assertThat(template.fetch(retrieved.getUsers()).iterator().next().getName(), is("user1"));
+		assertThat(template.fetch(retrieved.getDeviceType()).getName(), is("test"));
 	}
 
 	@Test
@@ -66,9 +66,9 @@ public class DeviceTest //extends AbstractTransactionalJUnit4SpringContextTests
 		Device dev = template.findOne(device.getDeviceId(), Device.class);
 		assertThat(dev.getHostName(), is("test1"));
 		//Check type
-		assertThat(dev.getDeviceType().getName(), is("test"));
+		assertThat(template.fetch(dev.getDeviceType()).getName(), is("test"));
 		//Check user
-		Set<User> users = dev.getUsers();
+		Set<User> users = template.fetch(dev.getUsers());
 		assertThat(users.size(), is(1));
 		assertThat(users.iterator().next().getName(), is("user"));
 		//Check ipaddrs

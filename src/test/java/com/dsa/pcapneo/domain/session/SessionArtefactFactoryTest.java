@@ -13,9 +13,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dsa.pcapneo.domain.graph.IpAddress;
+import com.dsa.pcapneo.graph.repositories.SessionArtefactFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(("/applicationContext.xml"))
+@ContextConfiguration(("/testContext.xml"))
 
 public class SessionArtefactFactoryTest {
 	@Autowired Neo4jTemplate template;

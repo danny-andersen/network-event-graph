@@ -12,16 +12,17 @@ import org.apache.commons.logging.LogFactory;
 public class PcapSummary {
 	private static final Log log = LogFactory.getLog(PcapSummary.class);
 	private static final String COMMA = ",";
+	private static final String TCP = "tcp";
+	private static final String UDP = "udp";
 	private static final ConcurrentHashMap<String, String> ipCache = new ConcurrentHashMap<String, String>();
 	private long dtoi;
 	private String[] protocols;
 	private String ipSrc;
 	private String ipDest;
 	private int length;
-	private String tcpSrcPort;
-	private String tcpDestPort;
-	private String udpSrcPort;
-	private String udpDestPort;
+	private int protocolNumber;
+	private String srcPort;
+	private String destPort;
 	private String httpUrl;
 	private String httpReferer;
 	private String httpLocation;
@@ -38,21 +39,43 @@ public class PcapSummary {
 	public void parseCsvString(String val)
 			throws ParseException {
 		try {
-			StringTokenizer tokenizer = new StringTokenizer(val.toString(),	COMMA);
-			this.setDtoi(Long.parseLong(tokenizer.nextToken().split("\\.")[0]));
-			this.setProtocols(tokenizer.nextToken().split(":"));
-			this.setIpSrc(tokenizer.nextToken());
-			this.setIpDest(tokenizer.nextToken());
-			this.setLength(Integer.parseInt(tokenizer.nextToken()));
-			//Ignore next length field
-			tokenizer.nextToken();
-			this.setTcpSrcPort(tokenizer.nextToken());
-			this.setTcpDestPort(tokenizer.nextToken());
-			this.setUdpSrcPort(tokenizer.nextToken());
-			this.setUdpDestPort(tokenizer.nextToken());
-			this.setHttpUrl(tokenizer.nextToken());
-			this.setHttpReferer(tokenizer.nextToken());
-			this.setHttpLocation(tokenizer.nextToken());
+//			StringTokenizer tokenizer = new StringTokenizer(val.toString(),	COMMA);
+			String[] parts = val.split(COMMA);
+			this.setDtoi(Long.parseLong(parts[0].split("\\.")[0]));
+			String protocols = parts[1];
+			this.setProtocols(protocols.split(":"));
+			int next = 3;
+			if (parts[2] != null && !parts[2].isEmpty()) {
+				this.setIpSrc(parts[2]);
+				this.setIpDest(parts[3]);
+				next = 4;
+			}
+			if (parts[next] != null && !parts[next].isEmpty()) {
+				this.setLength(Integer.parseInt(parts[next]));
+			}
+			next++;
+			if (parts[next] != null && !parts[next].isEmpty()) {
+				this.setProtocolNumber(Integer.parseInt(parts[next]));
+			}
+			next++;
+			if (protocols.contains(TCP)) {
+				this.setSrcPort(parts[next++]);
+				this.setDestPort(parts[next++]);
+			}
+			if (protocols.contains(UDP)) {
+				next++;
+				this.setSrcPort(parts[next++]);
+				this.setDestPort(parts[next++]);
+			}
+			if (parts.length > next) {
+				this.setHttpUrl(parts[next++]);
+				if (parts.length > next) {
+					this.setHttpReferer(parts[next++]);
+					if (parts.length > next) {
+						this.setHttpLocation(parts[next]);
+					}
+				}
+			}
 		} catch (Exception e) {
 			log.error("Failed to parse pcap entry: " + val.toString(), e);
 		}
@@ -107,36 +130,20 @@ public class PcapSummary {
 	}
 
 	
-	public String getTcpSrcPort() {
-		return tcpSrcPort;
+	public String getSrcPort() {
+		return srcPort;
 	}
 
-	public void setTcpSrcPort(String tcpSrcPort) {
-		this.tcpSrcPort = tcpSrcPort;
+	public void setSrcPort(String srcPort) {
+		this.srcPort = srcPort;
 	}
 
-	public String getTcpDestPort() {
-		return tcpDestPort;
+	public String getDestPort() {
+		return destPort;
 	}
 
-	public void setTcpDestPort(String tcpDestPort) {
-		this.tcpDestPort = tcpDestPort;
-	}
-
-	public String getUdpSrcPort() {
-		return udpSrcPort;
-	}
-
-	public void setUdpSrcPort(String udpSrcPort) {
-		this.udpSrcPort = udpSrcPort;
-	}
-
-	public String getUdpDestPort() {
-		return udpDestPort;
-	}
-
-	public void setUdpDestPort(String udpDestPort) {
-		this.udpDestPort = udpDestPort;
+	public void setDestPort(String destPort) {
+		this.destPort = destPort;
 	}
 
 	public String getHttpUrl() {
@@ -199,6 +206,18 @@ public class PcapSummary {
 			ipCache.put(ipaddr, hostname);
 		}
 		return hostname;
+	}
+
+	public int getProtocolNumber() {
+		return protocolNumber;
+	}
+
+	public void setProtocolNumber(int protocolNumber) {
+		this.protocolNumber = protocolNumber;
+	}
+
+	public static ConcurrentHashMap<String, String> getIpcache() {
+		return ipCache;
 	}
 
 	

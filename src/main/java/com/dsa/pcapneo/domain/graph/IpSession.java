@@ -7,7 +7,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import com.dsa.pcapneo.domain.session.PcapSummary;
-import com.dsa.pcapneo.domain.session.SessionArtefactFactory;
+import com.dsa.pcapneo.graph.repositories.SessionArtefactFactory;
 
 @NodeEntity
 public class IpSession extends Session {
@@ -15,8 +15,6 @@ public class IpSession extends Session {
 
 	private static final String DOT = ".";
 	private static final String COLON = ":";
-	private static final String TCP = "tcp";
-	private static final String UDP = "udp";
 
 	@RelatedTo(type = "CONNECTS_FROM_IP")
 	@Fetch private IpAddress srcIp;
@@ -31,7 +29,7 @@ public class IpSession extends Session {
 	@Fetch private Port destPort;
 
 	private int length;
-	private String transport;
+	private int protocolNumber;
 
 	public IpSession() {
 		super();
@@ -50,14 +48,9 @@ public class IpSession extends Session {
 			this.destIp = factory.getIpAddress(pcap.getIpDest());
 			this.srcIp = factory.getIpAddress(pcap.getIpSrc());
 			this.length = pcap.getLength();
-			this.transport = getTransport();
-			if (this.transport.compareTo(TCP) == 0) {
-				this.srcPort = factory.getPort(pcap.getTcpSrcPort());
-				this.destPort = factory.getPort(pcap.getTcpSrcPort());
-			} else if (this.transport.compareTo(UDP) == 0) {
-				this.srcPort = factory.getPort(pcap.getUdpSrcPort());
-				this.destPort = factory.getPort(pcap.getUdpDestPort());
-			}
+			this.srcPort = factory.getPort(pcap.getSrcPort());
+			this.destPort = factory.getPort(pcap.getDestPort());
+			this.protocolNumber = pcap.getProtocolNumber();
 		} catch (Exception e) {
 			log.error("Failed to create IpSession from pcap: " + pcap.toString(), e);
 		}
@@ -120,14 +113,6 @@ public class IpSession extends Session {
 		this.length = length;
 	}
 
-	public String getTransport() {
-		return transport;
-	}
-
-	public void setTransport(String transport) {
-		this.transport = transport;
-	}
-
 	public Port getSrcPort() {
 		return srcPort;
 	}
@@ -142,6 +127,30 @@ public class IpSession extends Session {
 
 	public void setDestPort(Port destPort) {
 		this.destPort = destPort;
+	}
+
+	public IpAddress getSrcIp() {
+		return srcIp;
+	}
+
+	public void setSrcIp(IpAddress srcIp) {
+		this.srcIp = srcIp;
+	}
+
+	public IpAddress getDestIp() {
+		return destIp;
+	}
+
+	public void setDestIp(IpAddress destIp) {
+		this.destIp = destIp;
+	}
+
+	public int getProtocolNumber() {
+		return protocolNumber;
+	}
+
+	public void setProtocolNumber(int protocolNumber) {
+		this.protocolNumber = protocolNumber;
 	}
 
 

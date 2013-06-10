@@ -4,7 +4,7 @@ import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 import com.dsa.pcapneo.domain.session.PcapSummary;
-import com.dsa.pcapneo.domain.session.SessionArtefactFactory;
+import com.dsa.pcapneo.graph.repositories.SessionArtefactFactory;
 
 
 /**
@@ -34,10 +34,6 @@ public abstract class Session {
 		this.factory = factory;
 		this.startTime = pcap.getDtoi();
 		this.protocols = pcap.getProtocols();
-	}
-	
-	public String getTransport() {
-		return null;
 	}
 	
 	public long getDtoi() {

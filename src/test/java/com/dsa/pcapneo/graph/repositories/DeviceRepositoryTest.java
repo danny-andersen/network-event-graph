@@ -22,7 +22,6 @@ import com.dsa.pcapneo.domain.graph.HttpSession;
 import com.dsa.pcapneo.domain.graph.IpAddress;
 import com.dsa.pcapneo.domain.graph.User;
 import com.dsa.pcapneo.domain.graph.WebSite;
-import com.dsa.pcapneo.domain.session.SessionArtefactFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(("/applicationContext.xml"))
@@ -82,11 +81,11 @@ public class DeviceRepositoryTest {
 		template.save(device);
 		HttpSession http = new HttpSession(this.factory);
 		http.setUri("http://www.facebook.com/friend/bill");
-		http.setDevice(device);
+		http.setFromDevice(device);
 		template.save(http);
 		http = new HttpSession(this.factory);
 		http.setUri("http://www.yahoo.com/mail");
-		http.setDevice(device);
+		http.setFromDevice(device);
 		template.save(http);
 		
 		//Find websites

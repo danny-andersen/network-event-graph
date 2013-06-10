@@ -19,7 +19,7 @@ public interface DeviceRepository extends GraphRepository<Device> {
 	Iterable<User> getUsersOfDevice(String hostName);
 	
 	@Query ("START device=node:Device(hostName={0}) " + 
-			"MATCH device<-[:CONNECTS_FROM]-httpsession-[:CONNECTS_TO]->site " +
+			"MATCH device<-[:CONNECTS_FROM_DEVICE]-httpsession-[:CONNECTS_TO_WEBSITE]->site " +
 			"RETURN site")
 	Iterable<WebSite> getAllWebSitesVisitedByDevice(String hostName);
 	

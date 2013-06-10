@@ -19,10 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dsa.pcapneo.domain.graph.IpAddress;
 import com.dsa.pcapneo.domain.graph.IpSession;
-import com.dsa.pcapneo.domain.session.SessionArtefactFactory;
+import com.dsa.pcapneo.graph.repositories.SessionArtefactFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(("/applicationContext.xml"))
+@ContextConfiguration(("/testContext.xml"))
 public class IpSessionTest {
 	@Autowired Neo4jTemplate template;
 	@Autowired SessionArtefactFactory factory;
@@ -34,14 +34,14 @@ public class IpSessionTest {
 		String[] protos = new String[] {"tcp", "ip"};
 		session.setProtocols(protos);
 		session.setStartTime(new Date().getTime());
-		session.setTransport("tcp");
+		session.setProtocolNumber(17);
 		session.setLength(1024);
 		Long sessionId = template.save(session).getSessionId();
 		Assert.assertNotNull(sessionId);
 		IpSession retrieved = template.findOne(sessionId, IpSession.class);
 		Assert.assertNotNull(retrieved);
 		assertThat(retrieved.getLength(), is(1024));
-		assertThat(retrieved.getTransport(), is("tcp"));
+		assertThat(retrieved.getProtocolNumber(), is(17));
 		List<String> rproto = new ArrayList<String>();
 		for (String p : retrieved.getProtocols()) {
 			rproto.add(p);
@@ -54,7 +54,7 @@ public class IpSessionTest {
 	public void createIpSessionWithOneRelationship() {
 		IpSession session = new IpSession();
 		session.setStartTime(new Date().getTime());
-		session.setTransport("tcp");
+		session.setProtocolNumber(17);
 		session.setLength(1024);
 		IpAddress ip = new IpAddress("192.168.1.1");
 		ip = template.save(ip);
@@ -64,7 +64,7 @@ public class IpSessionTest {
 		IpSession retrieved = template.findOne(sessionId, IpSession.class);
 		Assert.assertNotNull(retrieved);
 		assertThat(retrieved.getLength(), is(1024));
-		assertThat(retrieved.getTransport(), is("tcp"));
+		assertThat(retrieved.getProtocolNumber(), is(17));
 		assertThat(retrieved.getIpSrc().getIpAddr(), is("192.168.1.1"));
 	}
 
@@ -75,7 +75,7 @@ public class IpSessionTest {
 		String[] protos = new String[] {"tcp", "ip"};
 		session.setProtocols(protos);
 		session.setStartTime(new Date().getTime());
-		session.setTransport("tcp");
+		session.setProtocolNumber(17);
 		session.setLength(1024);
 		session.setIpSrc(factory.getIpAddress("192.168.1.1"));
 		session.setIpDest(factory.getIpAddress("12.1.1.1"));
@@ -86,7 +86,7 @@ public class IpSessionTest {
 		IpSession retrieved = template.findOne(sessionId, IpSession.class);
 		Assert.assertNotNull(retrieved);
 		assertThat(retrieved.getLength(), is(1024));
-		assertThat(retrieved.getTransport(), is("tcp"));
+		assertThat(retrieved.getProtocolNumber(), is(17));
 		List<String> rproto = new ArrayList<String>();
 		for (String p : retrieved.getProtocols()) {
 			rproto.add(p);

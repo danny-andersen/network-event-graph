@@ -17,20 +17,22 @@ public class Device {
 	Long deviceId;
 
 	@Indexed
-	private String hostName;
+	@Fetch private String hostName;
+
+	@Indexed
+	private String description;
 
 	@RelatedTo(type = "IS_A")
-	@Fetch private DeviceType deviceType;
+	private DeviceType deviceType;
 
 	@RelatedTo(type = "USED_BY", direction = Direction.OUTGOING)
-	@Fetch private Set<User> users;
+	private Set<User> users;
 	
 	//TODO - improve ip address relationship by adding date valid
 	@RelatedTo(type = "CONNECTS_USING", direction = Direction.OUTGOING)
 	@Fetch private Set<IpAddress> ipaddr;
 	
 	public Device() {
-		
 	}
 	
 	public Device(String name, DeviceType type) {
@@ -96,6 +98,14 @@ public class Device {
 			this.ipaddr = new HashSet<IpAddress>();
 		}
 		this.ipaddr.add(ipaddr);
+	}
+
+		public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@Override

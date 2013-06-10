@@ -1,5 +1,7 @@
-package com.dsa.pcapneo.domain.session;
+package com.dsa.pcapneo.graph.repositories;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
@@ -14,7 +16,6 @@ import com.dsa.pcapneo.domain.graph.IpAddress;
 import com.dsa.pcapneo.domain.graph.Port;
 import com.dsa.pcapneo.domain.graph.WebPath;
 import com.dsa.pcapneo.domain.graph.WebSite;
-import com.dsa.pcapneo.graph.repositories.DeviceRepository;
 
 @Repository
 public class SessionArtefactFactory {
@@ -28,6 +29,9 @@ public class SessionArtefactFactory {
 	}
 	
 	public WebSite getWebSite(String site) {
+		if (site == null) {
+			return null;
+		}
 		GraphRepository<WebSite> repo = template.repositoryFor(WebSite.class);
 		WebSite website = repo.findByPropertyValue(WebSite.ADDRESS, site);
 		if (website == null) {
@@ -37,6 +41,9 @@ public class SessionArtefactFactory {
 	}
 
 	public WebPath getWebPath(String path) {
+		if (path == null) {
+			return null;
+		}
 		GraphRepository<WebPath> repo = template.repositoryFor(WebPath.class);
 		WebPath webPath = repo.findByPropertyValue(WebPath.PATH, path);
 		if (webPath == null) {
@@ -47,8 +54,11 @@ public class SessionArtefactFactory {
 	
 	public Device getDeviceFromIpAddr(IpAddress ipaddr) {
 		//Find device associated with this session
+		if (ipaddr == null || ipaddr.getIpAddr().isEmpty()) {
+			return null;
+		}
 		Device device = null;
-		Iterable<Device> devices = deviceRepo.getDevicesUsingIpAddress(ipaddr);
+		Iterable<Device> devices = deviceRepo.getDevicesUsingIpAddress(ipaddr.getIpAddr());
 		if (devices != null) {
 			Iterator<Device> iter = devices.iterator();
 			if (iter != null && iter.hasNext()) {
@@ -59,9 +69,19 @@ public class SessionArtefactFactory {
 			}
 		}
 		if (device == null) {
-			//Create new device with unknown name
 			device = new Device();
-			device.setHostName("unknown_" + ipaddr);
+			//Look up device hostname
+			try {
+				//Create an inetaddress from ip string
+				InetAddress addr = InetAddress.getByName(ipaddr.getIpAddr());
+				//Get the ip bytes and recreate inetaddress
+				InetAddress address = InetAddress.getByAddress(addr.getAddress());
+				//Lookup and set hostname
+				device.setHostName(address.getCanonicalHostName());
+			} catch (UnknownHostException e) {
+				device.setHostName(ipaddr.getIpAddr());
+				log.info("Failed to lookup hostname for ip address: " + ipaddr.getIpAddr());
+			}
 			device.addIpAddr(ipaddr);
 			device = template.save(device);
 		}
@@ -69,6 +89,9 @@ public class SessionArtefactFactory {
 	}
 	
 	public IpAddress getIpAddress(String ip) {
+		if (ip == null) {
+			return null;
+		}
 		GraphRepository<IpAddress> repo = template.repositoryFor(IpAddress.class);
 		IpAddress ipaddr = repo.findByPropertyValue(IpAddress.IPADDR, ip);
 		if (ipaddr == null) {
@@ -78,6 +101,9 @@ public class SessionArtefactFactory {
 	}
 
 	public Port getPort(String portNumStr) {
+		if (portNumStr == null) {
+			return null;
+		}
 		int portNum = -1;
 		try {
 			portNum = Integer.parseInt(portNumStr);
