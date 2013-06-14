@@ -26,58 +26,56 @@ public class PcapSummary {
 	private String httpUrl;
 	private String httpReferer;
 	private String httpLocation;
-	
-	//-e frame.time_epoch -e frame.protocols -e ip.addr -e ip.len -e tcp.port  -e udp.port 
-	//-e http.url -e http.referer -e http.location
-	
-	public PcapSummary() {}
-	
-	public PcapSummary(String pcapStr) throws ParseException {
+
+	// -e frame.time_epoch -e frame.protocols -e ip.addr -e ip.len -e tcp.port
+	// -e udp.port
+	// -e http.url -e http.referer -e http.location
+
+	public PcapSummary() {
+	}
+
+	public PcapSummary(String pcapStr) throws Exception {
 		parseCsvString(pcapStr);
 	}
-	
-	public void parseCsvString(String val)
-			throws ParseException {
-		try {
-//			StringTokenizer tokenizer = new StringTokenizer(val.toString(),	COMMA);
-			String[] parts = val.split(COMMA);
-			this.setDtoi(Long.parseLong(parts[0].split("\\.")[0]));
-			String protocols = parts[1];
-			this.setProtocols(protocols.split(":"));
-			int next = 3;
-			if (parts[2] != null && !parts[2].isEmpty()) {
-				this.setIpSrc(parts[2]);
-				this.setIpDest(parts[3]);
-				next = 4;
-			}
-			if (parts[next] != null && !parts[next].isEmpty()) {
-				this.setLength(Integer.parseInt(parts[next]));
-			}
+
+	public void parseCsvString(String val) throws Exception {
+		// StringTokenizer tokenizer = new StringTokenizer(val.toString(),
+		// COMMA);
+		String[] parts = val.split(COMMA);
+		this.setDtoi(Long.parseLong(parts[0].split("\\.")[0]));
+		String protocols = parts[1];
+		this.setProtocols(protocols.split(":"));
+		int next = 3;
+		if (parts.length > 2 && parts[2] != null && !parts[2].isEmpty()) {
+			this.setIpSrc(parts[2]);
+			this.setIpDest(parts[3]);
+			next = 4;
+		}
+		if (parts.length > next && parts[next] != null && !parts[next].isEmpty()) {
+			this.setLength(Integer.parseInt(parts[next]));
+		}
+		next++;
+		if (parts.length > next && parts[next] != null && !parts[next].isEmpty()) {
+			this.setProtocolNumber(Integer.parseInt(parts[next]));
+		}
+		next++;
+		if (parts.length > next && protocols.contains(TCP)) {
+			this.setSrcPort(parts[next++]);
+			this.setDestPort(parts[next++]);
+		}
+		if (parts.length > next && protocols.contains(UDP)) {
 			next++;
-			if (parts[next] != null && !parts[next].isEmpty()) {
-				this.setProtocolNumber(Integer.parseInt(parts[next]));
-			}
-			next++;
-			if (protocols.contains(TCP)) {
-				this.setSrcPort(parts[next++]);
-				this.setDestPort(parts[next++]);
-			}
-			if (protocols.contains(UDP)) {
-				next++;
-				this.setSrcPort(parts[next++]);
-				this.setDestPort(parts[next++]);
-			}
+			this.setSrcPort(parts[next++]);
+			this.setDestPort(parts[next++]);
+		}
+		if (parts.length > next) {
+			this.setHttpUrl(parts[next++]);
 			if (parts.length > next) {
-				this.setHttpUrl(parts[next++]);
+				this.setHttpReferer(parts[next++]);
 				if (parts.length > next) {
-					this.setHttpReferer(parts[next++]);
-					if (parts.length > next) {
-						this.setHttpLocation(parts[next]);
-					}
+					this.setHttpLocation(parts[next]);
 				}
 			}
-		} catch (Exception e) {
-			log.error("Failed to parse pcap entry: " + val.toString(), e);
 		}
 	}
 
@@ -129,7 +127,6 @@ public class PcapSummary {
 		this.length = length;
 	}
 
-	
 	public String getSrcPort() {
 		return srcPort;
 	}
@@ -220,5 +217,4 @@ public class PcapSummary {
 		return ipCache;
 	}
 
-	
 }

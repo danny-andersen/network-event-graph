@@ -185,4 +185,29 @@ public class TestPcapSummary extends TestCase {
 		}
 		assertThat(protos, hasItems("eth","ip","igmp"));
 	}
+	
+	@Test
+	@Transactional
+	public void parseVeryShortSession() {
+		String pcapStr = "1367871304.019532000,eth:ipv6:icmpv6,,,,,,,,";
+		
+		PcapSummary pcap = null;
+		try {
+			pcap = new PcapSummary(pcapStr);
+		} catch (Exception e) {
+			Assert.fail("Failed to parse pcap str: " + e);
+		}
+		Session session = sessionFactory.createSession(pcap);
+		//Persist session
+		Long id = template.save(session).getSessionId();
+		assertEquals(session.getClass(), IpSession.class);
+		IpSession ret = template.findOne(id, IpSession.class);
+		assertThat(ret.getDtoi(), is(1367871304L));
+		List<String> protos = new ArrayList<String>();
+		for (String proto : ret.getProtocols()) {
+			protos.add(proto);
+		}
+		assertThat(protos, hasItems("eth","ipv6","icmpv6"));
+	}
+	
 }
