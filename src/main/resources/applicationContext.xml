@@ -13,7 +13,7 @@
 
 	<context:component-scan base-package="com.dsa" />
 
-	<neo4j:config storeDirectory="/home/danny/Neo4j/Pcap.db" />
+	<neo4j:config storeDirectory="/home/danny/Neo4J/Pcap.db" />
 	<neo4j:repositories base-package="com.dsa.pcapneo.graph.repositories" />
 
 	<tx:annotation-driven transaction-manager="neo4jTransactionManager" />

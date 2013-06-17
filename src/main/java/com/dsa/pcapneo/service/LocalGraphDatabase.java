@@ -6,7 +6,7 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-public class LocalGraphDatabase implements GraphDatabase {
+public class LocalGraphDatabase {
 	private GraphDatabaseService graphDb;
 
 	@Autowired
@@ -18,7 +18,6 @@ public class LocalGraphDatabase implements GraphDatabase {
 	@Autowired
 	private String dbPropertiesFile;
 
-	@Override
 	public GraphDatabaseService open() {
 		if (this.graphDb == null) {
 			GraphDatabaseBuilder builder = graphDbFactory.newEmbeddedDatabaseBuilder(dbPath);
@@ -35,7 +34,6 @@ public class LocalGraphDatabase implements GraphDatabase {
 		return this.graphDb;
 	}
 
-	@Override
 	public void close() {
 		this.graphDb.shutdown();
 	}

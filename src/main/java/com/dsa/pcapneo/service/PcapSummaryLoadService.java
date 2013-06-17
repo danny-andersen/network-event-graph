@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.ParseException;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,6 +34,8 @@ public class PcapSummaryLoadService {
 	private void parseFile(BufferedReader reader) {
 		String line = null;
 		int errors = 0, success = 0;
+		long startTime = new Date().getTime();
+		long lastTime = startTime;
 		try {
 			do {
 				line = reader.readLine();
@@ -44,11 +46,22 @@ public class PcapSummaryLoadService {
 						errors++;
 					}
 				}
+				if (success % 100 == 0) {
+					long currentTime = new Date().getTime();
+					long elapsed = currentTime - startTime;
+					long interval = currentTime - lastTime;
+					log.info(String.format("Imported %d lines, had %d failures in %f secs, current rate: %f, avg rate: %f",
+							success, errors, elapsed/1000.0, (1000*100.0/interval), (1000.0 * success / elapsed)));
+					lastTime = currentTime;
+				}
 			} while (line != null);
 		} catch (Exception e) {
 			log.error("Exception whilst processing ", e);
 		}
-		log.info(String.format("Sessions imported: %d new sessions with %d failures", success, errors));
+		long currentTime = new Date().getTime();
+		long elapsed = currentTime - startTime;
+		log.info(String.format("Sessions imported: %d new sessions with %d failures in %d secs at a rate of: %f/sec",
+						success, errors, elapsed/1000, (1000.0*(success+errors)/elapsed)));
 	}
 
 	@Transactional	
