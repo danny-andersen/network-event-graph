@@ -1,32 +1,24 @@
 package com.dsa.pcapneo.domain.graph;
 
+import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 
 @NodeEntity
-public class DeviceType {
+public class Protocol {
+	public static final String NAME = "name";
+
 	@GraphId
-	Long deviceTypeId;
-
+	Long id;
+	
 	@Indexed
-	String name;
-	
-	public DeviceType() {
-		
-	}
-	
-	public DeviceType(String type) {
-		this.name = type;
-	}
-	
-	
-	public Long getDeviceTypeId() {
-		return deviceTypeId;
-	}
+	@Fetch private String name;
 
-	public void setDeviceTypeId(Long deviceTypeId) {
-		this.deviceTypeId = deviceTypeId;
+	public Protocol() {}
+	
+	public Protocol(String name) {
+		this.name = name;
 	}
 
 	public String getName() {
@@ -41,10 +33,10 @@ public class DeviceType {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((deviceTypeId == null) ? 0 : deviceTypeId.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -53,14 +45,13 @@ public class DeviceType {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		DeviceType other = (DeviceType) obj;
-		if (deviceTypeId == null) {
-			if (other.deviceTypeId != null)
+		Protocol other = (Protocol) obj;
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!deviceTypeId.equals(other.deviceTypeId))
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}
-	
 	
 }

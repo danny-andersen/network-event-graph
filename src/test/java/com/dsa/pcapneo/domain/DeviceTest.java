@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dsa.pcapneo.domain.graph.Device;
 import com.dsa.pcapneo.domain.graph.DeviceType;
 import com.dsa.pcapneo.domain.graph.IpAddress;
+import com.dsa.pcapneo.domain.graph.Protocol;
 import com.dsa.pcapneo.domain.graph.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -62,7 +63,10 @@ public class DeviceTest //extends AbstractTransactionalJUnit4SpringContextTests
 		
 		device.addIpAddr(template.save(new IpAddress(ip1)));
 		device.addIpAddr(template.save(new IpAddress(ip2)));
+		device.addProtocol(template.save(new Protocol("tcp")));
+		device.addProtocol(template.save(new Protocol("ip")));
 		template.save(device);
+		
 		Device dev = template.findOne(device.getDeviceId(), Device.class);
 		assertThat(dev.getHostName(), is("test1"));
 		//Check type
@@ -79,6 +83,14 @@ public class DeviceTest //extends AbstractTransactionalJUnit4SpringContextTests
 			ipStrs.add(ip.getIpAddr());
 		}
 		assertThat(ipStrs, hasItems(ip1, ip2));
+		//Check protos
+		Set<Protocol> protos = template.fetch(dev.getProtocols());
+		assertThat(protos.size(), is(2));
+		List<String> protoStrs = new ArrayList<String>(protos.size());
+		for (Protocol p : protos) {
+			protoStrs.add(p.getName());
+		}
+		assertThat(protoStrs, hasItems("tcp", "ip"));
 	}
 	
 

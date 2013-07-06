@@ -1,5 +1,6 @@
 package com.dsa.pcapneo.domain.graph;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.neo4j.graphdb.Direction;
@@ -12,24 +13,31 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 public class WebSite {
 	@GraphId
 	Long id;
-	
-	//Used in index lookup
+
+	// Used in index lookup
 	public static final String ADDRESS = "address";
+	
 	@Indexed
 	private String address;
-	
-	//Uris hosted on this site
-	@RelatedTo(type="HOSTS", direction=Direction.OUTGOING)
+
+	// Uris hosted on this site
+	@RelatedTo(type = "HOSTS", direction = Direction.OUTGOING)
 	Set<WebPath> uris;
 
+	@RelatedTo(type = "DEVICES", direction = Direction.BOTH)
+	Set<Device> devices;
+
+	@RelatedTo(type = "REFERER", direction = Direction.INCOMING)
+	Set<WebSite> referers;
+
 	public WebSite() {
-		
+
 	}
-	
+
 	public WebSite(String address) {
 		this.address = address;
 	}
-	
+
 	public long getId() {
 		return id;
 	}
@@ -54,6 +62,41 @@ public class WebSite {
 		this.uris = uris;
 	}
 
+	public void addUri(WebPath uri) {
+		if (this.uris == null) {
+			this.uris = new HashSet<WebPath>();
+		}
+		this.uris.add(uri);
+	}
+
+	public Set<Device> getDevices() {
+		return devices;
+	}
+
+	public void setDevices(Set<Device> devices) {
+		this.devices = devices;
+	}
+
+	public void addDevice(Device dev) {
+		if (dev == null) {
+			return;
+		}
+		if (this.devices == null) {
+			this.devices = new HashSet<Device>();
+		}
+		this.devices.add(dev);
+	}
+
+	public void addReferer(WebSite site) {
+		if (site == null) {
+			return;
+		}
+		if (this.referers == null) {
+			this.referers = new HashSet<WebSite>();
+		}
+		this.referers.add(site);
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -75,6 +118,5 @@ public class WebSite {
 			return false;
 		return true;
 	}
-	
-	
+
 }

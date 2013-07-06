@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dsa.pcapneo.domain.graph.IpAddress;
 import com.dsa.pcapneo.domain.graph.IpSession;
+import com.dsa.pcapneo.domain.graph.Protocol;
 import com.dsa.pcapneo.graph.repositories.SessionArtefactFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -31,8 +32,6 @@ public class IpSessionTest {
 	@Transactional
 	public void createIpSession() {
 		IpSession session = new IpSession();
-		String[] protos = new String[] {"tcp", "ip"};
-		session.setProtocols(protos);
 		session.setStartTime(new Date().getTime());
 		session.setProtocolNumber(17);
 		session.setLength(1024);
@@ -43,10 +42,6 @@ public class IpSessionTest {
 		assertThat(retrieved.getLength(), is(1024));
 		assertThat(retrieved.getProtocolNumber(), is(17));
 		List<String> rproto = new ArrayList<String>();
-		for (String p : retrieved.getProtocols()) {
-			rproto.add(p);
-		}
-		assertThat(rproto, hasItems(protos));
 	}
 
 	@Test
@@ -73,7 +68,7 @@ public class IpSessionTest {
 	public void createIpSessionWithRelationships() {
 		IpSession session = new IpSession();
 		String[] protos = new String[] {"tcp", "ip"};
-		session.setProtocols(protos);
+		session.setProtocols(factory.getProtocols(protos));
 		session.setStartTime(new Date().getTime());
 		session.setProtocolNumber(17);
 		session.setLength(1024);
@@ -88,12 +83,14 @@ public class IpSessionTest {
 		assertThat(retrieved.getLength(), is(1024));
 		assertThat(retrieved.getProtocolNumber(), is(17));
 		List<String> rproto = new ArrayList<String>();
-		for (String p : retrieved.getProtocols()) {
-			rproto.add(p);
+		for (Protocol p : template.fetch(retrieved.getProtocols())) {
+			rproto.add(p.getName());
 		}
 		assertThat(rproto, hasItems(protos));
 		assertThat(retrieved.getIpSrc().getIpAddr(), is("192.168.1.1"));
 		assertThat(retrieved.getIpDest().getIpAddr(), is("12.1.1.1"));
+		assertThat(retrieved.getIpSrc().getLocation().name(), is("LOCAL"));
+		assertThat(retrieved.getIpDest().getLocation().name(), is("REMOTE"));
 		assertThat(retrieved.getSrcPort().getPort(), is(24555));
 		assertThat(retrieved.getDestPort().getPort(), is(80));
 	}

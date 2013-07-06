@@ -23,6 +23,7 @@ import com.dsa.pcapneo.domain.graph.DeviceType;
 import com.dsa.pcapneo.domain.graph.HttpSession;
 import com.dsa.pcapneo.domain.graph.IpAddress;
 import com.dsa.pcapneo.domain.graph.IpSession;
+import com.dsa.pcapneo.domain.graph.Protocol;
 import com.dsa.pcapneo.domain.graph.Session;
 import com.dsa.pcapneo.domain.graph.User;
 import com.dsa.pcapneo.domain.graph.WebSite;
@@ -67,7 +68,7 @@ public class TestPcapSummary extends TestCase {
 		assertThat(site.getAddress(), is("search.maven.org"));
 		Device device = template.fetch(ret.getToDevice());
 		assertNotNull(device);
-		assertTrue(device.getHostName(), device.getHostName().contains("facebook.com"));
+		assertTrue(device.getHostName(), device.getHostName().contains("31.13.72.33"));
 		device = template.fetch(ret.getFromDevice());
 		assertNotNull(device);
 		assertThat(device.getHostName(), device.getHostName(), is("192.168.1.79"));
@@ -127,8 +128,8 @@ public class TestPcapSummary extends TestCase {
 		assertThat(ret.getLength(), is(140));
 		assertThat(ret.getProtocolNumber(), is(17));
 		List<String> protos = new ArrayList<String>();
-		for (String proto : ret.getProtocols()) {
-			protos.add(proto);
+		for (Protocol proto : template.fetch(ret.getProtocols())) {
+			protos.add(proto.getName());
 		}
 		assertThat(protos, hasItems("eth","ip","udp","db-lsp-disc"));
 	}
@@ -153,8 +154,8 @@ public class TestPcapSummary extends TestCase {
 		assertThat(ret.getSrcPort().getPort(), is(51670));
 		assertThat(ret.getDtoi(), is(1367871237L));
 		List<String> protos = new ArrayList<String>();
-		for (String proto : ret.getProtocols()) {
-			protos.add(proto);
+		for (Protocol proto : template.fetch(ret.getProtocols())) {
+			protos.add(proto.getName());
 		}
 		assertThat(protos, hasItems("eth","ipv6","udp","http"));
 	}
@@ -180,8 +181,8 @@ public class TestPcapSummary extends TestCase {
 		assertThat(ret.getLength(), is(40));
 		assertThat(ret.getDtoi(), is(1367871239L));
 		List<String> protos = new ArrayList<String>();
-		for (String proto : ret.getProtocols()) {
-			protos.add(proto);
+		for (Protocol proto : template.fetch(ret.getProtocols())) {
+			protos.add(proto.getName());
 		}
 		assertThat(protos, hasItems("eth","ip","igmp"));
 	}
@@ -204,8 +205,8 @@ public class TestPcapSummary extends TestCase {
 		IpSession ret = template.findOne(id, IpSession.class);
 		assertThat(ret.getDtoi(), is(1367871304L));
 		List<String> protos = new ArrayList<String>();
-		for (String proto : ret.getProtocols()) {
-			protos.add(proto);
+		for (Protocol proto : template.fetch(ret.getProtocols())) {
+			protos.add(proto.getName());
 		}
 		assertThat(protos, hasItems("eth","ipv6","icmpv6"));
 	}

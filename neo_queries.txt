@@ -1,0 +1,37 @@
+#Find Ip addresses
+index -q IpAddress "ipAddr:192.168.1.*"
+
+#Find hosts
+index -q Device "hostName:192.168.1.*"  
+
+#Devices using an Ip address
+start me = node(966) match me<-[:CONNECTS_USING]-dev return dev;
+
+#Devices connected to, from specified device
+start me = node(968) 
+match me<-[:CONNECTS_FROM_DEVICE]-s
+-[:CONNECTS_TO_DEVICE]->d return distinct d;
+
+#Devices connected to that are web sites
+start me = node(17)
+match me<-[:CONNECTS_FROM_DEVICE]-s
+-[:CONNECTS_TO_DEVICE]->d
+<-[:DEVICES]-web return distinct web;
+
+#Devices connecting to specified device
+start me = node(968) 
+match me<-[:CONNECTS_TO_DEVICE]-s
+-[:CONNECTS_FROM_DEVICE]-d return distinct d;
+
+#Web sessions
+start me = node(968) 
+match me<-[:CONNECTS_FROM_DEVICE]-s
+-[:CONNECTS_TO]->web return distinct web;
+
+
+#Web views
+start me = node(968) 
+match me<-[:CONNECTS_FROM_DEVICE]-s
+-[:VIEWS]->web return distinct web;
+
+

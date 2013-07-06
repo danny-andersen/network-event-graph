@@ -8,6 +8,7 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.stereotype.Component;
@@ -24,8 +25,16 @@ public class PcapSummaryLoadService {
 
 	@Autowired private SessionFactory sessionFactory;
 	@Autowired private Neo4jTemplate template;
+	@Autowired private GraphDatabaseService graphDb;
 
 	public void parseFile(File file) throws IOException {
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				log.info("Closing down database cleanly");
+				graphDb.shutdown();
+			}
+		});
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		parseFile(reader);
 		reader.close();

@@ -26,6 +26,13 @@ public class SessionFactory {
 		}
 		return session;
 	}
-	
+
+	public SessionArtefactFactory getFactory() {
+		return factory;
+	}
+
+	public void setFactory(SessionArtefactFactory factory) {
+		this.factory = factory;
+	}
 
 }

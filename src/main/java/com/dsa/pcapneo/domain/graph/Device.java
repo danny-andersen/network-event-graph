@@ -32,6 +32,9 @@ public class Device {
 	@RelatedTo(type = "CONNECTS_USING", direction = Direction.OUTGOING)
 	@Fetch private Set<IpAddress> ipaddr;
 	
+	@RelatedTo(type="USES_PROTOCOL", direction = Direction.OUTGOING)
+	private Set<Protocol> protocols;
+	
 	public Device() {
 	}
 	
@@ -53,6 +56,13 @@ public class Device {
 		this.users.add(user);
 	}
 	
+	public void addProtocol(Protocol proto) {
+		if (this.protocols == null) {
+			this.protocols = new HashSet<Protocol>();
+		}
+		this.protocols.add(proto);
+	}
+
 	public Long getDeviceId() {
 		return deviceId;
 	}
@@ -106,6 +116,14 @@ public class Device {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Set<Protocol> getProtocols() {
+		return protocols;
+	}
+
+	public void setProtocols(Set<Protocol> protocols) {
+		this.protocols = protocols;
 	}
 
 	@Override

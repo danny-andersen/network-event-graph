@@ -1,7 +1,10 @@
 package com.dsa.pcapneo.domain.graph;
 
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
@@ -28,6 +31,12 @@ public class IpSession extends Session {
 	@RelatedTo(type = "CONNECTS_TO_PORT")
 	@Fetch private Port destPort;
 
+	@RelatedTo(type="CONNECTS_FROM_DEVICE", direction=Direction.OUTGOING)
+	@Fetch private Device fromDevice;
+	
+	@RelatedTo(type="CONNECTS_TO_DEVICE", direction=Direction.OUTGOING)
+	@Fetch private Device toDevice;
+
 	private int length;
 	private int protocolNumber;
 
@@ -49,8 +58,16 @@ public class IpSession extends Session {
 			this.srcIp = factory.getIpAddress(pcap.getIpSrc());
 			this.length = pcap.getLength();
 			this.srcPort = factory.getPort(pcap.getSrcPort());
+			if (srcIp != null && srcPort != null) {
+				this.srcIp.addClientPort(srcPort);
+			}
 			this.destPort = factory.getPort(pcap.getDestPort());
+			if (destIp != null && destPort != null) {
+				this.destIp.addServerPort(destPort);
+			}
 			this.protocolNumber = pcap.getProtocolNumber();
+			this.setFromDevice(factory.getDeviceFromIpAddr(this.getIpSrc()));
+			this.setToDevice(factory.getDeviceFromIpAddr(this.getIpDest()));
 		} catch (Exception e) {
 			log.error("Failed to create IpSession from pcap: " + pcap.toString(), e);
 		}
@@ -153,5 +170,20 @@ public class IpSession extends Session {
 		this.protocolNumber = protocolNumber;
 	}
 
+	public Device getFromDevice() {
+		return fromDevice;
+	}
+
+	public void setFromDevice(Device fromDevice) {
+		this.fromDevice = fromDevice;
+	}
+
+	public Device getToDevice() {
+		return toDevice;
+	}
+
+	public void setToDevice(Device toDevice) {
+		this.toDevice = toDevice;
+	}
 
 }

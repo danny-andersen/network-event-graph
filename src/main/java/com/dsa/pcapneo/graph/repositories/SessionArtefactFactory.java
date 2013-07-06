@@ -2,7 +2,9 @@ package com.dsa.pcapneo.graph.repositories;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import com.dsa.pcapneo.domain.graph.Device;
 import com.dsa.pcapneo.domain.graph.IpAddress;
 import com.dsa.pcapneo.domain.graph.Port;
+import com.dsa.pcapneo.domain.graph.Protocol;
 import com.dsa.pcapneo.domain.graph.WebPath;
 import com.dsa.pcapneo.domain.graph.WebSite;
 
@@ -119,5 +122,23 @@ public class SessionArtefactFactory {
 			}
 		}
 		return port;
+	}
+
+	public Set<Protocol> getProtocols(String[] protocols) {
+		if (protocols == null) {
+			return null;
+		}
+		Set<Protocol> protos = new HashSet<Protocol>();
+		for (String proto : protocols) {
+			if (proto != null) {
+				GraphRepository<Protocol> repo = template.repositoryFor(Protocol.class);
+				Protocol p = repo.findByPropertyValue(Protocol.NAME, proto);
+				if (p == null) {
+					p = template.save(new Protocol(proto));
+				}
+				protos.add(p);
+			}
+		}
+		return protos;
 	}
 }

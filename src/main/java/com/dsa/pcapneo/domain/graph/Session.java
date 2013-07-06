@@ -1,7 +1,12 @@
 package com.dsa.pcapneo.domain.graph;
 
+import java.util.Set;
+
+import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import com.dsa.pcapneo.domain.session.PcapSummary;
 import com.dsa.pcapneo.graph.repositories.SessionArtefactFactory;
@@ -18,9 +23,11 @@ public abstract class Session {
 	@GraphId
 	private Long sessionId;
 	
+	@Indexed
 	private long startTime;
 
-	private String[] protocols;
+	@RelatedTo(type="VIA_PROTOCOL", direction=Direction.OUTGOING)
+	protected Set<Protocol> protocols;
 
 	protected SessionArtefactFactory factory;
 	
@@ -33,7 +40,7 @@ public abstract class Session {
 	public Session(SessionArtefactFactory factory, PcapSummary pcap) {
 		this.factory = factory;
 		this.startTime = pcap.getDtoi();
-		this.protocols = pcap.getProtocols();
+		this.protocols = factory.getProtocols(pcap.getProtocols());
 	}
 	
 	public long getDtoi() {
@@ -42,14 +49,6 @@ public abstract class Session {
 
 	public void setStartTime(long dtoi) {
 		this.startTime = dtoi;
-	}
-
-	public String[] getProtocols() {
-		return protocols;
-	}
-
-	public void setProtocols(String[] protocols) {
-		this.protocols = protocols;
 	}
 
 	public Long getSessionId() {
@@ -70,6 +69,14 @@ public abstract class Session {
 
 	public long getStartTime() {
 		return startTime;
+	}
+
+	public Set<Protocol> getProtocols() {
+		return protocols;
+	}
+
+	public void setProtocols(Set<Protocol> protocols) {
+		this.protocols = protocols;
 	}
 
 	

@@ -20,13 +20,7 @@ public class HttpSession extends IpSession {
 	@RelatedTo(type="CAME_FROM", direction=Direction.OUTGOING)
 	private WebSite referer;
 	
-	@RelatedTo(type="CONNECTS_FROM_DEVICE", direction=Direction.OUTGOING)
-	private Device fromDevice;
-	
-	@RelatedTo(type="CONNECTS_TO_DEVICE", direction=Direction.OUTGOING)
-	private Device toDevice;
-
-	@RelatedTo(type="CONNECTS_TO_WEBSITE", direction=Direction.OUTGOING)
+	@RelatedTo(type="CONNECTS_TO", direction=Direction.OUTGOING)
 	private WebSite webSite;
 
 	@RelatedTo(type="VIEWS", direction=Direction.OUTGOING)
@@ -51,8 +45,6 @@ public class HttpSession extends IpSession {
 		} else if (pcap.getHttpLocation() != null && !pcap.getHttpLocation().isEmpty()) {
 			parseUri(pcap.getHttpLocation());
 		}
-		this.setFromDevice(factory.getDeviceFromIpAddr(this.getIpSrc()));
-		this.setToDevice(factory.getDeviceFromIpAddr(this.getIpDest()));
 	}
 
 	public void setUri(String url) {
@@ -71,6 +63,11 @@ public class HttpSession extends IpSession {
 			uri = new URI(location);
 			this.webSite = factory.getWebSite(uri.getHost());
 			this.resource = factory.getWebPath(uri.getPath());
+			this.webSite.addDevice(getToDevice());
+			this.webSite.addUri(this.resource);
+			if (this.referer != null) {
+				this.webSite.addReferer(this.referer);
+			}
 		} catch (URISyntaxException e) {
 			log.error("Could not parse uri string: " + location, e);
 		}
@@ -102,22 +99,6 @@ public class HttpSession extends IpSession {
 
 	public void setResource(WebPath location) {
 		this.resource = location;
-	}
-
-	public Device getFromDevice() {
-		return fromDevice;
-	}
-
-	public void setFromDevice(Device fromDevice) {
-		this.fromDevice = fromDevice;
-	}
-
-	public Device getToDevice() {
-		return toDevice;
-	}
-
-	public void setToDevice(Device toDevice) {
-		this.toDevice = toDevice;
 	}
 
 }

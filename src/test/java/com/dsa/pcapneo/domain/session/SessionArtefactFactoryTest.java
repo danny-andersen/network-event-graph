@@ -12,7 +12,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dsa.pcapneo.domain.graph.Device;
+import com.dsa.pcapneo.domain.graph.DeviceType;
 import com.dsa.pcapneo.domain.graph.IpAddress;
+import com.dsa.pcapneo.domain.graph.Protocol;
+import com.dsa.pcapneo.domain.graph.User;
 import com.dsa.pcapneo.graph.repositories.SessionArtefactFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -41,4 +45,16 @@ public class SessionArtefactFactoryTest {
 		assertThat(ip.getIpAddr(), is ("192.168.1.1"));
 		assertThat(ip.getId(), is(id));
 	}
+
+	@Test
+	@Transactional
+	public void getDevice() {
+		String ip1 = "127.0.0.1";
+		template.save(new IpAddress(ip1));
+
+		Device retrieved = factory.getDeviceFromIpAddr(factory.getIpAddress(ip1));
+		Assert.assertNotNull(retrieved);
+		assertThat(retrieved.getHostName(), is("localhost.localdomain"));
+	}
+
 }
