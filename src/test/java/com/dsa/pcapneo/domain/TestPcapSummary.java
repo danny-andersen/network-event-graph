@@ -68,7 +68,7 @@ public class TestPcapSummary extends TestCase {
 		assertThat(site.getAddress(), is("search.maven.org"));
 		Device device = template.fetch(ret.getToDevice());
 		assertNotNull(device);
-		assertTrue(device.getHostName(), device.getHostName().contains("31.13.72.33"));
+		assertTrue(device.getHostName(), device.getHostName().contains("31.13.72.33") || device.getHostName().contains("facebook.com"));
 		device = template.fetch(ret.getFromDevice());
 		assertNotNull(device);
 		assertThat(device.getHostName(), device.getHostName(), is("192.168.1.79"));

@@ -1,6 +1,6 @@
 package com.dsa.pcapneo.domain.session;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Assert;
@@ -54,7 +54,7 @@ public class SessionArtefactFactoryTest {
 
 		Device retrieved = factory.getDeviceFromIpAddr(factory.getIpAddress(ip1));
 		Assert.assertNotNull(retrieved);
-		assertThat(retrieved.getHostName(), is("localhost.localdomain"));
+		assertThat(retrieved.getHostName(), containsString("localhost"));
 	}
 
 }
