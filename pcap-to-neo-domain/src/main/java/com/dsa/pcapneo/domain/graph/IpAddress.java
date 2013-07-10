@@ -23,6 +23,7 @@ public class IpAddress {
 	@Indexed
 	@Fetch private String ipAddr;
 
+	@Indexed
 	@Fetch private Location location;
 
 	@RelatedTo(type="SERVER_PORT", direction=Direction.OUTGOING)

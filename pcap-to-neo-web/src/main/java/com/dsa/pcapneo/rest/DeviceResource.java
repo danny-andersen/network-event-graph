@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.dsa.pcapneo.domain.graph.Device;
+import com.dsa.pcapneo.domain.graph.IpAddress;
 import com.dsa.pcapneo.service.DeviceRetrievalService;
 
 @Component
@@ -36,7 +37,30 @@ public class DeviceResource {
 			devices = deviceService.getDevicesByHostname(hostname);
 			log.info(String.format("Retrieved %d devices for hostname: %s", devices.length, hostname));
 		}
+		//Null ports in device ipaddrs
+		for (Device device : devices) {
+			for (IpAddress ip : device.getIpaddr()) {
+				ip.setClientPort(null);
+				ip.setServerPort(null);
+			}
+		}
+		
 		return devices;
 	}
-
+	
+	@Path("/local")
+	@GET
+	public Device[] getLocalDevices() {
+		Device[] devices = deviceService.getLocalOrRemoteDevices(true);
+		log.info(String.format("Retrieved %d local devices", devices.length));
+		return devices;
+	}	
+	
+	@Path("/remote")
+	@GET
+	public Device[] getRemoteDevices() {
+		Device[] devices = deviceService.getLocalOrRemoteDevices(false);
+		log.info(String.format("Retrieved %d remote devices", devices.length));
+		return devices;
+	}
 }

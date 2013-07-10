@@ -24,7 +24,7 @@ import com.dsa.pcapneo.domain.graph.User;
 import com.dsa.pcapneo.domain.graph.WebSite;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(("/applicationContext.xml"))
+@ContextConfiguration(("/testContext.xml"))
 public class DeviceRepositoryTest {
 	
 	@Autowired DeviceRepository deviceRepository;
@@ -116,6 +116,84 @@ public class DeviceRepositoryTest {
 		
 		//Find devs using 192.168.1.
 		Iterable<Device> devices = deviceRepository.getDevicesUsingIpAddress("192.168.1.1");
+		List<String> devs = new ArrayList<String>();
+		for (Device dev : devices) {
+			devs.add(dev.getHostName());
+		}
+		assertThat(devs.size(), is(2));
+		assertThat(devs, hasItems("test1", "test3"));
+	}
+
+	@Test
+	@Transactional
+	public void getDevicesUsingIpAddressNode() {
+		Device device = new Device("test1", template.save(new DeviceType("laptop")), template.save(new User("user1")));
+		Device dev2 = new Device("test2", template.save(new DeviceType("laptop")), template.save(new User("user1")));
+		Device dev3 = new Device("test3", template.save(new DeviceType("netbook")), template.save(new User("user1")));
+		String ip1 = "192.168.1.1";
+		String ip2 = "192.168.1.2";
+		IpAddress ip = template.save(new IpAddress(ip1));
+		device.addIpAddr(ip);
+		template.save(device);
+		dev2.addIpAddr(template.save(new IpAddress(ip2)));
+		template.save(dev2);
+		dev3.addIpAddr(ip);
+		template.save(dev3);
+		
+		//Find devs using 192.168.1.
+		Iterable<Device> devices = deviceRepository.getDevicesUsingIpAddressNode(ip);
+		List<String> devs = new ArrayList<String>();
+		for (Device dev : devices) {
+			devs.add(dev.getHostName());
+		}
+		assertThat(devs.size(), is(2));
+		assertThat(devs, hasItems("test1", "test3"));
+	}
+
+	@Test
+	@Transactional
+	public void getLocalDevices() {
+		Device device = new Device("test1", template.save(new DeviceType("laptop")), template.save(new User("user1")));
+		Device dev2 = new Device("test2", template.save(new DeviceType("laptop")), template.save(new User("user1")));
+		Device dev3 = new Device("test3", template.save(new DeviceType("netbook")), template.save(new User("user1")));
+		String ip1 = "192.168.1.1";
+		String ip2 = "192.168.1.2";
+		IpAddress ip = template.save(new IpAddress(ip1));
+		device.addIpAddr(ip);
+		template.save(device);
+		dev2.addIpAddr(template.save(new IpAddress(ip2)));
+		template.save(dev2);
+		dev3.addIpAddr(ip);
+		template.save(dev3);
+		
+		//Find local devs 
+		Iterable<Device> devices = deviceRepository.getLocalDevices();
+		List<String> devs = new ArrayList<String>();
+		for (Device dev : devices) {
+			devs.add(dev.getHostName());
+		}
+		assertThat(devs.size(), is(3));
+		assertThat(devs, hasItems("test1", "test2", "test3"));
+	}
+
+	@Test
+	@Transactional
+	public void getRemoteDevices() {
+		Device device = new Device("test1", template.save(new DeviceType("laptop")), template.save(new User("user1")));
+		Device dev2 = new Device("test2", template.save(new DeviceType("laptop")), template.save(new User("user1")));
+		Device dev3 = new Device("test3", template.save(new DeviceType("netbook")), template.save(new User("user1")));
+		String ip1 = "31.31.31.31";
+		String ip2 = "192.168.1.2";
+		IpAddress ip = template.save(new IpAddress(ip1));
+		device.addIpAddr(ip);
+		template.save(device);
+		dev2.addIpAddr(template.save(new IpAddress(ip2)));
+		template.save(dev2);
+		dev3.addIpAddr(ip);
+		template.save(dev3);
+		
+		//Find local devs 
+		Iterable<Device> devices = deviceRepository.getRemoteDevices();
 		List<String> devs = new ArrayList<String>();
 		for (Device dev : devices) {
 			devs.add(dev.getHostName());

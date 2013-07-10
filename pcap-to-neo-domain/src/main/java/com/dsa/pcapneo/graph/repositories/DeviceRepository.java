@@ -23,13 +23,23 @@ public interface DeviceRepository extends GraphRepository<Device> {
 			"RETURN site")
 	Iterable<WebSite> getAllWebSitesVisitedByDevice(String hostName);
 	
-	@Query ("START ip=node:IpAddress({0}) " +
+	@Query ("START ip=node({0}) " +
 			"MATCH ip<-[:CONNECTS_USING]-device " +
 			"RETURN device")
-	Iterable<Device> getDevicesUsingIpAddress(IpAddress ipaddr);
+	Iterable<Device> getDevicesUsingIpAddressNode(IpAddress ipaddr);
 
 	@Query ("START ip=node:IpAddress(ipAddr={0}) " +
 			"MATCH ip<-[:CONNECTS_USING]-device " +
 			"RETURN device")
 	Iterable<Device> getDevicesUsingIpAddress(String ipaddr);
+
+	@Query ("START ip=node:IpAddress(location='LOCAL') " +
+			"MATCH ip<-[:CONNECTS_USING]-device " +
+			"RETURN device")
+	Iterable<Device> getLocalDevices();
+
+	@Query ("START ip=node:IpAddress(location='REMOTE') " +
+			"MATCH ip<-[:CONNECTS_USING]-device " +
+			"RETURN device")
+	Iterable<Device> getRemoteDevices();
 }
