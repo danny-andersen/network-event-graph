@@ -10,6 +10,8 @@ import com.dsa.pcapneo.domain.graph.User;
 import com.dsa.pcapneo.domain.graph.WebSite;
 
 public interface DeviceRepository extends GraphRepository<Device> {
+	Device findByDeviceId(Long deviceId);
+	
 	Iterable<Device> findByDeviceTypeName(String name);
 
 	@Query ("START device=node:Device(hostName={0}) MATCH device-[:IS_A]->dt return dt")
@@ -20,9 +22,15 @@ public interface DeviceRepository extends GraphRepository<Device> {
 	
 	@Query ("START device=node:Device(hostName={0}) " + 
 			"MATCH device<-[:CONNECTS_FROM_DEVICE]-httpsession-[:CONNECTS_TO]->site " +
-			"RETURN site")
+			"RETURN distinct site")
 	Iterable<WebSite> getAllWebSitesVisitedByDevice(String hostName);
 	
+	@Query ("START ip=node:IpAddress(ipAddr={0}) " +
+			"MATCH ip<-[:CONNECTS_USING]-device " +
+			"<-[:CONNECTS_FROM_DEVICE]-httpsession-[:CONNECTS_TO]->site " +
+			"RETURN distinct site")
+	Iterable<WebSite> getAllWebSitesVisitedByIpAddr(String ipAddr);
+
 	@Query ("START ip=node({0}) " +
 			"MATCH ip<-[:CONNECTS_USING]-device " +
 			"RETURN device")

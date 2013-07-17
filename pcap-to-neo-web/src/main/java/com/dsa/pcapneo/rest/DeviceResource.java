@@ -27,15 +27,16 @@ public class DeviceResource {
 	public Device[] getDevices(@QueryParam("hostname") String hostname,
 				@QueryParam("ipaddr") String ipaddr) {
 		Device[] devices = null;
+		long start = System.currentTimeMillis();
 		if (ipaddr != null) {
 			devices = deviceService.getDevicesByIpAddr(ipaddr);
-			log.info(String.format("Retrieved %d devices for ipaddr: %s", devices.length, ipaddr));
+			log.info(String.format("Retrieved %d devices for ipaddr: %s in %d ms", devices.length, ipaddr, System.currentTimeMillis() - start));
 		} else {
 			if (hostname == null) {
 				hostname = "*";
 			}
 			devices = deviceService.getDevicesByHostname(hostname);
-			log.info(String.format("Retrieved %d devices for hostname: %s", devices.length, hostname));
+			log.info(String.format("Retrieved %d devices for hostname: %s in %d ms", devices.length, hostname, System.currentTimeMillis() - start));
 		}
 		//Null ports in device ipaddrs
 		for (Device device : devices) {
@@ -48,19 +49,37 @@ public class DeviceResource {
 		return devices;
 	}
 	
+	@GET
+	@Path("/detail")
+	public Device getDeviceDetail(@QueryParam("id") Long deviceId) {
+		Device device = null;
+		long start = System.currentTimeMillis();
+		if (deviceId != null) {
+			device = deviceService.getDevice(deviceId);
+			if (device != null) {
+				log.info(String.format("Found device for id: %s in %d ms", deviceId, System.currentTimeMillis() - start));
+			} else {
+				log.info("No device found for id: " + deviceId);
+			}
+		}
+		return device;
+	}
+	
 	@Path("/local")
 	@GET
 	public Device[] getLocalDevices() {
+		long start = System.currentTimeMillis();
 		Device[] devices = deviceService.getLocalOrRemoteDevices(true);
-		log.info(String.format("Retrieved %d local devices", devices.length));
+		log.info(String.format("Retrieved %d local devices in %d ms", devices.length, System.currentTimeMillis() - start));
 		return devices;
 	}	
 	
 	@Path("/remote")
 	@GET
 	public Device[] getRemoteDevices() {
+		long start = System.currentTimeMillis();
 		Device[] devices = deviceService.getLocalOrRemoteDevices(false);
-		log.info(String.format("Retrieved %d remote devices", devices.length));
+		log.info(String.format("Retrieved %d remote devices in %d ms", devices.length, System.currentTimeMillis() - start));
 		return devices;
 	}
 }

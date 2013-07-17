@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.stereotype.Component;
 
 import com.dsa.pcapneo.domain.graph.Device;
@@ -14,6 +15,7 @@ import com.dsa.pcapneo.graph.repositories.IpAddressRepository;
 
 @Component
 public class DeviceRetrievalService {
+	@Autowired Neo4jTemplate template;
 	@Autowired DeviceRepository repo;
 	@Autowired IpAddressRepository ipaddrRepo;
 	
@@ -66,6 +68,14 @@ public class DeviceRetrievalService {
 		return devSet.toArray(new Device[devSet.size()]);
 	}
 
+	public Device getDevice(Long id) {
+		Device device = repo.findByDeviceId(id);
+		//Retrieve the lazy loaded stuff
+		template.fetch(device);
+		template.fetch(device.getDeviceType());
+		return device;
+	}
+	
 	private Set<Device> getDevicesByIpAddress(Set<Device> devices, IpAddress ip) {
 		if (ip != null) {
 			Iterable<Device> devIter = repo.getDevicesUsingIpAddressNode(ip);

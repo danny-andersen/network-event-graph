@@ -71,7 +71,7 @@ public class TestPcapSummary extends TestCase {
 		assertTrue(device.getHostName(), device.getHostName().contains("31.13.72.33") || device.getHostName().contains("facebook.com"));
 		device = template.fetch(ret.getFromDevice());
 		assertNotNull(device);
-		assertThat(device.getHostName(), device.getHostName(), is("192.168.1.79"));
+		assertTrue(device.getHostName(), device.getHostName().contains("192.168.1.79") || device.getHostName().contains("Dannys-iPad"));
 	}
 
 	@Test

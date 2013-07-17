@@ -38,6 +38,7 @@ public class PcapSummaryLoadService {
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		parseFile(reader);
 		reader.close();
+		graphDb.shutdown();
 	}
 	
 	private void parseFile(BufferedReader reader) {

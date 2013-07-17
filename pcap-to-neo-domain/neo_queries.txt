@@ -4,6 +4,9 @@ index -q IpAddress "ipAddr:192.168.1.*"
 #Find hosts
 index -q Device "hostName:192.168.1.*"  
 
+#Find Websites
+index -q WebSite "address:*"
+
 #Devices using an Ip address
 start me = node:IpAddress(ipAddr ='192.168.1.72') match me<-[:CONNECTS_USING]-dev return dev;
 start me = node(966) match me<-[:CONNECTS_USING]-dev return dev;
