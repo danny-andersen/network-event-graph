@@ -26,11 +26,11 @@ public class IpAddress {
 	@Indexed
 	@Fetch private Location location;
 
-	@RelatedTo(type="SERVER_PORT", direction=Direction.OUTGOING)
-	private Set<Port> serverPorts;
-	
-	@RelatedTo(type="CLIENT_PORT", direction=Direction.OUTGOING)
-	private Set<Port> clientPorts;
+//	@RelatedTo(type="SERVER_PORT", direction=Direction.OUTGOING)
+//	private Set<Port> serverPorts;
+//	
+//	@RelatedTo(type="CLIENT_PORT", direction=Direction.OUTGOING)
+//	private Set<Port> clientPorts;
 
 	public IpAddress() {
 	}
@@ -99,41 +99,41 @@ public class IpAddress {
 		return true;
 	}
 
-	public Set<Port> getServerPort() {
-		return serverPorts;
-	}
-
-	public void setServerPort(Set<Port> serverPort) {
-		this.serverPorts = serverPort;
-	}
-
-	public void addServerPort(Port port) {
-		if (port == null) {
-			return;
-		}
-		if (this.serverPorts == null) {
-			this.serverPorts = new HashSet<Port>();
-		}
-		this.serverPorts.add(port);
-	}
-	
-	public Set<Port> getClientPort() {
-		return clientPorts;
-	}
-
-	public void setClientPort(Set<Port> clientPort) {
-		this.clientPorts = clientPort;
-	}
-
-	public void addClientPort(Port port) {
-		if (port == null) {
-			return;
-		}
-		if (this.clientPorts == null) {
-			this.clientPorts = new HashSet<Port>();
-		}
-		this.clientPorts.add(port);
-	}
+//	public Set<Port> getServerPort() {
+//		return serverPorts;
+//	}
+//
+//	public void setServerPort(Set<Port> serverPort) {
+//		this.serverPorts = serverPort;
+//	}
+//
+//	public void addServerPort(Port port) {
+//		if (port == null) {
+//			return;
+//		}
+//		if (this.serverPorts == null) {
+//			this.serverPorts = new HashSet<Port>();
+//		}
+//		this.serverPorts.add(port);
+//	}
+//	
+//	public Set<Port> getClientPort() {
+//		return clientPorts;
+//	}
+//
+//	public void setClientPort(Set<Port> clientPort) {
+//		this.clientPorts = clientPort;
+//	}
+//
+//	public void addClientPort(Port port) {
+//		if (port == null) {
+//			return;
+//		}
+//		if (this.clientPorts == null) {
+//			this.clientPorts = new HashSet<Port>();
+//		}
+//		this.clientPorts.add(port);
+//	}
 	
 
 	

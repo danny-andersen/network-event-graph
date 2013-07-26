@@ -1,7 +1,5 @@
 package com.dsa.pcapneo.domain.graph;
 
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.neo4j.graphdb.Direction;
@@ -58,13 +56,13 @@ public class IpSession extends Session {
 			this.srcIp = factory.getIpAddress(pcap.getIpSrc());
 			this.length = pcap.getLength();
 			this.srcPort = factory.getPort(pcap.getSrcPort());
-			if (srcIp != null && srcPort != null) {
-				this.srcIp.addClientPort(srcPort);
-			}
+//			if (srcIp != null && srcPort != null) {
+//				this.srcIp.addClientPort(srcPort);
+//			}
 			this.destPort = factory.getPort(pcap.getDestPort());
-			if (destIp != null && destPort != null) {
-				this.destIp.addServerPort(destPort);
-			}
+//			if (destIp != null && destPort != null) {
+//				this.destIp.addServerPort(destPort);
+//			}
 			this.protocolNumber = pcap.getProtocolNumber();
 			this.setFromDevice(factory.getDeviceFromIpAddr(this.getIpSrc()));
 			this.setToDevice(factory.getDeviceFromIpAddr(this.getIpDest()));

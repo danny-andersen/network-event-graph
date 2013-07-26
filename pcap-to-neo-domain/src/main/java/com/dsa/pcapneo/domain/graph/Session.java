@@ -3,6 +3,7 @@ package com.dsa.pcapneo.domain.graph;
 import java.util.Set;
 
 import org.neo4j.graphdb.Direction;
+import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
@@ -27,7 +28,7 @@ public abstract class Session {
 	private long startTime;
 
 	@RelatedTo(type="VIA_PROTOCOL", direction=Direction.OUTGOING)
-	protected Set<Protocol> protocols;
+	@Fetch protected Set<Protocol> protocols;
 
 	protected SessionArtefactFactory factory;
 	

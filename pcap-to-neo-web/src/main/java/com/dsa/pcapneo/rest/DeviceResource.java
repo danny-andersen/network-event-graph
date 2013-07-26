@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.dsa.pcapneo.domain.graph.Device;
-import com.dsa.pcapneo.domain.graph.IpAddress;
 import com.dsa.pcapneo.service.DeviceRetrievalService;
 
 @Component
@@ -37,13 +36,6 @@ public class DeviceResource {
 			}
 			devices = deviceService.getDevicesByHostname(hostname);
 			log.info(String.format("Retrieved %d devices for hostname: %s in %d ms", devices.length, hostname, System.currentTimeMillis() - start));
-		}
-		//Null ports in device ipaddrs
-		for (Device device : devices) {
-			for (IpAddress ip : device.getIpaddr()) {
-				ip.setClientPort(null);
-				ip.setServerPort(null);
-			}
 		}
 		
 		return devices;
