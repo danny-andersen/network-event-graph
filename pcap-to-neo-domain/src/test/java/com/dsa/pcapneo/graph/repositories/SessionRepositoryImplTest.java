@@ -18,15 +18,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dsa.pcapneo.domain.graph.IpAddress;
 import com.dsa.pcapneo.domain.graph.IpSession;
+import com.dsa.pcapneo.domain.graph.SessionSummary;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(("/testContext.xml"))
 public class SessionRepositoryImplTest {
 
-	@Autowired Neo4jTemplate template;
-	@Autowired SessionRepositoryImpl sessionRepository;
-	@Autowired SessionArtefactFactory factory;
-	
+	@Autowired
+	Neo4jTemplate template;
+	@Autowired
+	SessionRepositoryImpl sessionRepository;
+	@Autowired
+	SessionArtefactFactory factory;
+
 	@Transactional
 	@Test
 	public void getIpSessionsByIpAddr() {
@@ -41,7 +45,8 @@ public class SessionRepositoryImplTest {
 		ip.setStartTime(new Date().getTime());
 		template.save(ip);
 
-		List<IpSession> ips = this.sessionRepository.getIpSessionsByIpAddr(ip1, 0, new Date().getTime());
+		List<IpSession> ips = this.sessionRepository.getIpSessionsByIpAddr(ip1,
+				0, new Date().getTime());
 		List<String> src = new ArrayList<String>();
 		for (IpSession s : ips) {
 			src.add(s.getSrcIp().getIpAddr());
@@ -50,4 +55,41 @@ public class SessionRepositoryImplTest {
 		assertThat(src, hasItems("192.168.1.1"));
 	}
 
+	@Transactional
+	@Test
+	public void getIpSessionSummaryByIpAddr() {
+		String srcIp = "192.168.1.1";
+		String destIp1 = "192.168.1.2";
+		String destIp2 = "192.168.1.3";
+		String destIp3 = "192.168.1.4";
+		String destIp4 = "192.168.1.5";
+		IpAddress srcIpAddress = template.save(new IpAddress(srcIp));
+		IpAddress[] addrs = new IpAddress[4];
+		addrs[0] = template.save(new IpAddress(destIp1));
+		addrs[1] = template.save(new IpAddress(destIp2));
+		addrs[2] = template.save(new IpAddress(destIp3));
+		addrs[3] = template.save(new IpAddress(destIp4));
+		int[] cnts = new int[] { 5, 3, 4, 10 };
+		long dateOffset = 10000;
+		for (int i=0; i<cnts.length; i++) {
+			for (int j= 0; j < cnts[i]; j++) {
+				IpSession ip = new IpSession(this.factory);
+				ip.setIpSrc(srcIpAddress);
+				ip.setIpDest(addrs[i]);
+				ip.setStartTime(dateOffset * (i + 1) * (j+1));
+				template.save(ip);
+			}
+		}
+
+		List<SessionSummary> ips = this.sessionRepository.getIpSessionSummaryByIpAddr(srcIp, 0, new Date().getTime());
+		assertThat(ips.size(), is(4));
+		for (int i=0; i<ips.size(); i++) {
+			SessionSummary s = ips.get(i);
+			assertThat(s.getSrcIpAddr(), is("192.168.1.1"));
+			assertThat(s.getDestIpAddr(), is(addrs[i].getIpAddr()));
+			assertThat(s.getNumSessions(), is((long)cnts[i]));
+			assertThat(s.getLatest(), is(dateOffset * (i+1) * cnts[i]));
+			
+		}
+	}
 }

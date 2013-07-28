@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import com.dsa.pcapneo.domain.graph.HttpSession;
 import com.dsa.pcapneo.domain.graph.IpSession;
+import com.dsa.pcapneo.domain.graph.SessionSummary;
 import com.dsa.pcapneo.service.SessionRetrievalService;
 import com.sun.jersey.api.ParamException;
 
@@ -28,9 +29,31 @@ public class SessionResource {
 	public static final String DATE_FORMAT_LONG = "YYYY-MM-ddTHH:mm:ss";
 	public static final String DATE_FORMAT_SHORT = "YYYY-MM-dd";
 	@Autowired SessionRetrievalService sessionService;
+
+	@GET
+	@Path("/ip/summary")
+	public SessionSummary[] getIpSessionSummaries(@QueryParam ("deviceid") long id,
+			@QueryParam("ipaddr") String ipAddr,
+			@QueryParam("startdate") String startDate,
+			@QueryParam("enddate") String endDate) {
+		long start = parseDateString(startDate, 0);
+		long end = parseDateString(endDate, new Date().getTime());
+		SessionSummary[] sessions = null;
+		long qtime = new Date().getTime();
+		if (ipAddr != null && !ipAddr.isEmpty()) {
+			sessions = sessionService.getIpSessionSummariesByIpAddr(ipAddr, start, end);
+			log.info(String.format("Retrieved %d sessions for address %s for date range %s (%d) to %s (%d) in %d ms",
+								sessions.length, ipAddr, startDate, start, endDate, end, (new Date().getTime() - qtime))); 
+		} else {
+			sessions = sessionService.getIpSessionByDevice(id, start, end);
+			log.info(String.format("Retrieved %d sessions for device %d for date range %s (%d) to %s (%d) in %d ms",
+								sessions.length, id, startDate, start, endDate, end, (new Date().getTime() - qtime)));
+		}
+		return sessions;
+	}
 	
 	@GET
-	@Path("/ip")
+	@Path("/ip/detail")
 	public IpSession[] getIpSessions(@QueryParam ("deviceid") long id,
 							@QueryParam ("ipaddr") String ipAddr,
 								@QueryParam("startdate") String startDate,
@@ -51,14 +74,41 @@ public class SessionResource {
 	}
 
 	@GET
-	@Path("/web")
-	public HttpSession[] getHttpSessionsByDeviceId(@QueryParam ("deviceId") long id,
-								@QueryParam("startDate") String startDate,
-								@QueryParam("endDate") String endDate) {
+	@Path("/web/detail")
+	public HttpSession[] getHttpSessions(@QueryParam ("deviceid") long id,
+							@QueryParam ("ipaddr") String ipAddr,
+								@QueryParam("startdate") String startDate,
+								@QueryParam("enddate") String endDate) {
 		long start = parseDateString(startDate, 0);
 		long end = parseDateString(endDate, new Date().getTime());
-		HttpSession[] sessions = sessionService.getDeviceHttpSessions(id, start, end);
-		log.info(String.format("Retrieved %d sessions for device %d for date range %s to %s",sessions.length, id, startDate, endDate));
+		HttpSession[] sessions = null;
+		if (ipAddr != null && !ipAddr.isEmpty()) {
+		} else {
+			sessions = sessionService.getDeviceHttpSessions(id, start, end);
+			log.info(String.format("Retrieved %d sessions for device %d for date range %s (%d) to %s (%d)",sessions.length, id, startDate, start, endDate, end));
+		}
+		return sessions;
+	}
+
+	@GET
+	@Path("/web/summary")
+	public SessionSummary[] getWebSessionSummaries(@QueryParam ("deviceid") long id,
+			@QueryParam("ipaddr") String ipAddr,
+			@QueryParam("startdate") String startDate,
+			@QueryParam("enddate") String endDate) {
+		long start = parseDateString(startDate, 0);
+		long end = parseDateString(endDate, new Date().getTime());
+		SessionSummary[] sessions = null;
+		long qtime = new Date().getTime();
+		if (ipAddr != null && !ipAddr.isEmpty()) {
+			sessions = sessionService.getWebSessionSummariesByIpAddr(ipAddr, start, end);
+			log.info(String.format("Retrieved %d web sessions for address %s for date range %s (%d) to %s (%d) in %d ms",
+								sessions.length, ipAddr, startDate, start, endDate, end, (new Date().getTime() - qtime))); 
+		} else {
+			sessions = sessionService.getWebSessionSummariesByDevice(id, start, end);
+			log.info(String.format("Retrieved %d web sessions for device %d for date range %s (%d) to %s (%d) in %d ms",
+								sessions.length, id, startDate, start, endDate, end, (new Date().getTime() - qtime)));
+		}
 		return sessions;
 	}
 

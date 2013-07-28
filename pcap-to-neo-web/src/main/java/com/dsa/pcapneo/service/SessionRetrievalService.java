@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.dsa.pcapneo.domain.graph.HttpSession;
 import com.dsa.pcapneo.domain.graph.IpSession;
+import com.dsa.pcapneo.domain.graph.SessionSummary;
 import com.dsa.pcapneo.graph.repositories.SessionRepositoryImpl;
 
 @Component
@@ -35,5 +36,31 @@ public class SessionRetrievalService {
 		List<IpSession> sessList = repo.getIpSessionsByIpAddr(ipAddr, startTime, endTime);
 		IpSession[] sessions = sessList.toArray(new IpSession[sessList.size()]);
 		return sessions;
+	}
+
+	public SessionSummary[] getIpSessionSummariesByIpAddr(String ipAddr,
+			long start, long end) {
+		List<SessionSummary> sums = repo.getIpSessionSummaryByIpAddr(ipAddr, start, end);
+		SessionSummary[] ss = sums.toArray(new SessionSummary[sums.size()]);
+		return ss;
+	}
+
+	public SessionSummary[] getIpSessionByDevice(long id, long start, long end) {
+		List<SessionSummary> sums = repo.getIpSessionSummaryByDeviceId(id, start, end);
+		SessionSummary[] ss = sums.toArray(new SessionSummary[sums.size()]);
+		return ss;
+	}
+
+	public SessionSummary[] getWebSessionSummariesByIpAddr(String ipAddr,
+			long start, long end) {
+		List<SessionSummary> sums = repo.getWebSessionSummaryByIpAddr(ipAddr, start, end);
+		SessionSummary[] ss = sums.toArray(new SessionSummary[sums.size()]);
+		return ss;
+	}
+
+	public SessionSummary[] getWebSessionSummariesByDevice(long id, long start,
+			long end) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
