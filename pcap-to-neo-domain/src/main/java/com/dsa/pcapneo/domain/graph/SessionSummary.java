@@ -6,6 +6,8 @@ public class SessionSummary {
 	protected long latest;
 	protected long srcDeviceId;
 	protected long destDeviceId;
+	protected String srcHostname;
+	protected String destHostname;
 	protected long numSessions;
 	protected String srcIpAddr;
 	protected String destIpAddr;
@@ -58,6 +60,18 @@ public class SessionSummary {
 	}
 	public void setDestDeviceId(long destDeviceId) {
 		this.destDeviceId = destDeviceId;
+	}
+	public String getSrcHostname() {
+		return srcHostname;
+	}
+	public void setSrcHostname(String srcHostname) {
+		this.srcHostname = srcHostname;
+	}
+	public String getDestHostname() {
+		return destHostname;
+	}
+	public void setDestHostname(String destHostname) {
+		this.destHostname = destHostname;
 	}
 	
 }

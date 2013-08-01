@@ -2,8 +2,8 @@ package com.dsa.pcapneo.rest;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.logging.Log;
@@ -23,16 +23,24 @@ public class WebResource {
 	@Autowired WebSiteRetrievalService siteService;
 
 	@GET
-	public WebSite[] getWebSitesVisited(@QueryParam("hostname") String hostname, @QueryParam("ipaddr") String ipAddr) {
+	@Path("/hostname/{hostname}")
+	public WebSite[] getWebSitesVisitedByHostname(@PathParam("hostname") String hostname) {
 		WebSite[] sites = null;
 		if (hostname != null && !hostname.isEmpty()) {
 			sites = siteService.getWebSitesVisitedByHostname(hostname);
 			log.info(String.format("Returning %s sites visited by hostname %s",sites.length, hostname));
-		} else if (ipAddr != null && !ipAddr.isEmpty()) {
+		} 
+		return sites;
+	}
+	
+	@GET
+	@Path("/ipaddr/{ipaddr}")
+	public WebSite[] getWebSitesVisited(@PathParam("ipaddr") String ipAddr) {
+		WebSite[] sites = null;
+		if (ipAddr != null && !ipAddr.isEmpty()) {
 			sites = siteService.getWebSitesVisitedByIpAddr(ipAddr);
 			log.info(String.format("Returning %s sites visited by ipAddr %s",sites.length, ipAddr));
 		}
 		return sites;
 	}
-	
 }

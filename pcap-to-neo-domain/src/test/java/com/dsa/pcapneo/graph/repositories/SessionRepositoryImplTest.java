@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dsa.pcapneo.domain.graph.IpAddress;
 import com.dsa.pcapneo.domain.graph.IpSession;
 import com.dsa.pcapneo.domain.graph.SessionSummary;
+import com.dsa.pcapneo.graph.repositories.SessionRepository.SessionQueryType;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(("/testContext.xml"))
@@ -45,8 +46,7 @@ public class SessionRepositoryImplTest {
 		ip.setStartTime(new Date().getTime());
 		template.save(ip);
 
-		List<IpSession> ips = this.sessionRepository.getIpSessionsByIpAddr(ip1,
-				0, new Date().getTime());
+		List<IpSession> ips = this.sessionRepository.getIpSessionsByIpAddr(ip1, "", 0, new Date().getTime());
 		List<String> src = new ArrayList<String>();
 		for (IpSession s : ips) {
 			src.add(s.getSrcIp().getIpAddr());
@@ -81,15 +81,13 @@ public class SessionRepositoryImplTest {
 			}
 		}
 
-		List<SessionSummary> ips = this.sessionRepository.getIpSessionSummaryByIpAddr(srcIp, 0, new Date().getTime());
-		assertThat(ips.size(), is(4));
-		for (int i=0; i<ips.size(); i++) {
-			SessionSummary s = ips.get(i);
-			assertThat(s.getSrcIpAddr(), is("192.168.1.1"));
-			assertThat(s.getDestIpAddr(), is(addrs[i].getIpAddr()));
-			assertThat(s.getNumSessions(), is((long)cnts[i]));
-			assertThat(s.getLatest(), is(dateOffset * (i+1) * cnts[i]));
-			
-		}
+		List<SessionSummary> ips = this.sessionRepository.getIpSessionSummaryByIpAddr(SessionQueryType.DEST, destIp1, 0, new Date().getTime());
+		assertThat(ips.size(), is(1));
+			SessionSummary s = ips.get(0);
+			assertThat(s.getDestIpAddr(), is(destIp1));
+			assertThat(s.getSrcIpAddr(), is(srcIp));
+			assertThat(s.getNumSessions(), is((long)cnts[0]));
+			assertThat(s.getLatest(), is(dateOffset * cnts[0]));
+
 	}
 }

@@ -9,14 +9,26 @@ import com.dsa.pcapneo.domain.graph.IpSession;
 public interface IpSessionRepository extends GraphRepository<IpSession>, CypherDslRepository<IpSession> {
 
 	@Query ("start device=node({0}) " +
-			"MATCH device<-[:CONNECTS_FROM_DEVICE]-ip " +
-			"WHERE ip.startTime >= {1} AND ip.startTime <= {2} " +
+			"MATCH device<-[:CONNECTS_FROM_DEVICE|CONNECTS_TO_DEVICE]-ip " +
+			"WHERE ip.startTime >= {1} AND ip.startTime <= {2} AND" +
 			"RETURN ip;")
 	public Iterable<IpSession> getIpSessionsByDevice(long deviceId, long startTime, long endTime);
+
+	@Query ("start device=node({0}) " +
+			"MATCH device<-[:CONNECTS_FROM_DEVICE|CONNECTS_TO_DEVICE]-ip-[:CONNECTS_TO_DEVICE|CONNECTS_FROM_DEVICE]-destdev " +
+			"WHERE ip.startTime >= {2} AND ip.startTime <= {3} AND destdev.id = {1}" +
+			"RETURN ip;")
+	public Iterable<IpSession> getIpSessionsByDeviceIds(long deviceId, long destId, long startTime, long endTime);
 
 	@Query ("start ipaddr=node:IpAddress(ipAddr={0}) " +
 			"MATCH ipaddr-[:CONNECTS_FROM_IP|CONNECTS_TO_IP]-ip " +
 			"WHERE ip.startTime >= {1} AND ip.startTime <= {2} " +
 			"RETURN ip;")
 	public Iterable<IpSession> getIpSessionsByIpAddr(String ipaddr, long startTime, long endTime);
+
+	@Query ("start ipaddr=node:IpAddress(ipAddr={0}) " +
+			"MATCH ipaddr-[:CONNECTS_FROM_IP|CONNECTS_TO_IP]-ip-[:CONNECTS_TO_IP|CONNECTS_FROM_IP]-destIp " +
+			"WHERE ip.startTime >= {2} AND ip.startTime <= {3} AND destIp.ipAddr = {1} " +
+			"RETURN ip;")
+	public Iterable<IpSession> getIpSessionsByIpAddr(String ipaddr, String destIp, long startTime, long endTime);
 }
