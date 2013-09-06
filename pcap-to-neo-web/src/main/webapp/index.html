@@ -4,17 +4,24 @@
   <meta charset="utf-8">
   <title>NetworkEventGraph</title>
   <link rel="stylesheet" href="css/app.css"/>
+  <link rel="stylesheet" href="css/bootstrap.css">
   <script src="lib/angular/angular.js"></script>
-  <script src="js/app.js"></script>
+  <script src="lib/angular/angular-resource.js"></script>
+  <script src="lib/angular/ui-bootstrap-tpls-0.5.0.min.js"></script>
   <script src="js/services.js"></script>
   <script src="js/controllers.js"></script>
+  <script src="js/devices/deviceCntrl.js"></script>
+  <script src="js/devices/deviceServices.js"></script>
+  <script src="js/sessionServices/websiteServices.js"></script>
+  <script src="js/sessionServices/ipSessionServices.js"></script>
   <script src="js/filters.js"></script>
   <script src="js/directives.js"></script>
+  <script src="js/app.js"></script>
 </head>
 <body>
   <ul class="menu">
-    <li><a href="#/view1">view1</a></li>
-    <li><a href="#/view2">view2</a></li>
+    <li><a href="#/devices">Devices</a></li>
+    <li><a href="#/device">Device</a></li>
   </ul>
 
   <div ng-view></div>

@@ -29,7 +29,7 @@ public class WebResource {
 		if (hostname != null && !hostname.isEmpty()) {
 			sites = siteService.getWebSitesVisitedByHostname(hostname);
 			log.info(String.format("Returning %s sites visited by hostname %s",sites.length, hostname));
-		} 
+		}
 		return sites;
 	}
 	

@@ -1,0 +1,47 @@
+<h2>Hostname: {{device.hostName}}</h2>
+<p>{{device.description}}</p>
+<button ng-click="getWebSitesVisitedByHost()">Show Web Sites Visited By Host</button>
+<br /><br />
+<h3>Host IP Addresses</h3>
+<table class="table table-striped table-bordered">
+	<tr><th>IP Address</th><th>Location</th></tr>
+	<tr ng-repeat="ipAddr in device.ipaddr">
+		<td >
+		{{ipAddr.ipAddr}}
+		<button class="btn btn-default" ng-click="getWebSitesVisitedByIp(ipAddr.ipAddr)">Show Websites</button>
+		<button class="btn btn-default" ng-click="getSessionsByIp(ipAddr.ipAddr)">All Sessions</button>
+		<button class="btn btn-default" ng-click="getSessionsBySrcIp(ipAddr.ipAddr)">Outgoing Sessions</button>
+		<button class="btn btn-default" ng-click="getSessionsByDestIp(ipAddr.ipAddr)">Incoming Sessions</button>
+	</td><td>{{ipAddr.location}}</td></tr>
+</table>
+<br />
+<h3>Protocols</h3>
+<li ng-repeat="proto in device.protocols">
+	{{proto.name}}
+</li>
+  <hr />
+<div >
+  <tabset>
+    <tab heading="Websites Visited from {{webAddress}}" active="tabs[0].active">
+	<h3>Websites visited from {{webAddress}}</h3>
+	<table class="table table-striped table-bordered">
+		<tr><th>Address</th><th>Uri</th><th>Referers</th><th>Devices</th></tr>
+		<tr ng-repeat="website in websites" >
+			<td>{{website.address}}</td>
+			<td><ul class="list-unstyled" ng-repeat="uri in website.uris">{{uri.path}}</ul></td>
+			<td><ul class="list-unstyled" ng-repeat="referer in website.referers">{{refer.address}}</ul></td>
+			<td><ul class="list-unstyled" ng-repeat="device in website.devices">{{device.hostName}}</ul></td>
+	</table>
+    	
+    </tab>
+    <tab heading="All Sessions" active="tabs[1].active">
+     	 <div ng-include src="tabs[1].url"></div>
+    </tab>
+    <tab heading="Outgoing Sessions" active="tabs[2].active">
+     	 <div ng-include src="tabs[2].url"></div>
+    </tab>
+    <tab heading="Incoming Sessions" active="tabs[3].active">!
+     	 <div ng-include src="tabs[3].url"></div>
+    </tab>
+  </tabset>
+</div>

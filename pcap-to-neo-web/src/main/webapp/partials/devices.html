@@ -1,0 +1,6 @@
+Enter IpAddr:<input type="search" ng-model="ipaddr" ></input><button ng-click="getDevices()">Find Devices</button>
+<br>
+<table class="table">
+	<tr><th>Id</th><th>Hostname</th><th>Description</th><th>IpAddr</th></tr>
+	<tr ng-repeat="device in devices"><td><a href="#/device/{{device.deviceId}}">{{device.deviceId}}</td><td>{{device.hostName}}</td><td>{{device.description}}</td><td>{{device.ipaddr[0].ipAddr}}</td></tr>
+</table>
