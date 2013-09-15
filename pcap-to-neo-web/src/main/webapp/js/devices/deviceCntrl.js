@@ -1,27 +1,52 @@
 /*jslint white:true */
 
-function DeviceCtrl($scope, DeviceByIpAddr) {
-	$scope.ipaddr = "192.168.*";
+function DeviceCtrl($scope, DeviceModel, DeviceByIpAddr, LocalDevices, RemoteDevices) {
+	$scope.data = {};
+	$scope.data.devices = DeviceModel.getDevices();
+	var setDevices = function(devices) {
+			DeviceModel.devices = devices;
+		};
 	$scope.getDevices = function() {
-		if ($scope.devices !== undefined) {
-			console.log("No of devices:" + $scope.devices.length);
-		}
-		$scope.devices = DeviceByIpAddr.query({
+		$scope.data.devices = DeviceByIpAddr.query({
 			'ipAddr': $scope.ipaddr
-		});
+		}, setDevices);
+	};
+	$scope.getLocalDevices = function() {
+		$scope.data.devices = LocalDevices.query({}, setDevices);
+	};
+	$scope.getRemoteDevices = function() {
+		$scope.data.devices = RemoteDevices.query({}, setDevices);
+	};
+	$scope.addDevice = function(deviceId) {
+		$scope.menuItems.push({"href" : "#/device/"+deviceId, "name": "Device(id="+deviceId+")" });
 	};
 }
 
-function DeviceDetailCtrl($scope, $routeParams, DeviceDetail, WebSitesByIp, WebSitesByHostname,
+function DeviceDetailCtrl($scope, $routeParams,  DeviceModel, DeviceDetailById, WebSitesByIp, WebSitesByHostname,
 	SessionsByIp, SessionsBySrcIp, SessionsByDestIp) {
-	// $scope.device = JSON.parse($routeParams.device);
-	$scope.device = DeviceDetail.get({
-		'deviceId': $routeParams.deviceId
-	});
-	$scope.tabs = [{
+	$scope.detail = {};
+	$scope.detail.id = $routeParams.deviceId;
+	$scope.detail.device = DeviceModel.getDeviceDetail($scope.detail.id);
+	if ($scope.detail.device === undefined) {
+		$scope.detail.device = DeviceDetailById.get({
+			'deviceId': $scope.detail.id
+		}, function(device) {
+			DeviceModel.setDeviceDetail($scope.detail.id, device);
+		});
+	}
+	$scope.navTabs = {};
+	$scope.navTabs.protoTab = 0;
+	$scope.navTabs.webTab = 1;
+	$scope.navTabs.allTab = 2;
+	$scope.navTabs.fromTab = 3;
+	$scope.navTabs.toTab = 4;
+	$scope.navTabs.tabs = [{
 		active: true,
 		url: ""
-	}, {
+	},	{
+		active: false,
+		url: ""
+	}, 	{
 		active: false,
 		url: "partials/sessionTable.html"
 	}, {
@@ -41,45 +66,57 @@ function DeviceDetailCtrl($scope, $routeParams, DeviceDetail, WebSitesByIp, WebS
 	};
 
 	$scope.getWebSitesVisitedByIp = function(ipaddr) {
-		$scope.tabs[0].active = true;
+		$scope.navTabs.tabs[$scope.navTabs.webTab].active = true;
 		$scope.webAddress = ipaddr;
-		$scope.websites = WebSitesByIp.query({
+		$scope.detail.device.websites = [];
+		$scope.detail.device.websites = WebSitesByIp.query({
 			'ipAddr': ipaddr
 		});
 	};
 
 	$scope.getWebSitesVisitedByHost = function() {
-		$scope.tabs[0].active = true;
-		$scope.webAddress = $scope.device.hostName;
-		$scope.websites = WebSitesByHostname.query({
-			'hostName': $scope.device.hostName
+		$scope.navTabs.tabs[$scope.navTabs.webTab].active = true;
+		$scope.webAddress = $scope.detail.device.hostName;
+		$scope.detail.device.websites = [];
+		$scope.detail.device.websites = WebSitesByHostname.query({
+			'hostName': $scope.detail.device.hostName
 		});
 	};
 
 	$scope.getSessionsByIp = function(ipaddr) {
-		$scope.tabs[1].active = true;
+		$scope.navTabs.tabs[$scope.navTabs.allTab].active = true;
 		$scope.ipAddress = ipaddr;
 		$scope.direction = "from/to";
-		$scope.sessions = SessionsByIp.query({
+		$scope.detail.device.allSessions = SessionsByIp.query({
 			'ipAddr': ipaddr
 		});
 	};
 
 	$scope.getSessionsBySrcIp = function(ipaddr) {
-		$scope.tabs[2].active = true;
+		$scope.navTabs.tabs[$scope.navTabs.fromTab].active = true;
 		$scope.ipAddress = ipaddr;
 		$scope.direction = "from";
-		$scope.sessions = SessionsBySrcIp.query({
+		$scope.detail.device.fromSessions = SessionsBySrcIp.query({
 			'ipAddr': ipaddr
 		});
 	};
 
 	$scope.getSessionsByDestIp = function(ipaddr) {
-		$scope.tabs[3].active = true;
+		$scope.navTabs.tabs[$scope.navTabs.toTab].active = true;
 		$scope.ipAddress = ipaddr;
 		$scope.direction = "to";
-		$scope.sessions = SessionsByDestIp.query({
+		$scope.detail.device.toSessions = SessionsByDestIp.query({
 			'ipAddr': ipaddr
 		});
 	};
+	$scope.setSessions = function(tabId) {
+		if (tabId === $scope.navTabs.allTab) {
+			$scope.currentSessions = $scope.detail.device.allSessions;
+		} else if (tabId === $scope.navTabs.fromTab) {
+			$scope.currentSessions = $scope.detail.device.fromSessions;
+		} else if (tabId === $scope.navTabs.toTab) {
+			$scope.currentSessions = $scope.detail.device.toSessions;
+		}
+	};
+
 }

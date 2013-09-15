@@ -1,6 +1,12 @@
-Enter IpAddr:<input type="search" ng-model="ipaddr" ></input><button ng-click="getDevices()">Find Devices</button>
+<h2>Enter Device Selection Criteria</h2>
+Enter IpAddr Filter:<input type="search" ng-model="ipaddr" ></input><button class="btn btn-primary" ng-click="getDevices()">Find Devices</button>
+<br>
+<div class="btn-group">
+	<button class="btn btn-primary" ng-click="getLocalDevices()">Show All Local Devices</button>
+	<button class="btn btn-primary" ng-click="getRemoteDevices()">Show All Remote Devices</button>
+</div>
 <br>
 <table class="table">
 	<tr><th>Id</th><th>Hostname</th><th>Description</th><th>IpAddr</th></tr>
-	<tr ng-repeat="device in devices"><td><a href="#/device/{{device.deviceId}}">{{device.deviceId}}</td><td>{{device.hostName}}</td><td>{{device.description}}</td><td>{{device.ipaddr[0].ipAddr}}</td></tr>
+	<tr ng-repeat="device in data.devices"><td><a ng-click="addDevice(device.deviceId)" href="#/device/{{device.deviceId}}">{{device.deviceId}}</td><td>{{device.hostName}}</td><td>{{device.description}}</td><td>{{device.ipaddr[0].ipAddr}}</td></tr>
 </table>

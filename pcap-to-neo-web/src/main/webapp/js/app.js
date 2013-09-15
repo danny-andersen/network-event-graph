@@ -1,9 +1,12 @@
+/*jslint white:true */
+
 'use strict';
 
 
 // Declare app level module which depends on filters, and services
 angular.module('NetworkGraphApp', ['ui.bootstrap', 'myApp.filters', 'myApp.services', 'myApp.directives', 
-	'myApp.controllers', 'deviceServices', 'websiteServices', 'ipSessionServices']).
+	'menuControllers', 'deviceServices', 'deviceModels', 'websiteServices',
+	 'ipSessionServices']).
 config(['$routeProvider',
 	function($routeProvider) {
 		$routeProvider.when('/devices', {
@@ -17,6 +20,10 @@ config(['$routeProvider',
 		$routeProvider.when('/device', {
 			templateUrl: 'partials/device.html',
 			controller: 'DeviceDetailCtrl'
+		});
+		$routeProvider.when('/sessionDetail/:srcIpAddr', {
+			templateUrl: 'partials/sessionDetail.html',
+			controller: 'SessionCtrl'
 		});
 		$routeProvider.otherwise({
 			redirectTo: '/devices'

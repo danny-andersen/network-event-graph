@@ -2,12 +2,12 @@
 		<table class="table table-striped table-bordered"><tr><th>Start Time</th><th>End Time</th>
 			<th>Source</th><th>Destination</th>
 			<th>Web Address</th><th>Count</th></tr>
-		<tr ng-repeat="session in sessions">
-			<td >{{session.earliest | date: 'short'}}</td>
-			<td >{{session.latest | date: 'short'}}</td>
+		<tr ng-repeat="session in currentSessions">
+			<td >{{session.earliest * 1000| date: 'short'}}</td>
+			<td >{{session.latest * 1000 | date: 'short'}}</td>
 			<td >{{showSessionSrc(session)}}</td>
 			<td >{{showSessionDest(session)}}</td>
 			<td >{{session.webAddress}} </td>
-			<td >{{session.numSessions}}</td>
+			<td ><a href="#/sessionDetail/{{session.srcIpAddr}}?destIpAddr={{session.destIpAddr}}&start={{session.earliest}}&end={{session.latest}}">{{session.numSessions}}</a></td>
 		</tr>
 	</table>
