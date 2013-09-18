@@ -22,7 +22,7 @@ function DeviceCtrl($scope, DeviceModel, DeviceByIpAddr, LocalDevices, RemoteDev
 	};
 }
 
-function DeviceDetailCtrl($scope, $routeParams,  DeviceModel, DeviceDetailById, WebSitesByIp, WebSitesByHostname,
+function DeviceDetailCtrl($scope, $routeParams, $timeout, DeviceModel, DeviceDetailById, WebSitesByIp, WebSitesByHostname,
 	SessionsByIp, SessionsBySrcIp, SessionsByDestIp) {
 	$scope.detail = {};
 	$scope.detail.id = $routeParams.deviceId;
@@ -34,6 +34,29 @@ function DeviceDetailCtrl($scope, $routeParams,  DeviceModel, DeviceDetailById, 
 			DeviceModel.setDeviceDetail($scope.detail.id, device);
 		});
 	}
+
+	//Date control
+  var d = new Date();
+  d.setHours(0);
+  d.setMinutes(0);
+  $scope.fromDate = d;
+  var d = new Date();
+  d.setHours(0);
+  d.setMinutes(0);
+  $scope.toDate = d;
+  $scope.opened = false;
+
+  $scope.dateOptions = {
+    'year-format': "'yy'",
+    'starting-day': 1
+  };
+  $scope.open = function() {
+    $timeout(function() {
+      $scope.opened = true;
+    });
+  };
+
+    //Tabs
 	$scope.navTabs = {};
 	$scope.navTabs.protoTab = 0;
 	$scope.navTabs.webTab = 1;

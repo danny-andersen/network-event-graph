@@ -2,8 +2,40 @@
 <p>{{detail.device.description}}</p>
 <button ng-click="getWebSitesVisitedByHost()">Show Web Sites Visited By Host</button>
 <br /><br />
-<h3>Host IP Addresses</h3>
-<table class="table table-striped table-bordered">
+<h3>Host IP Addresses seen for this device</h3>
+<h4>Select an IP address</h4>
+<label ng-repeat="ipaddr in detail.device.ipaddr">
+	<input type="radio" name="ipAddr" ng-model="$parent.ipAddr" 
+		ng-value="ipaddr.ipAddr" />{{ipaddr.ipAddr}}
+</label>
+<div>
+	<h4>Select a from date and time</h4>
+    <div class="form-horizontal">
+        <input type="text" datepicker-popup="dd-MMMM-yyyy" ng-model="fromDate" is-open="opened" datepicker-options="dateOptions" ng-required="true" />
+        <button class="btn" ng-click="open()"><i class="icon-calendar"></i></button>
+    </div>
+ 	 <div ng-model="fromDate" class="well well-small" style="display:inline-block;">
+		    <timepicker hour-step="1" minute-step="5" show-meridian="false"></timepicker>
+    </div>
+</div>
+<div>
+	<h4>Select a to date and time</h4>
+    <div class="form-horizontal">
+        <input type="text" datepicker-popup="dd-MMMM-yyyy" ng-model="fromDate" is-open="opened" datepicker-options="dateOptions" ng-required="true" />
+        <button class="btn" ng-click="open()"><i class="icon-calendar"></i></button>
+    </div>
+ 	 <div ng-model="fromDate" class="well well-small" style="display:inline-block;">
+		    <timepicker hour-step="1" minute-step="5" show-meridian="false"></timepicker>
+    </div>
+</div>
+<br />
+		<button class="btn btn-default" ng-click="getWebSitesVisitedByIp(ipAddr)">Show Websites</button>
+		<button class="btn btn-default" ng-click="getSessionsByIp(ipAddr)">All Sessions</button>
+		<button class="btn btn-default" ng-click="getSessionsBySrcIp(ipAddr)">Outgoing Sessions</button>
+		<button class="btn btn-default" ng-click="getSessionsByDestIp(ipAddr)">Incoming Sessions</button>
+<br />
+
+<!-- <table class="table table-striped table-bordered">
 	<tr><th>IP Address</th><th>Location</th></tr>
 	<tr ng-repeat="ipAddr in detail.device.ipaddr">
 		<td >
@@ -14,7 +46,8 @@
 		<button class="btn btn-default" ng-click="getSessionsByDestIp(ipAddr.ipAddr)">Incoming Sessions</button>
 	</td><td>{{ipAddr.location}}</td></tr>
 </table>
-<br />
+ -->
+<hr />
 <div >
   <tabset>
   	<tab heading="Protocols used by host" active="navTabs.tabs[navTabs.protoTab].active" >

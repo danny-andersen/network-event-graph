@@ -8,6 +8,7 @@ import org.springframework.data.neo4j.annotation.GraphId;
 import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.data.neo4j.annotation.NodeEntity;
 import org.springframework.data.neo4j.annotation.RelatedTo;
+import org.springframework.data.neo4j.support.index.IndexType;
 
 @NodeEntity
 public class WebSite {
@@ -17,7 +18,7 @@ public class WebSite {
 	// Used in index lookup
 	public static final String ADDRESS = "address";
 	
-	@Indexed
+	@Indexed(indexName="website-search", indexType=IndexType.FULLTEXT)
 	private String address;
 
 	// Uris hosted on this site
