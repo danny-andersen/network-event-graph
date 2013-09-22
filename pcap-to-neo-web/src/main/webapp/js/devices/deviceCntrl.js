@@ -34,25 +34,39 @@ function DeviceDetailCtrl($scope, $routeParams, $timeout, DeviceModel, DeviceDet
 			DeviceModel.setDeviceDetail($scope.detail.id, device);
 		});
 	}
+    $('#fromTimepicker').timepicker({
+    	showMeridian: false
+    });
+    $('#toTimepicker').timepicker({
+    	showMeridian: false
+    });
 
 	//Date control
   var d = new Date();
   d.setHours(0);
   d.setMinutes(0);
   $scope.fromDate = d;
-  var d = new Date();
+  d = new Date();
   d.setHours(0);
   d.setMinutes(0);
   $scope.toDate = d;
-  $scope.opened = false;
+  $scope.fromOpened = false;
+  $scope.toOpened = false;
 
   $scope.dateOptions = {
     'year-format': "'yy'",
     'starting-day': 1
   };
-  $scope.open = function() {
+
+  $scope.fromOpen = function() {
     $timeout(function() {
-      $scope.opened = true;
+      $scope.fromOpened = true;
+    });
+  };
+
+  $scope.toOpen = function() {
+    $timeout(function() {
+      $scope.toOpened = true;
     });
   };
 
@@ -113,6 +127,7 @@ function DeviceDetailCtrl($scope, $routeParams, $timeout, DeviceModel, DeviceDet
 		$scope.detail.device.allSessions = SessionsByIp.query({
 			'ipAddr': ipaddr
 		});
+		return $scope.detail.device.allSessions;
 	};
 
 	$scope.getSessionsBySrcIp = function(ipaddr) {
@@ -122,6 +137,7 @@ function DeviceDetailCtrl($scope, $routeParams, $timeout, DeviceModel, DeviceDet
 		$scope.detail.device.fromSessions = SessionsBySrcIp.query({
 			'ipAddr': ipaddr
 		});
+		return $scope.detail.device.fromSessions;
 	};
 
 	$scope.getSessionsByDestIp = function(ipaddr) {
@@ -131,14 +147,41 @@ function DeviceDetailCtrl($scope, $routeParams, $timeout, DeviceModel, DeviceDet
 		$scope.detail.device.toSessions = SessionsByDestIp.query({
 			'ipAddr': ipaddr
 		});
+		return $scope.detail.device.toSessions;
 	};
+
 	$scope.setSessions = function(tabId) {
-		if (tabId === $scope.navTabs.allTab) {
-			$scope.currentSessions = $scope.detail.device.allSessions;
+		if (tabId === $scope.navTabs.webTab) {
+			$scope.detail.device.websites = [];
+			if ($scope.ipAddr === undefined) {
+				$scope.webAddress = $scope.detail.device.hostName;
+				$scope.detail.device.websites = WebSitesByHostname.query({
+					'hostName': $scope.detail.device.hostName
+				});
+			} else {
+				$scope.webAddress = $scope.ipAddr;
+				$scope.detail.device.websites = WebSitesByIp.query({
+					'ipAddr': $scope.ipAddr
+				});
+			}
+		} else if (tabId === $scope.navTabs.allTab) {
+			if ($scope.detail.device.allSessions !== undefined && $scope.detail.device.allSessions.length > 0) {
+				$scope.currentSessions = $scope.detail.device.allSessions;
+			} else {
+				$scope.currentSessions = $scope.getSessionsByIp($scope.ipAddr);
+			}
 		} else if (tabId === $scope.navTabs.fromTab) {
-			$scope.currentSessions = $scope.detail.device.fromSessions;
+			if ($scope.detail.device.fromSessions !== undefined && $scope.detail.device.fromSessions.length > 0) {
+				$scope.currentSessions = $scope.detail.device.fromSessions;
+			} else {
+				$scope.currentSessions = $scope.getSessionsBySrcIp($scope.ipAddr);
+			}
 		} else if (tabId === $scope.navTabs.toTab) {
-			$scope.currentSessions = $scope.detail.device.toSessions;
+			if ($scope.detail.device.toSessions !== undefined && $scope.detail.device.toSessions.length > 0) {
+				$scope.currentSessions = $scope.detail.device.toSessions;
+			} else {
+				$scope.currentSessions = $scope.getSessionsByDestIp($scope.ipAddr);
+			}
 		}
 	};
 
