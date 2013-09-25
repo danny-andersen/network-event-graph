@@ -22,6 +22,68 @@ function DeviceCtrl($scope, DeviceModel, DeviceByIpAddr, LocalDevices, RemoteDev
 	};
 }
 
+function showSessionGraph(coreIpAddr, sessions) {
+	//Session: numSessions srcIpAddr srcHostName destIpAddr destHostName
+    var element = document.getElementById('sessionGraph');
+//     var element = $('#sessionGraph');
+	var i, sigInst = sigma.init(element);
+	sigInst.drawingProperties({
+		defaultLabelColour: '#fff'
+	});
+
+// var i, sigInst = sigma.init($('#sessionGraph'));
+	// sigInst.addNode('hello', {
+ //      label: 'Hello',
+ //      x: -0.51,
+ //      y: -0.51,
+ //      color: '#f00',
+ //      size: 5,
+ //    }).addNode('world', {
+ //      label: 'World!',
+ //      x: 0.99,
+ //      y: 0.99,
+ //      color: '#0f0',
+ //      size: 5,
+ //    }).addEdge('hello_world', 'hello','world');
+    var nodes = {};
+	sigInst.addNode(coreIpAddr, {
+		label: coreIpAddr,
+	    x: 0.5,
+	    y: 0.5,
+	    color: '#00f',
+	    size: 5,
+	});
+	nodes[coreIpAddr] = true;
+ 	for (i=0; i<sessions.length; i++) {
+		var session = sessions[i];
+		//Check node exists
+		var srcIp = session.srcIpAddr;
+		if (nodes[srcIp] === undefined) {
+	 		sigInst.addNode(srcIp, {
+				label: session.srcHostname === null ? session.srcIpAddr : session.srcHostName,
+			    x: Math.random(),
+			    y: Math.random(),
+			    color: '#f00',
+			    size: 3,
+	 		});
+	 		nodes[srcIp] = true;
+	 	}
+		var destIp = session.destIpAddr;
+		if (nodes[destIp] === undefined) {
+	 		sigInst.addNode(destIp,	{
+				label: session.destHostname === null ? destIp : session.destHostName,
+			    x: Math.random(),
+			    y: Math.random(),
+			    color: '#0f0',
+			    size: 3,
+			});
+	 		nodes[destIp] = true;
+	 	}
+ 		sigInst.addEdge(srcIp + '-' + destIp, srcIp, destIp);
+ 	}
+    sigInst.draw();
+}
+
 function DeviceDetailCtrl($scope, $routeParams, $timeout, DeviceModel, DeviceDetailById, WebSitesByIp, WebSitesByHostname,
 	SessionsByIp, SessionsBySrcIp, SessionsByDestIp) {
 	$scope.detail = {};
@@ -185,4 +247,28 @@ function DeviceDetailCtrl($scope, $routeParams, $timeout, DeviceModel, DeviceDet
 		}
 	};
 
+	//Graphing
+	$scope.graphTable="table";
+	$scope.tableOnly = true;
+	$scope.showGraphTable = function(graphTable) {
+		// console.log("radio: " + graphTable);
+		switch(graphTable) {
+			case 'graph':
+				$scope.graphOnly=true;
+				$scope.tableOnly=false;
+				showSessionGraph($scope.ipAddr, $scope.currentSessions);
+				break;
+			case 'both':
+				$scope.graphOnly=false;
+				$scope.tableOnly=false;
+				showSessionGraph($scope.ipAddr, $scope.currentSessions);
+				break;
+			case 'table':
+				$scope.graphOnly=false;
+				$scope.tableOnly=true;
+				break;
+			default:
+		}
+	};
 }
+

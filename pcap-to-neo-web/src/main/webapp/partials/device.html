@@ -44,8 +44,12 @@
 		<button class="btn btn-default" ng-click="getSessionsByDestIp(ipAddr)">Incoming Sessions</button>
 <br />
 -->
-	<div class="row-fluid">
-	  <tabset>
+ </div>
+</div>
+<div class="container" >
+	<div class="row">
+	  <div class="span12" >
+	  <tabset >
 	  	<tab heading="Protocols used by host" active="navTabs.tabs[navTabs.protoTab].active" >
 			<li ng-repeat="proto in detail.device.protocols">
 				{{proto.name}}
