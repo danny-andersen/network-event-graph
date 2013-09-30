@@ -22,11 +22,16 @@ function DeviceCtrl($scope, DeviceModel, DeviceByIpAddr, LocalDevices, RemoteDev
 	};
 }
 
-function showSessionGraph(coreIpAddr, sessions) {
+function showSessionGraph($scope) {
+	var coreIpAddr = $scope.ipAddr;
+	var sessions = $scope.currentSessions;
+	var nodes = $scope.nodes;
 	//Session: numSessions srcIpAddr srcHostName destIpAddr destHostName
-    var element = document.getElementById('sessionGraph');
+    var element = document.getElementById($scope.graph);
 //     var element = $('#sessionGraph');
 	var i, sigInst = sigma.init(element);
+	sigInst.emptyGraph();
+	sigInst.refresh();
 	sigInst.drawingProperties({
 		defaultLabelColour: '#fff'
 	});
@@ -45,28 +50,54 @@ function showSessionGraph(coreIpAddr, sessions) {
  //      color: '#0f0',
  //      size: 5,
  //    }).addEdge('hello_world', 'hello','world');
-    var nodes = {};
-	sigInst.addNode(coreIpAddr, {
-		label: coreIpAddr,
-	    x: 0.5,
-	    y: 0.5,
-	    color: '#00f',
-	    size: 5,
-	});
-	nodes[coreIpAddr] = true;
+	if (nodes === undefined) {
+	    nodes = {};
+	    $scope.nodes = nodes;
+	}
+	if (nodes[coreIpAddr] === undefined) {
+		sigInst.addNode(coreIpAddr, {
+			label: coreIpAddr,
+		    x: 0.5,
+		    y: 0.5,
+		    color: '#00f',
+		    size: 5
+		});
+		nodes[coreIpAddr] = true;
+	}
+	//Find max and min session size
+	var maxCnt = -1;
+	var minCnt = 9999999;
+ 	var nodeColour = {};
+ 	var session;
  	for (i=0; i<sessions.length; i++) {
-		var session = sessions[i];
+ 		session = sessions[i];
+ 		var cnt = session.numSessions;
+ 		if (cnt < minCnt) {
+ 			minCnt = cnt;
+ 		} else if (maxCnt < cnt) {
+ 			maxCnt = cnt;
+ 		}
+ 		nodeColour[session.srcIpAddr] = nodeColour[session.srcIpAddr] === undefined ? '#f00' : '#ff0';
+ 		nodeColour[session.destIpAddr] = nodeColour[session.destIpAddr] === undefined ? '#0f0' : '#ff0';
+ 	}
+ 	var sizeScale = 9 / (maxCnt - minCnt);
+ 	var minSize = 1;
+ 	for (i=0; i<sessions.length; i++) {
+		session = sessions[i];
 		//Check node exists
 		var srcIp = session.srcIpAddr;
+		var size = session.numSessions * sizeScale;
+		var newNode = false;
 		if (nodes[srcIp] === undefined) {
 	 		sigInst.addNode(srcIp, {
 				label: session.srcHostname === null ? session.srcIpAddr : session.srcHostName,
 			    x: Math.random(),
 			    y: Math.random(),
-			    color: '#f00',
-			    size: 3,
+			    color: nodeColour[srcIp],
+			    size: size + minSize
 	 		});
 	 		nodes[srcIp] = true;
+	 		newNode = true;
 	 	}
 		var destIp = session.destIpAddr;
 		if (nodes[destIp] === undefined) {
@@ -74,12 +105,15 @@ function showSessionGraph(coreIpAddr, sessions) {
 				label: session.destHostname === null ? destIp : session.destHostName,
 			    x: Math.random(),
 			    y: Math.random(),
-			    color: '#0f0',
-			    size: 3,
+			    color: nodeColour[destIp],
+			    size: size + minSize
 			});
 	 		nodes[destIp] = true;
+	 		newNode = true;
 	 	}
- 		sigInst.addEdge(srcIp + '-' + destIp, srcIp, destIp);
+	 	if (newNode) {
+	 		sigInst.addEdge(srcIp + '-' + destIp, srcIp, destIp);
+	 	}
  	}
     sigInst.draw();
 }
@@ -232,18 +266,24 @@ function DeviceDetailCtrl($scope, $routeParams, $timeout, DeviceModel, DeviceDet
 			} else {
 				$scope.currentSessions = $scope.getSessionsByIp($scope.ipAddr);
 			}
+			$scope.graph = "allSessionGraph";
+			$scope.nodes = $scope.detail.device.allNodes;
 		} else if (tabId === $scope.navTabs.fromTab) {
 			if ($scope.detail.device.fromSessions !== undefined && $scope.detail.device.fromSessions.length > 0) {
 				$scope.currentSessions = $scope.detail.device.fromSessions;
 			} else {
 				$scope.currentSessions = $scope.getSessionsBySrcIp($scope.ipAddr);
 			}
+			$scope.graph = "fromSessionGraph";
+			$scope.nodes = $scope.detail.device.fromNodes;
 		} else if (tabId === $scope.navTabs.toTab) {
 			if ($scope.detail.device.toSessions !== undefined && $scope.detail.device.toSessions.length > 0) {
 				$scope.currentSessions = $scope.detail.device.toSessions;
 			} else {
 				$scope.currentSessions = $scope.getSessionsByDestIp($scope.ipAddr);
 			}
+			$scope.graph = "toSessionGraph";
+			$scope.nodes = $scope.detail.device.toNodes;
 		}
 	};
 
@@ -256,12 +296,12 @@ function DeviceDetailCtrl($scope, $routeParams, $timeout, DeviceModel, DeviceDet
 			case 'graph':
 				$scope.graphOnly=true;
 				$scope.tableOnly=false;
-				showSessionGraph($scope.ipAddr, $scope.currentSessions);
+				showSessionGraph($scope);
 				break;
 			case 'both':
 				$scope.graphOnly=false;
 				$scope.tableOnly=false;
-				showSessionGraph($scope.ipAddr, $scope.currentSessions);
+				showSessionGraph($scope);
 				break;
 			case 'table':
 				$scope.graphOnly=false;
@@ -269,6 +309,19 @@ function DeviceDetailCtrl($scope, $routeParams, $timeout, DeviceModel, DeviceDet
 				break;
 			default:
 		}
+		switch($scope.graph) {
+			case 'allSessionGraph':
+				$scope.detail.device.allNodes = $scope.nodes;
+				break;
+			case 'fromSessionGraph':
+				$scope.detail.device.fromNodes = $scope.nodes;
+				break;
+			case 'toSessionGraph':
+				$scope.detail.device.toNodes = $scope.nodes;
+				break;
+			default:
+		}
+
 	};
 }
 
