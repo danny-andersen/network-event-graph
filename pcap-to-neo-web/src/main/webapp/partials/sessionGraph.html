@@ -1,0 +1,12 @@
+<h4>Graph of sessions {{direction}} {{ipaddr}}</h4>
+<p ng-show="hasDate" >From {{startDate}} to {{endDate}}</p>
+<p>Filter sessions: <div class="btn-group">
+	<button class="btn btn-primary" ng-model="filter" btn-radio="'from'" ng-click="filterSessions()">From</button>
+	<button class="btn btn-primary" ng-model="filter" btn-radio="'to'" ng-click="filterSessions()">To</button>
+	<button class="btn btn-primary" ng-model="filter" btn-radio="'both'" ng-click="filterSessions()">None</button>
+</div>
+<p>Key:<canvas id="keyCanvas" width="50" height="10"></canvas></p>
+</p>
+<div class="sigma-parent" >
+	<div class="sigma-graph" id="sessionGraph" ></div>
+</div>

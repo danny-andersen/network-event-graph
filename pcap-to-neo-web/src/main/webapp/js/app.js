@@ -25,6 +25,15 @@ config(['$routeProvider',
 			templateUrl: 'partials/sessionDetail.html',
 			controller: 'SessionCtrl'
 		});
+		// $routeProvider.when('/device/graph/:ipAddr/:direction?start=:start&end=:end', {
+		$routeProvider.when('/device/graph/:ipAddr/:direction', {
+			templateUrl: 'partials/sessionGraph.html',
+			controller: 'SessionGraphCtrl'
+		});
+		$routeProvider.when('/device/graph/:ipAddr/:direction?start=:start&end=:end', {
+			templateUrl: 'partials/sessionGraph.html',
+			controller: 'SessionGraphCtrl'
+		});
 		$routeProvider.otherwise({
 			redirectTo: '/devices'
 		});
