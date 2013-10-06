@@ -21,9 +21,13 @@ import com.dsa.pcapneo.domain.graph.SessionSummary;
 import com.dsa.pcapneo.graph.repositories.SessionRepository.SessionQueryType;
 import com.dsa.pcapneo.service.SessionRetrievalService;
 import com.sun.jersey.api.ParamException;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 @Component
 @Path("/session/ip")
+@Api(value="/session/ip", description="Find and retrieve IP Sessions")
 @Produces(MediaType.APPLICATION_JSON)
 public class IpSessionResource {
 	private static final Log log = LogFactory.getLog(IpSessionResource.class);
@@ -34,9 +38,13 @@ public class IpSessionResource {
 
 	@GET
 	@Path("/summary/ipaddr/{ipaddr}")
+	@ApiOperation(value="Retrieve Ip session summaries for IP address", notes="Specify an IP address to view all IP sessions, filtered by date")
 	public SessionSummary[] getIpSessionSummariesByIpAddrBoth(
+			@ApiParam(value="ip address", required = true)
 			@PathParam("ipaddr") String ipAddr,
+			@ApiParam(value="start date", required = true)
 			@QueryParam("startdate") String startDate,
+			@ApiParam(value="end date", required = true)
 			@QueryParam("enddate") String endDate) {
 		return getIpSessionSummaries(ipAddr, startDate, endDate,
 				SessionQueryType.BOTH);
