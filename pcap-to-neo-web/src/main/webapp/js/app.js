@@ -21,6 +21,10 @@ config(['$routeProvider',
 			templateUrl: 'partials/device.html',
 			controller: 'DeviceDetailCtrl'
 		});
+		$routeProvider.when('/ipaddr/:ipaddr', {
+			templateUrl: 'partials/device.html',
+			controller: 'DeviceDetailCtrl'
+		});
 		$routeProvider.when('/sessionDetail/:srcIpAddr', {
 			templateUrl: 'partials/sessionDetail.html',
 			controller: 'SessionCtrl'

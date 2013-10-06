@@ -15,7 +15,9 @@ devServices.factory('RemoteDevices', function ($resource) {
 });
 
 devServices.factory('DeviceByIpAddr', function ($resource) {
-  return $resource('/pcap-to-neo-web/rest/device/ipaddr/:ipAddr', {});
+  return $resource('/pcap-to-neo-web/rest/device/ipaddr/:ipAddr', {
+    query: {method: 'GET', isArray: true}
+  });
 });
 
 devServices.factory('DeviceDetailById', function ($resource) {

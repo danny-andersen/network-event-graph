@@ -16,4 +16,12 @@ devModels.service('DeviceModel', [function(DeviceDetailById) {
 	this.getDeviceDetail = function(deviceId) {
 		return this.deviceDetails[deviceId];
 	};
+	this.getDeviceDetailByIpAddr = function(ipaddr) {
+		var i;
+		for (i=0; i<this.deviceDetails.length; i++) {
+			if (ipaddr === this.deviceDetails[i].ipaddr.ipAddr) {
+				return this.deviceDetails[i];
+			}
+		}
+	};
 }]);

@@ -35,9 +35,9 @@
   border-radius: 4px;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
-  background: #222;
+  background: #000;
   height: 500px;
-  width: 500px;
+  width: 800px;
 }
 
 .sigma-graph {
@@ -48,3 +48,7 @@
   left: 0;
 }
 
+.buttons-container{
+    padding-bottom: 8px;
+    padding-top: 12px;
+  }

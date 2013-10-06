@@ -13,9 +13,15 @@ import org.springframework.stereotype.Component;
 
 import com.dsa.pcapneo.domain.graph.Device;
 import com.dsa.pcapneo.service.DeviceRetrievalService;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Component
 @Path("/device")
+@Api(value="/device", description="Find and retrieve Devices")
 @Produces(MediaType.APPLICATION_JSON)
 public class DeviceResource {
 	private static final Log log = LogFactory.getLog(DeviceResource.class);
@@ -25,7 +31,11 @@ public class DeviceResource {
 
 	@GET
 	@Path("/hostname/{hostname}")
-	public Device[] getDevicesByHostname(@PathParam("hostname") String hostname) {
+	@ApiOperation(value="Find Devices by hostname search string", notes="Enter a hostname or a host search expression")
+	public Device[] getDevicesByHostname(
+			@ApiParam(value="hostname search string - if not set * is assumed", required = false)
+			@PathParam("hostname") 
+			String hostname) {
 		Device[] devices = null;
 		long start = System.currentTimeMillis();
 		if (hostname == null) {
@@ -40,7 +50,11 @@ public class DeviceResource {
 
 	@GET
 	@Path("/ipaddr/{ipaddr}")
-	public Device[] getDevices(@PathParam("ipaddr") String ipaddr) {
+	@ApiOperation(value="Find Devices by Ip Address search string", notes="Enter an Ipaddress or a ipaddr search expression, e.g. 192.*")
+	public Device[] getDevices(
+			@ApiParam(value="ipaddress search string - if not set * is assumed", required = false)
+			@PathParam("ipaddr") 
+			String ipaddr) {
 		Device[] devices = null;
 		long start = System.currentTimeMillis();
 		if (ipaddr == null) {
@@ -55,7 +69,13 @@ public class DeviceResource {
 
 	@GET
 	@Path("/detail/{id}")
-	public Device getDeviceDetail(@PathParam("id") Long deviceId) {
+	@ApiOperation(value="Returns a single Device for the given ID", notes="Enter a valid device id")
+	@ApiResponses(value = {
+			@ApiResponse(code=404, message = "Device not found")
+	})
+	public Device getDeviceDetail(
+			@ApiParam(value="The id of the device")
+			@PathParam("id") Long deviceId) {
 		Device device = null;
 		long start = System.currentTimeMillis();
 		if (deviceId != null) {
@@ -71,6 +91,7 @@ public class DeviceResource {
 	}
 
 	@Path("/local")
+	@ApiOperation(value="Get all devices that have been flagged as local", notes="This is equivalent to looking for all hosts with an ipaddress of 192.168.*")
 	@GET
 	public Device[] getLocalDevices() {
 		long start = System.currentTimeMillis();
@@ -81,6 +102,7 @@ public class DeviceResource {
 	}
 
 	@Path("/remote")
+	@ApiOperation(value="Get all devices that are remote, i.e. have been flagged as local", notes="This is equivalent to looking for all hosts that dont have an ipaddress of 192.168.*")
 	@GET
 	public Device[] getRemoteDevices() {
 		long start = System.currentTimeMillis();

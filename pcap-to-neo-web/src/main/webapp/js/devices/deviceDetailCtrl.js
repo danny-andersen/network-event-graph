@@ -1,16 +1,31 @@
 /*jslint white:true */
 
-function DeviceDetailCtrl($scope, $routeParams, $window, $location, $timeout, DeviceModel, DeviceDetailById, WebSitesByIp, WebSitesByHostname,
+function DeviceDetailCtrl($scope, $routeParams, $window, $location, $timeout, DeviceModel, DeviceByIpAddr, DeviceDetailById, WebSitesByIp, WebSitesByHostname,
 	SessionsByIp, SessionsBySrcIp, SessionsByDestIp) {
 	$scope.detail = {};
-	$scope.detail.id = $routeParams.deviceId;
-	$scope.detail.device = DeviceModel.getDeviceDetail($scope.detail.id);
-	if ($scope.detail.device === undefined) {
-		$scope.detail.device = DeviceDetailById.get({
-			'deviceId': $scope.detail.id
-		}, function(device) {
-			DeviceModel.setDeviceDetail($scope.detail.id, device);
-		});
+	if ($routeParams.deviceId !== undefined) {
+	 	$scope.detail.id = $routeParams.deviceId;
+		$scope.detail.device = DeviceModel.getDeviceDetail($scope.detail.id);
+		if ($scope.detail.device === undefined) {
+			$scope.detail.device = DeviceDetailById.get({
+				'deviceId': $scope.detail.id
+			}, function(device) {
+				DeviceModel.setDeviceDetail($scope.detail.id, device);
+				$scope.ipAddr = device.ipaddr[0].ipAddr;
+			});
+		}
+	} else if ($routeParams.ipaddr !== undefined) {
+		$scope.ipAddr = $routeParams.ipaddr;
+		$scope.detail.device = DeviceModel.getDeviceDetailByIpAddr($scope.ipAddr);
+		if ($scope.detail.device === undefined) {
+			var devs = [];
+			devs = DeviceByIpAddr.query({
+				'ipAddr': $scope.ipAddr
+			}, function(devs) {
+				$scope.detail.device = devs[0];
+				DeviceModel.setDeviceDetail(devs[0].deviceId, devs[0]);
+			});
+		}
 	}
     $('#fromTimepicker').timepicker({
     	showMeridian: false
@@ -82,38 +97,50 @@ function DeviceDetailCtrl($scope, $routeParams, $window, $location, $timeout, De
 
 	$scope.getWebSitesVisitedByIp = function(ipaddr) {
 		$scope.navTabs.tabs[$scope.navTabs.webTab].active = true;
+		$scope.loading=true;
 		$scope.webAddress = ipaddr;
 		$scope.detail.device.websites = [];
 		$scope.detail.device.websites = WebSitesByIp.query({
 			'ipAddr': ipaddr
+		}, function() {
+			$scope.loading = false;
 		});
 	};
 
 	$scope.getWebSitesVisitedByHost = function() {
 		$scope.navTabs.tabs[$scope.navTabs.webTab].active = true;
+		$scope.loading = true;
 		$scope.webAddress = $scope.detail.device.hostName;
 		$scope.detail.device.websites = [];
 		$scope.detail.device.websites = WebSitesByHostname.query({
 			'hostName': $scope.detail.device.hostName
+		}, function() {
+			$scope.loading = false;
 		});
 	};
 
 	$scope.getSessionsByIp = function(ipaddr) {
 		$scope.navTabs.tabs[$scope.navTabs.allTab].active = true;
+		$scope.loading = true;
 		$scope.ipAddress = ipaddr;
 		$scope.direction = "from/to";
 		$scope.detail.device.allSessions = SessionsByIp.query({
 			'ipAddr': ipaddr
+		}, function() {
+			$scope.loading = false;
 		});
 		return $scope.detail.device.allSessions;
 	};
 
 	$scope.getSessionsBySrcIp = function(ipaddr) {
 		$scope.navTabs.tabs[$scope.navTabs.fromTab].active = true;
+		$scope.loading = true;
 		$scope.ipAddress = ipaddr;
 		$scope.direction = "from";
 		$scope.detail.device.fromSessions = SessionsBySrcIp.query({
 			'ipAddr': ipaddr
+		}, function() {
+			$scope.loading = false;
 		});
 		return $scope.detail.device.fromSessions;
 	};
@@ -122,8 +149,11 @@ function DeviceDetailCtrl($scope, $routeParams, $window, $location, $timeout, De
 		$scope.navTabs.tabs[$scope.navTabs.toTab].active = true;
 		$scope.ipAddress = ipaddr;
 		$scope.direction = "to";
+		$scope.loading = true;
 		$scope.detail.device.toSessions = SessionsByDestIp.query({
 			'ipAddr': ipaddr
+		}, function() {
+			$scope.loading = false;
 		});
 		return $scope.detail.device.toSessions;
 	};
@@ -133,15 +163,9 @@ function DeviceDetailCtrl($scope, $routeParams, $window, $location, $timeout, De
 		if (tabId === $scope.navTabs.webTab) {
 			$scope.detail.device.websites = [];
 			if ($scope.ipAddr === undefined) {
-				$scope.webAddress = $scope.detail.device.hostName;
-				$scope.detail.device.websites = WebSitesByHostname.query({
-					'hostName': $scope.detail.device.hostName
-				});
+				$scope.getWebSitesVisitedByHost();
 			} else {
-				$scope.webAddress = $scope.ipAddr;
-				$scope.detail.device.websites = WebSitesByIp.query({
-					'ipAddr': $scope.ipAddr
-				});
+				$scope.getWebSitesVisitedByIp($scope.ipAddr);
 			}
 		} else if (tabId === $scope.navTabs.allTab) {
 			if ($scope.detail.device.allSessions !== undefined && $scope.detail.device.allSessions.length > 0) {

@@ -48,6 +48,8 @@
 		</tab>
 	    <tab heading="Websites Visited from {{webAddress}}" select="setSessions(navTabs.webTab)" active="navTabs.tabs[navTabs.webTab].active">
 		<h3>Websites visited from {{webAddress}}</h3>
+		<br />
+		<img src="img/loader.gif" ng-show="loading" />
 		<table class="table table-striped table-bordered">
 			<tr><th>Address</th><th>Uri</th><th>Referers</th><th>Devices</th></tr>
 			<tr ng-repeat="website in detail.device.websites" >
