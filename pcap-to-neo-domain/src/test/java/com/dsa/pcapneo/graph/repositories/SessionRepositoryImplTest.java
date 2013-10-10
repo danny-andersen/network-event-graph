@@ -87,6 +87,7 @@ public class SessionRepositoryImplTest {
 			assertThat(s.getDestIpAddr(), is(destIp1));
 			assertThat(s.getSrcIpAddr(), is(srcIp));
 			assertThat(s.getNumSessions(), is((long)cnts[0]));
+			assertThat(s.getEarliest(), is(dateOffset));
 			assertThat(s.getLatest(), is(dateOffset * cnts[0]));
 
 	}

@@ -13,6 +13,10 @@ config(['$routeProvider',
 			templateUrl: 'partials/devices.html',
 			controller: 'DeviceCtrl'
 		});
+		$routeProvider.when('/allSessionGraph', {
+			templateUrl: 'partials/allSessionGraph.html',
+			controller: 'AllSessionCtrl'
+		});
 		$routeProvider.when('/device/:deviceId', {
 			templateUrl: 'partials/device.html',
 			controller: 'DeviceDetailCtrl'

@@ -1,5 +1,5 @@
 
-<h3>Sessions from {{srcAddr}} to {{destAddr}} between {{start * 1000 | date: 'short'}} and {{end * 1000 | date: 'short'}}</h3>
+<h3>Sessions from {{srcAddr}} to {{destAddr}} between {{start * 1000 | date: 'yyyy-MMM-dd HH:mm:ss'}} and {{end * 1000 | date: 'yyyy-MMM-dd HH:mm:ss'}}</h3>
 <table class="table table-striped">
 	<tr>
 		<th>Time</th>
@@ -12,8 +12,9 @@
 		<th>Protocol Stack</th>
 		<th>Length</th>
 	</tr>
+	<img src="img/loader.gif" ng-show="loading" />
 	<tr ng-repeat="session in sessions">
-		<td>{{session.startTime * 1000| date: 'short'}}</td>
+		<td>{{session.startTime * 1000| date: 'yyyy-MMM-dd HH:mm:ss'}}</td>
 		<td>{{session.fromDevice.hostName}}</td>
 		<td>{{session.ipSrc.ipAddr}}</td>
 		<td>{{session.srcPort.port}}</td>

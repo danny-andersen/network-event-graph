@@ -43,13 +43,13 @@ public class SessionRepositoryImpl {
 	private static final String IP_SESSION_SUMMARY_BY_IPADDR_SRC = "start ipsrc=node:IpAddress(ipAddr={ipAddr}) " + 
 			"MATCH ipsrc-[:CONNECTS_FROM_IP]-ips-[:CONNECTS_TO_IP]-ipdest " +
 			"WHERE ips.startTime >= {startTime} AND ips.startTime <= {endTime} " +
-			"RETURN ipsrc.ipAddr as ipSrc, ipdest.ipAddr as ipDest, count(*) as numSessions, max(ips.startTime) as lastTime " + 
+			"RETURN ipsrc.ipAddr as ipSrc, ipdest.ipAddr as ipDest, count(*) as numSessions, min(ips.startTime) as earliest, max(ips.startTime) as lastTime " + 
 			"ORDER BY ipdest.ipAddr;";            
 
 	private static final String IP_SESSION_SUMMARY_BY_IPADDR_DEST = "start ipdest=node:IpAddress(ipAddr={ipAddr}) " + 
 			"MATCH ipsrc-[:CONNECTS_FROM_IP]-ips-[:CONNECTS_TO_IP]-ipdest " +
 			"WHERE ips.startTime >= {startTime} AND ips.startTime <= {endTime} " +
-			"RETURN ipdest.ipAddr as ipDest, ipsrc.ipAddr as ipSrc, count(*) as numSessions, max(ips.startTime) as lastTime " + 
+			"RETURN ipdest.ipAddr as ipDest, ipsrc.ipAddr as ipSrc, count(*) as numSessions, min(ips.startTime) as earliest, max(ips.startTime) as lastTime " + 
 			"ORDER BY ipsrc.ipAddr;";            
 
 	public List<SessionSummary> getIpSessionSummaryByIpAddr(SessionQueryType type, String ipAddr, long startTime, long endTime) {
@@ -218,6 +218,8 @@ public class SessionRepositoryImpl {
 					s.setSrcIpAddr((String)entry.getValue());
 				} else if (entry.getKey().compareTo("numSessions") == 0) {
 					s.setNumSessions((Long)entry.getValue());
+				} else if (entry.getKey().compareTo("earliest") == 0) {
+					s.setEarliest((Long)entry.getValue());
 				} else if (entry.getKey().compareTo("lastTime") == 0) {
 					s.setLatest((Long)entry.getValue());
 				}

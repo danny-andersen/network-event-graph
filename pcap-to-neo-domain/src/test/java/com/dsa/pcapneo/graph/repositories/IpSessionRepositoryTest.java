@@ -38,7 +38,8 @@ public class IpSessionRepositoryTest {
 		IpSession ip = new IpSession(this.factory);
 		ip.setIpSrc(addr1);
 		ip.setIpDest(addr2);
-		ip.setStartTime(new Date().getTime());
+		long start = new Date().getTime();
+		ip.setStartTime(start);
 		template.save(ip);
 
 		Iterable<IpSession> ips = this.ipSessionRepository.getIpSessionsByIpAddr(ip1, 0, new Date().getTime());

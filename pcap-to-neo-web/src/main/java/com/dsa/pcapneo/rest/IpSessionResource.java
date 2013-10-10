@@ -173,9 +173,9 @@ public class IpSessionResource {
 		//See if is a long date
 		if (startDate != null && !startDate.isEmpty()) {
 			try {
-				Long.parseLong(startDate);
+				start = Long.parseLong(startDate);
 			} catch (NumberFormatException ne) {
-			//Not a number
+				//Not a number - must be a date string
 				SimpleDateFormat format = null;
 				if (startDate.length() == DATE_FORMAT_LONG.length()) {
 					format = new SimpleDateFormat(DATE_FORMAT_LONG);

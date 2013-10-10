@@ -125,7 +125,9 @@ function DeviceDetailCtrl($scope, $routeParams, $window, $location, $timeout, De
 		$scope.ipAddress = ipaddr;
 		$scope.direction = "from/to";
 		$scope.detail.device.allSessions = SessionsByIp.query({
-			'ipAddr': ipaddr
+			'ipAddr': ipaddr,
+			'start' : ($scope.fromDate.getTime() / 1000).toFixed(0),
+			'end'	: ($scope.toDate.getTime() / 1000).toFixed(0)
 		}, function() {
 			$scope.loading = false;
 		});
@@ -138,7 +140,9 @@ function DeviceDetailCtrl($scope, $routeParams, $window, $location, $timeout, De
 		$scope.ipAddress = ipaddr;
 		$scope.direction = "from";
 		$scope.detail.device.fromSessions = SessionsBySrcIp.query({
-			'ipAddr': ipaddr
+			'ipAddr': ipaddr,
+			'start' : ($scope.fromDate.getTime() / 1000).toFixed(0),
+			'end'	: ($scope.toDate.getTime() / 1000).toFixed(0)
 		}, function() {
 			$scope.loading = false;
 		});
@@ -151,14 +155,21 @@ function DeviceDetailCtrl($scope, $routeParams, $window, $location, $timeout, De
 		$scope.direction = "to";
 		$scope.loading = true;
 		$scope.detail.device.toSessions = SessionsByDestIp.query({
-			'ipAddr': ipaddr
+			'ipAddr': ipaddr,
+			'start' : ($scope.fromDate.getTime() / 1000).toFixed(0),
+			'end'	: ($scope.toDate.getTime() / 1000).toFixed(0)
 		}, function() {
 			$scope.loading = false;
 		});
 		return $scope.detail.device.toSessions;
 	};
 
-	$scope.setSessions = function(tabId) {
+	$scope.refresh = function() {
+		$scope.setSessions($scope.activeTab, true);
+	};
+
+	$scope.setSessions = function(tabId, refresh) {
+		refresh = refresh || false;
 		$scope.activeTab = tabId;
 		if (tabId === $scope.navTabs.webTab) {
 			$scope.detail.device.websites = [];
@@ -168,7 +179,7 @@ function DeviceDetailCtrl($scope, $routeParams, $window, $location, $timeout, De
 				$scope.getWebSitesVisitedByIp($scope.ipAddr);
 			}
 		} else if (tabId === $scope.navTabs.allTab) {
-			if ($scope.detail.device.allSessions !== undefined && $scope.detail.device.allSessions.length > 0) {
+			if (!refresh && ($scope.detail.device.allSessions !== undefined && $scope.detail.device.allSessions.length > 0)) {
 				$scope.currentSessions = $scope.detail.device.allSessions;
 			} else {
 				$scope.currentSessions = $scope.getSessionsByIp($scope.ipAddr);

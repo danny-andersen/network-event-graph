@@ -1,4 +1,6 @@
-		<h3>Sessions {{direction}} {{ipAddress}}</h3>
+		<div>
+		<h3>Sessions {{direction}} {{ipAddress}}</h3><button class="btn" ng-click="refresh()"><i class="icon-time"></i></span>
+
 		<!--
 		Show:<div >
 			<input type="radio" name="graphTable" ng-model="graphTable" ng-change="showGraphTable(graphTable)" value="graph"> Graph</input>
@@ -7,6 +9,7 @@
 		</div>
 	-->
 		<button class="btn btn-default" ng-click="showSessionGraph()">Show Graph</button>
+		<div>
 		<!--
 		<div class="sigma-parent" ng-hide="tableOnly" >
 			<div class="sigma-graph" id="fromSessionGraph" ng-show="graph == 'fromSessionGraph'" ></div>
@@ -20,8 +23,8 @@
 			<th>Source</th><th>Destination</th>
 			<th>Web Address</th><th>Count</th></tr>
 		<tr ng-repeat="session in currentSessions">
-			<td >{{session.earliest * 1000 | date: 'short'}}</td>
-			<td >{{session.latest * 1000 | date: 'short'}}</td>
+			<td >{{session.earliest * 1000 | date: 'yyyy-MMM-dd HH:mm:ss'}}</td>
+			<td >{{session.latest * 1000 | date: 'yyyy-MMM-dd HH:mm:ss'}}</td>
 			<td >{{showSessionSrc(session)}}</td>
 			<td >{{showSessionDest(session)}}</td>
 			<td >{{session.webAddress}} </td>

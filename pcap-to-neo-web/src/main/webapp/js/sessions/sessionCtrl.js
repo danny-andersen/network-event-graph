@@ -6,9 +6,12 @@ function SessionCtrl($scope, $routeParams, SessionDetailByIp) {
 	$scope.destAddr = $routeParams.destIpAddr;
 	$scope.start = $routeParams.start;
 	$scope.end = $routeParams.end;
+	$scope.loading = true;
 	$scope.sessions = SessionDetailByIp.query({
 		'srcAddr': $routeParams.srcIpAddr, 
 		'destAddr': $routeParams.destIpAddr, 
 		'start': $routeParams.earliest, 
-		'end': $routeParams.latest});
+		'end': $routeParams.latest}, function() {
+			$scope.loading = false;
+		});
 }

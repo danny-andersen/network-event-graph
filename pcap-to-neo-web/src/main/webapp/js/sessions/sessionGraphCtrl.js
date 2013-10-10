@@ -1,16 +1,93 @@
 /*jslint white:true */
 
-function showGraph($scope, $window, coreIpAddr, sessions, colours) {
-	var nodes = {};
+function plotSessions($scope, nodes, edges, $window, coreIpAddr, sessions, colours) {
+	var sigInst = $scope.sigInst;
+	//Show device node centrally
+	if (nodes[coreIpAddr] === undefined) {
+		sigInst.addNode(coreIpAddr, {
+				label: coreIpAddr,
+			    x: 0.5,
+			    y: 0.5,
+			    color: colours.device,
+			    size: 5
+		});
+		nodes[coreIpAddr] = true;
+	}
+	//Find max and min session size
+	var maxCnt = -1;
+	var minCnt = 9999999;
+ 	var nodeColour = {};
+ 	var session;
+	var i;
+ 	for (i=0; i<sessions.length; i++) {
+ 		session = sessions[i];
+ 		var cnt = session.numSessions;
+ 		if (cnt < minCnt) {
+ 			minCnt = cnt;
+ 		}
+ 		if (maxCnt < cnt) {
+ 			maxCnt = cnt;
+ 		}
+ 		nodeColour[session.srcIpAddr] = nodeColour[session.srcIpAddr] === undefined ? colours.to : colours.both;
+ 		nodeColour[session.destIpAddr] = nodeColour[session.destIpAddr] === undefined ? colours.from : colours.both;
+ 	}
+ 	var sizeScale = 9 / maxCnt;
+ 	var minSize = 1;
+ 	for (i=0; i<sessions.length; i++) {
+		session = sessions[i];
+		//Check node exists
+		var srcIp = session.srcIpAddr;
+		var size = session.numSessions * sizeScale;
+		var newNode = false;
+		if (nodes[srcIp] === undefined) {
+	 		sigInst.addNode(srcIp, {
+				label: session.srcHostname === null ? session.srcIpAddr : session.srcHostName,
+			    x: Math.random(),
+			    y: Math.random(),
+			    color: nodeColour[srcIp],
+			    size: size + minSize
+	 		});
+	 		nodes[srcIp] = true;
+	 	}
+		var destIp = session.destIpAddr;
+		if (nodes[destIp] === undefined) {
+	 		sigInst.addNode(destIp,	{
+				label: session.destHostname === null ? destIp : session.destHostName,
+			    x: Math.random(),
+			    y: Math.random(),
+			    color: nodeColour[destIp],
+			    size: size + minSize
+			});
+	 		nodes[destIp] = true;
+	 	}
+	 	var edge = srcIp + '-' + destIp;
+	 	if (edges[edge] === undefined) {
+	 		sigInst.addEdge(edge, srcIp, destIp);
+	 		edges[edge] = true;
+	 	}
+ 	}
+    sigInst.draw();
+	sigInst.bind('downnodes', function(event) {
+		var ipAddr = event.content;
+		var path = "#/ipaddr/"+ipAddr;
+		$scope.menuItems.push({"href" : path, "name": "IpAddr("+ipAddr+")" });
+		var currentPath = $window.location.pathname;
+		var url = currentPath + path;
+		$window.location = url;
+	});
+}
+
+function initGraph($scope, colours) {
     var element = document.getElementById('sessionGraph');
 //     var element = $('#sessionGraph');
-	var i, sigInst = sigma.init(element);
+	var sigInst = sigma.init(element);
 	sigInst.emptyGraph();
 	sigInst.refresh();
 	sigInst.drawingProperties({
 		defaultLabelColor: '#fff',
 		edgeColor: 'default',
-		defaultEdgeColor: '#aaa'
+		defaultEdgeColor: '#aaa',
+		labelThreshold: 5
     	// defaultEdgeType: 'curve'
     });
 
@@ -51,77 +128,14 @@ function showGraph($scope, $window, coreIpAddr, sessions, colours) {
 		});
 		sigInst.draw();
 	};
+	$scope.sigInst = sigInst;
+}
 
-	//Show device node centrally
-	sigInst.addNode(coreIpAddr, {
-			label: coreIpAddr,
-		    x: 0.5,
-		    y: 0.5,
-		    color: colours.device,
-		    size: 5
-	});
-	nodes[coreIpAddr] = true;
-	//Find max and min session size
-	var maxCnt = -1;
-	var minCnt = 9999999;
- 	var nodeColour = {};
- 	var session;
- 	for (i=0; i<sessions.length; i++) {
- 		session = sessions[i];
- 		var cnt = session.numSessions;
- 		if (cnt < minCnt) {
- 			minCnt = cnt;
- 		}
- 		if (maxCnt < cnt) {
- 			maxCnt = cnt;
- 		}
- 		nodeColour[session.srcIpAddr] = nodeColour[session.srcIpAddr] === undefined ? colours.to : colours.both;
- 		nodeColour[session.destIpAddr] = nodeColour[session.destIpAddr] === undefined ? colours.from : colours.both;
- 	}
- 	var sizeScale = 9 / maxCnt;
- 	var minSize = 1;
- 	for (i=0; i<sessions.length; i++) {
-		session = sessions[i];
-		//Check node exists
-		var srcIp = session.srcIpAddr;
-		var size = session.numSessions * sizeScale;
-		var newNode = false;
-		if (nodes[srcIp] === undefined) {
-	 		sigInst.addNode(srcIp, {
-				label: session.srcHostname === null ? session.srcIpAddr : session.srcHostName,
-			    x: Math.random(),
-			    y: Math.random(),
-			    color: nodeColour[srcIp],
-			    size: size + minSize
-	 		});
-	 		nodes[srcIp] = true;
-	 		newNode = true;
-	 	}
-		var destIp = session.destIpAddr;
-		if (nodes[destIp] === undefined) {
-	 		sigInst.addNode(destIp,	{
-				label: session.destHostname === null ? destIp : session.destHostName,
-			    x: Math.random(),
-			    y: Math.random(),
-			    color: nodeColour[destIp],
-			    size: size + minSize
-			});
-	 		nodes[destIp] = true;
-	 		newNode = true;
-	 	}
-	 	if (newNode) {
-	 		sigInst.addEdge(srcIp + '-' + destIp, srcIp, destIp);
-	 	}
- 	}
-    sigInst.draw();
-	sigInst.bind('downnodes', function(event) {
-		var ipAddr = event.content;
-		var path = "#/ipaddr/"+ipAddr;
-		$scope.menuItems.push({"href" : path, "name": "IpAddr("+ipAddr+")" });
-		var currentPath = $window.location.pathname;
-		var url = currentPath + path;
-		$window.location = url;
-	});
+function showGraph($scope, $window, coreIpAddr, sessions, colours) {
+	var nodes = {};
+	var edges = {};
+	initGraph($scope);
+	plotSessions($scope, nodes, edges, $window, coreIpAddr, sessions, colours);
 }
 
 function showKey(colours) {
