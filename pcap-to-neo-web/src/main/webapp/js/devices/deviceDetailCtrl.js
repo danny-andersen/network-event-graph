@@ -35,14 +35,21 @@ function DeviceDetailCtrl($scope, $routeParams, $window, $location, $timeout, De
     });
 
 	//Date control
+  // var d = new Date();
+  // d.setHours(0);
+  // d.setMinutes(0);
+  $scope.timeType = -1;
+  $scope.showTimePicker = false;
+  $scope.fromDate = 0;
+  $scope.fromTime = "00:00";
+  // $scope.timepicker = {
+  // 	"time": "00:00"
+  // };
   var d = new Date();
   d.setHours(0);
   d.setMinutes(0);
-  $scope.fromDate = d;
-  d = new Date();
-  d.setHours(0);
-  d.setMinutes(0);
   $scope.toDate = d;
+  $scope.toTime = "00:00";
   $scope.fromOpened = false;
   $scope.toOpened = false;
 
@@ -61,6 +68,32 @@ function DeviceDetailCtrl($scope, $routeParams, $window, $location, $timeout, De
     $timeout(function() {
       $scope.toOpened = true;
     });
+  };
+
+  $scope.setTimePeriod = function() {
+  	var d,t;
+  	switch ($scope.timeType) {
+   		case 0:
+		    $scope.showTimePicker = true;
+			d = new Date();
+			d.setHours(0);
+			d.setMinutes(0);
+  			$scope.fromDate = d;
+  			break;
+  		case -1:  
+  			$scope.fromDate = 0;
+		    $scope.showTimePicker = false;
+  			break;
+  		default:
+			$scope.showTimePicker = true;
+			t = new Date().getTime();
+			t -= $scope.timeType * 24 * 3600 * 1000;
+			d = new Date(t); 
+			d.setHours(0);
+			d.setMinutes(0);
+  			$scope.fromDate = d;
+  			break;
+  	}
   };
 
     //Tabs
@@ -124,11 +157,14 @@ function DeviceDetailCtrl($scope, $routeParams, $window, $location, $timeout, De
 		$scope.loading = true;
 		$scope.ipAddress = ipaddr;
 		$scope.direction = "from/to";
-		$scope.detail.device.allSessions = SessionsByIp.query({
-			'ipAddr': ipaddr,
-			'start' : ($scope.fromDate.getTime() / 1000).toFixed(0),
-			'end'	: ($scope.toDate.getTime() / 1000).toFixed(0)
-		}, function() {
+		var params = {
+			'ipAddr': ipaddr
+		};
+		if ($scope.timeType !== -1) {
+			params.start = ($scope.fromDate.getTime() / 1000).toFixed(0);
+			params.end = ($scope.toDate.getTime() / 1000).toFixed(0);
+		}
+		$scope.detail.device.allSessions = SessionsByIp.query(params, function() {
 			$scope.loading = false;
 		});
 		return $scope.detail.device.allSessions;
@@ -139,11 +175,14 @@ function DeviceDetailCtrl($scope, $routeParams, $window, $location, $timeout, De
 		$scope.loading = true;
 		$scope.ipAddress = ipaddr;
 		$scope.direction = "from";
-		$scope.detail.device.fromSessions = SessionsBySrcIp.query({
-			'ipAddr': ipaddr,
-			'start' : ($scope.fromDate.getTime() / 1000).toFixed(0),
-			'end'	: ($scope.toDate.getTime() / 1000).toFixed(0)
-		}, function() {
+		var params = {
+			'ipAddr': ipaddr
+		};
+		if ($scope.timeType !== -1) {
+			params.start = ($scope.fromDate.getTime() / 1000).toFixed(0);
+			params.end = ($scope.toDate.getTime() / 1000).toFixed(0);
+		}
+		$scope.detail.device.fromSessions = SessionsBySrcIp.query(params, function() {
 			$scope.loading = false;
 		});
 		return $scope.detail.device.fromSessions;
@@ -154,11 +193,14 @@ function DeviceDetailCtrl($scope, $routeParams, $window, $location, $timeout, De
 		$scope.ipAddress = ipaddr;
 		$scope.direction = "to";
 		$scope.loading = true;
-		$scope.detail.device.toSessions = SessionsByDestIp.query({
-			'ipAddr': ipaddr,
-			'start' : ($scope.fromDate.getTime() / 1000).toFixed(0),
-			'end'	: ($scope.toDate.getTime() / 1000).toFixed(0)
-		}, function() {
+		var params = {
+			'ipAddr': ipaddr
+		};
+		if ($scope.timeType !== -1) {
+			params.start = ($scope.fromDate.getTime() / 1000).toFixed(0);
+			params.end = ($scope.toDate.getTime() / 1000).toFixed(0);
+		}
+		$scope.detail.device.toSessions = SessionsByDestIp.query(params, function() {
 			$scope.loading = false;
 		});
 		return $scope.detail.device.toSessions;

@@ -70,7 +70,15 @@ function plotSessions($scope, nodes, edges, $window, coreIpAddr, sessions, colou
 	sigInst.bind('downnodes', function(event) {
 		var ipAddr = event.content;
 		var path = "#/ipaddr/"+ipAddr;
-		$scope.menuItems.push({"href" : path, "name": "IpAddr("+ipAddr+")" });
+		var inMenu = false;
+		$scope.menuItems.forEach(function(item) {
+			if (item.name.indexOf(ipAddr) !== -1) {
+				inMenu = true;
+			}
+		});
+		if (!inMenu) {
+			$scope.menuItems.push({"href" : path, "name": "IpAddr("+ipAddr+")" });
+		}
 		var currentPath = $window.location.pathname;
 		var url = currentPath + path;
 		$window.location = url;
