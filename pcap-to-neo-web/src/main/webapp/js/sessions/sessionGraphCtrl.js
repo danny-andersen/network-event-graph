@@ -199,14 +199,12 @@ function SessionGraphCtrl($scope, $window, $routeParams, SessionsByIp, SessionsB
 	};
 	$scope.direction = direction;
 	$scope.ipaddr = ipAddr;
-	var startTime = $routeParams.start;
-	var endTime = $routeParams.end;
 	$scope.hasDate = false;
-	if (startTime !== undefined && endTime !== undefined) {
+	if ($routeParams.start !== undefined && $routeParams.end !== undefined) {
 		var d = new Date();
-		d.setTime(startTime);
+		d.setTime($routeParams.start * 1000);
 		$scope.startDate = d.toUTCString();
-		d.setTime(endTime);
+		d.setTime($routeParams.end * 1000);
 		$scope.endDate = d.toUTCString();
 		$scope.hasDate = true;
 	}

@@ -1,36 +1,37 @@
 <div class="container-fluid" >
  <div class="row-fluid" >
   <div class="span2" >
-	<h2>{{detail.device.hostName}}</h2>
+	<h2 ng-bind="detail.device.hostName"></h2>
 	<h4>Description</h4>
-	<p>{{detail.device.description}}</p>
+	<p ng-bind="detail.device.description"></p>
   </div>
   <div class="span10">
   	<h3>Session Filter Criteria</h3>
   	<div class="row-fluid" >
 		<p>Select an IP address</p>
-		<span ng-repeat="ipaddr in detail.device.ipaddr"><input type="radio" name="ipAddr" ng-model="$parent.ipAddr" ng-value="ipaddr.ipAddr" /> {{ipaddr.ipAddr}}</span>
+		<span ng-repeat="ipaddr in detail.device.ipaddr">
+			<input type="radio" name="ipAddr" ng-model="$parent.sessionParams.ipAddr" ng-value="ipaddr.ipAddr" /> {{ipaddr.ipAddr}}</span>
 	</div>
 	<hr/>
   <div class="row-fluid" >
   	<p>Select Time period to filter sessions by</p>
     <div class="btn-group">
-        <button type="button" class="btn btn-primary" ng-model="timeType" ng-change="setTimePeriod()" btn-radio="-1">None</button>
-        <button type="button" class="btn btn-primary" ng-model="timeType" ng-change="setTimePeriod()" btn-radio="0">Today</button>
-        <button type="button" class="btn btn-primary" ng-model="timeType" ng-change="setTimePeriod()" btn-radio="7">Last Week</button>
-        <button type="button" class="btn btn-primary" ng-model="timeType" ng-change="setTimePeriod()" btn-radio="30">Last Month</button>
+        <button type="button" class="btn btn-primary" ng-model="period.timeType" btn-radio="-1">None</button>
+        <button type="button" class="btn btn-primary" ng-model="period.timeType" btn-radio="0">Today</button>
+        <button type="button" class="btn btn-primary" ng-model="period.timeType" btn-radio="7">Last Week</button>
+        <button type="button" class="btn btn-primary" ng-model="period.timeType" btn-radio="30">Last Month</button>
     </div>
     	<br/>
   </div>
-	<div class="row-fluid" ng-show="showTimePicker">
+	<div class="row-fluid" ng-show="period.showTimePicker">
   	<div class="span6" >
 		<h4>Enter start date and time:</h4>
 	    <div class="form-horizontal">
-	        <input type="text" datepicker-popup="yyyy-MM-dd" ng-model="fromDate" is-open="fromOpened" datepicker-options="dateOptions" ng-required="true" />
+	        <input type="text" datepicker-popup="yyyy-MM-dd" ng-model="period.fromDate" is-open="fromOpened" datepicker-options="dateOptions" ng-required="true" />
 	        <button class="btn" ng-click="fromOpen()"><i class="icon-calendar"></i></button>
 	    </div>
 		<div class="control-group input-append">
-		  <input type="text" ng-model="fromTime" bs-timepicker>
+		  <input type="text" ng-model="period.fromTime" bs-timepicker>
 		  <!--
 		  <button type="button" class="btn" data-toggle="timepicker"><i class="icon-time"></i></button>
 		-->
@@ -45,11 +46,11 @@
 	<div class="span6" >
 		<h4>Enter end date and time</h4>
 	    <div class="form-horizontal">
-	        <input type="text" datepicker-popup="yyyy-MM-dd" ng-model="toDate" is-open="toOpened" datepicker-options="dateOptions" ng-required="true" />
+	        <input type="text" datepicker-popup="yyyy-MM-dd" ng-model="period.toDate" is-open="toOpened" datepicker-options="dateOptions" ng-required="true" />
 	        <button class="btn" ng-click="toOpen()"><i class="icon-calendar"></i></button>
 	    </div>
 		<div class="control-group input-append">
-		  <input type="text" ng-model="toTime" bs-timepicker>
+		  <input type="text" ng-model="period.toTime" bs-timepicker>
 		  <!--
 		  <button type="button" class="btn" data-toggle="timepicker"><i class="icon-time"></i></button>
 		-->
