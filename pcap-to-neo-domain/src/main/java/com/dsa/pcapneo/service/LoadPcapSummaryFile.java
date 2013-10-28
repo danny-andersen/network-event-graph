@@ -1,10 +1,13 @@
 package com.dsa.pcapneo.service;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -20,11 +23,25 @@ public class LoadPcapSummaryFile {
 			throw new IllegalArgumentException("Usage: <filename to read>");
 		}
 		File inFile = new File(args[0]);
+		LoadPcapSummaryFile load = new LoadPcapSummaryFile();
+		load.parseFile(inFile);
+	}
+	
+	public void parseFile(File file) throws IOException {
 		ApplicationContext context =
 			    new ClassPathXmlApplicationContext("applicationContext.xml");
 		PcapSummaryLoadService graphInserter = context.getBean(PcapSummaryLoadService.class);
-		graphInserter.parseFile(inFile);
+		final GraphDatabaseService graphDb = context.getBean(GraphDatabaseService.class);
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				log.info("Closing down database cleanly");
+				graphDb.shutdown();
+			}
+		});
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		graphInserter.parseFile(reader);
+		reader.close();
+		graphDb.shutdown();
 	}
-		
-
 }

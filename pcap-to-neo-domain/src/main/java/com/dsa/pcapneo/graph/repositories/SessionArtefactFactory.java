@@ -104,7 +104,7 @@ public class SessionArtefactFactory {
 	}
 
 	public Port getPort(String portNumStr) {
-		if (portNumStr == null) {
+		if (portNumStr == null || portNumStr.isEmpty()) {
 			return null;
 		}
 		int portNum = -1;
@@ -125,7 +125,7 @@ public class SessionArtefactFactory {
 	}
 
 	public Set<Protocol> getProtocols(String[] protocols) {
-		if (protocols == null) {
+		if (protocols == null || protocols.length == 0) {
 			return null;
 		}
 		Set<Protocol> protos = new HashSet<Protocol>();

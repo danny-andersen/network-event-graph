@@ -26,10 +26,13 @@ public class PcapSummary {
 	private String httpUrl;
 	private String httpReferer;
 	private String httpLocation;
+	private String srcHost;
+	private String destHost;
+	
 
 	// -e frame.time_epoch -e frame.protocols -e ip.addr -e ip.len -e tcp.port
 	// -e udp.port
-	// -e http.url -e http.referer -e http.location
+	// -e http.url -e http.referer -e http.location -e ip.host
 
 	public PcapSummary() {
 	}
@@ -42,10 +45,27 @@ public class PcapSummary {
 		// StringTokenizer tokenizer = new StringTokenizer(val.toString(),
 		// COMMA);
 		String[] parts = val.split(COMMA);
-		this.setDtoi(Long.parseLong(parts[0].split("\\.")[0]));
-		String protocols = parts[1];
-		this.setProtocols(protocols.split(":"));
 		int next = 3;
+		String protocols = null;
+		this.setDtoi(Long.parseLong(parts[0].split("\\.")[0]));
+		if (parts.length > 1 && parts[1] != null && !parts[1].isEmpty()) {
+			protocols = parts[1];
+			this.setProtocols(protocols.split(":"));
+		} else {
+			//Empty session
+			return;
+		}
+		int ipcnt = 0;
+		for (String protocol : this.protocols) {
+			if (protocol.contentEquals("ip")) {
+				ipcnt++;
+			}
+		}
+		if (ipcnt == 2) {
+			//tunnelled -ignore for now?
+			return;
+//			next += 2;
+		}
 		if (parts.length > 2 && parts[2] != null && !parts[2].isEmpty()) {
 			this.setIpSrc(parts[2]);
 			this.setIpDest(parts[3]);
@@ -76,6 +96,10 @@ public class PcapSummary {
 					this.setHttpLocation(parts[next]);
 				}
 			}
+		}
+		if (parts[parts.length-1] != null) {
+			this.setDestHost(parts[parts.length-1]);
+			this.setSrcHost(parts[parts.length-2]);
 		}
 	}
 
@@ -215,6 +239,22 @@ public class PcapSummary {
 
 	public static ConcurrentHashMap<String, String> getIpcache() {
 		return ipCache;
+	}
+
+	public String getSrcHost() {
+		return srcHost;
+	}
+
+	public void setSrcHost(String srcHost) {
+		this.srcHost = srcHost;
+	}
+
+	public String getDestHost() {
+		return destHost;
+	}
+
+	public void setDestHost(String destHost) {
+		this.destHost = destHost;
 	}
 
 }

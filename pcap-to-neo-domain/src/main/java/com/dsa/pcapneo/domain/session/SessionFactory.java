@@ -20,9 +20,11 @@ public class SessionFactory {
 				|| (pcap.getHttpLocation() != null && !pcap.getHttpLocation().isEmpty())) {
 			//Its a Http session
 			session = new HttpSession(factory, pcap);
-		} else {
+		} else if (pcap.getIpSrc() != null) {
 			//Plain ip session
 			session = new IpSession(factory, pcap);
+		} else {
+			session = new Session(factory, pcap);
 		}
 		return session;
 	}

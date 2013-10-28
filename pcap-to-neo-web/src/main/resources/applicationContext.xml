@@ -2,7 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:neo4j="http://www.springframework.org/schema/data/neo4j"
 	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    xmlns:camel="http://camel.apache.org/schema/spring"
+    xsi:schemaLocation="http://camel.apache.org/schema/spring 
+    http://camel.apache.org/schema/spring/camel-spring.xsd 
+    http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context-3.0.xsd
@@ -18,6 +21,15 @@
 
 	<tx:annotation-driven transaction-manager="neo4jTransactionManager" />
 
+	<camel:camelContext id="camel1" >
+		<camel:route>
+			<camel:from uri="file:/home/danny/pcapIn?fileName=*.pcap&amp;recursive=true&amp;readLock=changed&amp;delete=true" />
+			<camel:bean ref="pcapImportBean" method="parseFile"/>
+		</camel:route>
+	</camel:camelContext>
+	
+	<bean id="pcapImportBean" class="com.dsa.pcapneo.service.PcapSummaryLoadService" />
+	
 <!-- 
 	<bean id="neo4jTransactionManagerService"
 		class="org.neo4j.kernel.impl.transaction.SpringTransactionManager">

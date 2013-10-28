@@ -20,7 +20,7 @@ import com.dsa.pcapneo.graph.repositories.SessionArtefactFactory;
  */
 
 @NodeEntity
-public abstract class Session {
+public class Session {
 	@GraphId
 	private Long sessionId;
 	

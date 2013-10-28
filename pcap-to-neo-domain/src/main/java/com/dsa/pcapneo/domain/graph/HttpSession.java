@@ -63,10 +63,12 @@ public class HttpSession extends IpSession {
 			uri = new URI(location);
 			this.webSite = factory.getWebSite(uri.getHost());
 			this.resource = factory.getWebPath(uri.getPath());
-			this.webSite.addDevice(getToDevice());
-			this.webSite.addUri(this.resource);
-			if (this.referer != null) {
-				this.webSite.addReferer(this.referer);
+			if (webSite != null) {
+				this.webSite.addDevice(getToDevice());
+				this.webSite.addUri(this.resource);
+				if (this.referer != null) {
+					this.webSite.addReferer(this.referer);
+				}
 			}
 		} catch (URISyntaxException e) {
 			log.error("Could not parse uri string: " + location, e);

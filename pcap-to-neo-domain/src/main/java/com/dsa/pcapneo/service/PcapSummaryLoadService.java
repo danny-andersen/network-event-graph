@@ -12,6 +12,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dsa.pcapneo.domain.graph.Session;
@@ -27,21 +28,7 @@ public class PcapSummaryLoadService {
 	@Autowired private Neo4jTemplate template;
 	@Autowired private GraphDatabaseService graphDb;
 
-	public void parseFile(File file) throws IOException {
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				log.info("Closing down database cleanly");
-				graphDb.shutdown();
-			}
-		});
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-		parseFile(reader);
-		reader.close();
-		graphDb.shutdown();
-	}
-	
-	private void parseFile(BufferedReader reader) {
+	public void parseFile(BufferedReader reader) {
 		String line = null;
 		int errors = 0, success = 0;
 		long startTime = new Date().getTime();
@@ -74,7 +61,7 @@ public class PcapSummaryLoadService {
 						success, errors, elapsed/1000, (1000.0*(success+errors)/elapsed)));
 	}
 
-	@Transactional	
+	@Transactional(propagation = Propagation.REQUIRES_NEW)	
 	private boolean processLine(String line) {
 		boolean success = false;
 		try {
@@ -84,7 +71,10 @@ public class PcapSummaryLoadService {
 			template.save(session);
 			success = true;
 		} catch (Exception e) {
-			log.error(String.format("Line failed: %s caused by: %s",line,e.getMessage()));
+			if (log.isDebugEnabled()) {
+				log.debug("Line failed: %s: ", e);
+			}
+			log.error(String.format("Line failed: %s caused by: %s",line,e.getMessage()),e);
 		}
 		return success;
 	}

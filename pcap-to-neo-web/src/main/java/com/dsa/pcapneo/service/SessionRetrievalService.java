@@ -10,11 +10,11 @@ import com.dsa.pcapneo.domain.graph.HttpSession;
 import com.dsa.pcapneo.domain.graph.IpSession;
 import com.dsa.pcapneo.domain.graph.SessionSummary;
 import com.dsa.pcapneo.graph.repositories.SessionRepository.SessionQueryType;
-import com.dsa.pcapneo.graph.repositories.SessionRepositoryImpl;
+import com.dsa.pcapneo.graph.repositories.SessionRepoImpl;
 
 @Component
 public class SessionRetrievalService {
-	@Autowired SessionRepositoryImpl repo;
+	@Autowired SessionRepoImpl repo;
 	
 	public HttpSession[] getDeviceHttpSessions(long deviceId, long startTime, long endTime) {
 		HttpSession[] sessions = null;

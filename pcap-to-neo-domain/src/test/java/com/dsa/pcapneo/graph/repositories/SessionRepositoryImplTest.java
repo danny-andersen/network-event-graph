@@ -28,7 +28,7 @@ public class SessionRepositoryImplTest {
 	@Autowired
 	Neo4jTemplate template;
 	@Autowired
-	SessionRepositoryImpl sessionRepository;
+	SessionRepoImpl sessionRepository;
 	@Autowired
 	SessionArtefactFactory factory;
 

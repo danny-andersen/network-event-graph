@@ -19,7 +19,7 @@ import com.dsa.pcapneo.domain.graph.SessionSummary;
 import com.dsa.pcapneo.graph.repositories.SessionRepository.SessionQueryType;
 
 @Component
-public class SessionRepositoryImpl {
+public class SessionRepoImpl {
 	@Autowired Neo4jTemplate template;
 	@Autowired HttpSessionRepository httpRepo;
 	@Autowired IpSessionRepository ipRepo;
