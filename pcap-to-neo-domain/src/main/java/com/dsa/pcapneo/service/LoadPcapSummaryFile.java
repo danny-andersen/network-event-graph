@@ -13,7 +13,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class LoadPcapSummaryFile {
 	private static final Log log = LogFactory.getLog(LoadPcapSummaryFile.class);
-	
+
 	/**
 	 * @param args
 	 * @throws IOException 
@@ -22,15 +22,8 @@ public class LoadPcapSummaryFile {
 		if (args.length != 1) {
 			throw new IllegalArgumentException("Usage: <filename to read>");
 		}
-		File inFile = new File(args[0]);
-		LoadPcapSummaryFile load = new LoadPcapSummaryFile();
-		load.parseFile(inFile);
-	}
-	
-	public void parseFile(File file) throws IOException {
 		ApplicationContext context =
 			    new ClassPathXmlApplicationContext("applicationContext.xml");
-		PcapSummaryLoadService graphInserter = context.getBean(PcapSummaryLoadService.class);
 		final GraphDatabaseService graphDb = context.getBean(GraphDatabaseService.class);
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
@@ -39,9 +32,19 @@ public class LoadPcapSummaryFile {
 				graphDb.shutdown();
 			}
 		});
+		File inFile = new File(args[0]);
+		LoadPcapSummaryFile load = new LoadPcapSummaryFile();
+		load.parseFile(inFile);
+		graphDb.shutdown();
+	}
+	
+	public void parseFile(File file) throws IOException {
+		ApplicationContext context =
+			    new ClassPathXmlApplicationContext("applicationContext.xml");
+		PcapSummaryLoadService graphInserter = context.getBean(PcapSummaryLoadService.class);
+		GraphDatabaseService graphDb = context.getBean(GraphDatabaseService.class);
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		graphInserter.parseFile(reader);
 		reader.close();
-		graphDb.shutdown();
 	}
 }
