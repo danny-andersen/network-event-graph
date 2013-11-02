@@ -6,6 +6,8 @@ Enter IpAddr Filter:<input type="search" ng-model="ipaddr" ></input><button clas
 	<button class="btn btn-primary" ng-click="getRemoteDevices()">Show All Remote Devices</button>
 </div>
 <br>
+<p>Query: {{data.query}}</p>
+<img src="img/loader.gif" ng-show="data.loading" />
 <table class="table">
 	<tr><th>Id</th><th>Hostname</th><th>Description</th><th>IpAddr</th></tr>
 	<tr ng-repeat="device in data.devices"><td><a ng-click="addDevice(device.deviceId)" href="#/device/{{device.deviceId}}">{{device.deviceId}}</td><td>{{device.hostName}}</td><td>{{device.description}}</td><td>{{device.ipaddr[0].ipAddr}}</td></tr>

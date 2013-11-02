@@ -4,6 +4,13 @@ var devModels = angular.module('deviceModels', ['deviceServices']);
 
 devModels.service('DeviceModel', [function(DeviceDetailById) {
 	this.deviceDetails = {};
+	this.query = "";
+	this.getQuery = function() {
+		return this.query;
+	};
+	this.setQuery = function(query) {
+		this.query = query;
+	};
 	this.getDevices = function() {
 		return this.devices;
 	};
