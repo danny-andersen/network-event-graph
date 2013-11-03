@@ -12,8 +12,9 @@
 	</properties>
 	<modules>
 		<module>pcap-to-neo-domain</module>
+	    <module>pcap-to-neo-rest</module>
 	    <module>pcap-to-neo-web</module>
-  </modules>
+	</modules>
 	<build>
 		<plugins>
 			<plugin>
