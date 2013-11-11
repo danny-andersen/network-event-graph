@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('networkEventGraphApp', [
-  'ngResource', 'menuControllers', 'deviceResources'
+  'ui.bootstrap', 'ngResource', 'menuControllers', 'deviceResources', 'websiteResources', 'ipSessionResources'
 ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -12,6 +12,10 @@ angular.module('networkEventGraphApp', [
       .when('/devices', {
         templateUrl: 'views/devices.html',
         controller: 'DevicesCtrl'
+      })
+      .when('/device/:deviceId', {
+        templateUrl: 'views/device.html',
+        controller: 'DeviceCtrl'
       })
       .otherwise({
         redirectTo: '/'

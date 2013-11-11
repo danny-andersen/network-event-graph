@@ -1,0 +1,32 @@
+
+<h3>Sessions from {{srcAddr}} to {{destAddr}} {{timePhrase}}</h3>
+<!--<h3 ng-show="typeType !== -1" >between {{start * 1000 | date: 'yyyy-MMM-dd HH:mm:ss'}} and {{end * 1000 | date: 'yyyy-MMM-dd HH:mm:ss'}}</h3> -->
+<br />
+<table class="table table-striped">
+	<tr>
+		<th>Time</th>
+		<th>Source Host</th>
+		<th>Source IP</th>
+		<th>Source Port</th>
+		<th>Dest Host</th>
+		<th>Dest IP</th>
+		<th>Dest Port</th>
+		<th>Protocol Stack</th>
+		<th>Length</th>
+	</tr>
+	<img src="images/loader.gif" ng-show="loading" />
+	<tr ng-repeat="session in sessions">
+		<td>{{session.startTime * 1000| date: 'yyyy-MMM-dd HH:mm:ss'}}</td>
+		<td>{{session.fromDevice.hostName}}</td>
+		<td>{{session.ipSrc.ipAddr}}</td>
+		<td>{{session.srcPort.port}}</td>
+		<td>{{session.toDevice.hostName}}</td>
+		<td>{{session.ipDest.ipAddr}}</td>
+		<td>{{session.destPort.port}}</td>
+		<td><span ng-repeat="proto in session.protocols">
+			{{proto.name}},
+		</span>
+		</td>
+		<td>{{session.length}}</td>
+	</tr>
+</table>

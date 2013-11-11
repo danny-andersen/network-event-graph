@@ -1,0 +1,22 @@
+<div>
+  	<div class="span6" >
+		<h4>Enter start date and time:</h4>
+	    <div class="form-horizontal">
+	        <input type="text" datepicker-popup="yyyy-MM-dd" ng-model="period.fromDate" is-open="fromOpened" datepicker-options="dateOptions" ng-required="true" />
+	        <button class="btn" ng-click="fromOpen()"><i class="icon-calendar"></i></button>
+	    </div>
+		<div class="control-group input-append">
+		  <input type="text" ng-model="period.fromTime" bs-timepicker>
+		</div>		  
+	</div>
+	<div class="span6" >
+		<h4>Enter end date and time</h4>
+	    <div class="form-horizontal">
+	        <input type="text" datepicker-popup="yyyy-MM-dd" ng-model="period.toDate" is-open="toOpened" datepicker-options="dateOptions" ng-required="true" />
+	        <button class="btn" ng-click="toOpen()"><i class="icon-calendar"></i></button>
+	    </div>
+		<div class="control-group input-append">
+		  <input type="text" ng-model="period.toTime" bs-timepicker>
+		</div>		  
+	</div>
+</div>

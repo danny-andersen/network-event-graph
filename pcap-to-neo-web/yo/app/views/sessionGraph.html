@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="row">
+	<div class="span12" >
+	<h4>Graph of sessions {{direction}} {{ipaddr}}</h4>
+		<div ng-show="hasDate" >From {{startDate}} to {{endDate}}</div>
+    </div>
+	<div class="span12 buttons-container">Filter sessions: 
+	  <div class="btn-group">
+		<button class="btn btn-primary" ng-model="filter" btn-radio="'from'" ng-click="filterSessions('from')">Outgoing</button>
+		<button class="btn btn-primary" ng-model="filter" btn-radio="'to'" ng-click="filterSessions('to')">Incoming</button>
+		<button class="btn btn-primary" ng-model="filter" btn-radio="'both'" ng-click="filterSessions('both')">Both</button>
+		<button class="btn btn-primary" ng-model="filter" btn-radio="'all'" ng-click="filterSessions('all')">Show All</button>
+ 	  </div>
+	</div>
+	</hr>
+  </div>
+  <div class="row">    
+	<div class="span12"><canvas id="keyCanvas" width="350" height="15"></canvas>
+	</div>
+	<div class="span 12 sigma-parent" >
+		<div class="sigma-graph" id="sessionGraph" ></div>
+	</div>
+  </div>
+</div>

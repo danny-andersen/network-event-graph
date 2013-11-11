@@ -30,6 +30,6 @@ angular.module('networkEventGraphApp')
         $scope.data.devices = remoteDevices.query({}, setDevices);
     };
     $scope.addDevice = function(deviceId) {
-        $scope.menuItems.push({"href" : "#/device/"+deviceId, "name": "Device(id="+deviceId+")" });
+        $scope.$parent.items.Devices.push({"href" : "#/device/"+deviceId, "name": "Device(id="+deviceId+")" });
     };
 });

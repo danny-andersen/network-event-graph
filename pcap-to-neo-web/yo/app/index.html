@@ -13,6 +13,7 @@
 
         <!-- build:css(.tmp) styles/main.css -->
         <link rel="stylesheet" href="styles/bootstrap.css">
+        <link rel="stylesheet" href="styles/bootstrap-timepicker.css">
         <link rel="stylesheet" href="styles/main.css">
         <!-- endbuild -->
 </head>
@@ -27,8 +28,8 @@
     <![endif]-->
 
     <div class="container-fluid">
-      <div class="row-fluid" >
-        <div class="span2" ng-controller="menuCtrl">
+      <div class="row-fluid" ng-controller="menuCtrl" >
+        <div class="span2" >
           <ul class="nav nav-list bs-docs-sidenav" ng-repeat="menuItem in items.menuItems">
               <li><a href="{{menuItem.href}}">{{menuItem.name}}</a></li>
                 <ul class="nav nav-tabs nav-stacked" ng-repeat="submenuItem in items[menuItem.name]">
@@ -75,6 +76,8 @@
         <script src="bower_components/bootstrap-sass/js/bootstrap-collapse.js"></script>
         <script src="bower_components/bootstrap-sass/js/bootstrap-tab.js"></script>
         <!-- endbuild -->
+        <script src="bower_components/bootstrap-timepicker/js/bootstrap-timepicker.js"></script>
+        <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 
         <!-- build:js scripts/modules.js -->
         <script src="bower_components/angular-resource/angular-resource.js"></script>
@@ -84,9 +87,13 @@
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/main.js"></script>
         <script src="scripts/controllers/menuCtrl.js"></script>
-        <script src="scripts/controllers/devices.js"></script>
-        <script src="scripts/services/deviceModel.js"></script>
         <script src="scripts/services/deviceResources.js"></script>
+        <script src="scripts/services/websiteResources.js"></script>
+        <script src="scripts/services/ipSessionResources.js"></script>
+        <script src="scripts/controllers/devices.js"></script>
+        <script src="scripts/controllers/device.js"></script>
+        <script src="scripts/directives/timespan.js"></script>
+        <script src="scripts/services/deviceModel.js"></script>
         <!-- endbuild -->
 </body>
 </html>
