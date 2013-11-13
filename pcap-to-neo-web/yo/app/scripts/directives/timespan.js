@@ -15,15 +15,5 @@ angular.module('networkEventGraphApp')
 					showMeridian: false
 				});
 			}
-			// },
-			// controller: function controllerConstructor($scope, $element) {
-			// 	$('#fromTimepicker').timepicker({
-			// 		showMeridian: false
-			// 	});
-			// 	$('#toTimepicker').timepicker({
-			// 		showMeridian: false
-			// 	});
-
-			// }
 		};
 	});

@@ -1,0 +1,90 @@
+/*jslint white:true */
+
+'use strict';
+
+describe('Controller: TimespanPickerCtrl', function () {
+
+  // load the controller's module
+  beforeEach(module('networkEventGraphApp'));
+
+  var timespanPickerCtrl,
+    scope;
+
+  // Initialize the controller and a mock scope
+  beforeEach(inject(function ($controller, $rootScope) {
+    scope = $rootScope.$new();
+    scope.sessionParams = {};
+    timespanPickerCtrl = $controller('TimespanPickerCtrl', {
+      $scope: scope
+    });
+  }));
+
+  it('sets timespan to none', function () {
+    var startDate = new Date(2013, 11, 12, 0, 0, 0, 0);
+    scope.period.currentDate = startDate;
+    var endDate = new Date(2013, 11, 12, 23, 59, 59, 0);
+    scope.period.toDate = endDate;
+
+    //Run test
+    scope.period.timeType = -1; 
+    //Trigger the watch on timeType
+    scope.$apply();
+
+    var start = startDate.getTime();
+    expect(Number(scope.sessionParams.start)).toEqual(0);
+    expect(Number(scope.sessionParams.end)).toEqual(endDate.getTime());
+    
+  });
+
+  it('sets timespan to today', function () {
+    var current = new Date(2013, 11, 12, 0, 0, 0, 0);
+    scope.period.currentDate = current;
+    var endDate = new Date(2013, 11, 12, 23, 59, 59, 0);
+    scope.period.toDate = endDate;
+    // console.log("Set test date to: " + startDate.getTime());
+
+    //Run test
+    scope.period.timeType = 0; 
+    //Trigger the watch on timeType
+    scope.$apply();
+
+    var start = current.getTime() / 1000;
+    expect(Number(scope.sessionParams.start)).toEqual(start);
+    expect(Number(scope.sessionParams.end)).toEqual(endDate.getTime());
+  });
+
+  it('sets timespan to last week', function () {
+    var current = new Date(2013, 11, 12, 0, 0, 0, 0);
+    scope.period.currentDate = current;
+    var endDate = new Date(2013, 11, 12, 23, 59, 59, 0);
+    scope.period.toDate = endDate;
+
+    //Run test
+    scope.period.timeType = 7; 
+    //Trigger the watch on timeType
+    scope.$apply();
+
+    var startDate = new Date(2013, 11, 5, 0, 0, 0, 0);
+    var start = startDate.getTime();
+    expect(Number(scope.sessionParams.start)).toEqual(start);
+    expect(Number(scope.sessionParams.end)).toEqual(endDate.getTime());
+  });
+
+  it('sets timespan to last month', function () {
+    var current = new Date(2013, 11, 12, 0, 0, 0, 0);
+    scope.period.currentDate = current;
+    var endDate = new Date(2013, 11, 12, 23, 59, 59, 0);
+    scope.period.toDate = endDate;
+
+    //Run test
+    scope.period.timeType = 30; 
+    //Trigger the watch on timeType
+    scope.$apply();
+
+    var startDate = new Date(2013, 10, 12, 0, 0, 0, 0);
+    var start = startDate.getTime();
+    expect(Number(scope.sessionParams.start)).toEqual(start);
+    expect(Number(scope.sessionParams.end)).toEqual(endDate.getTime());
+  });
+
+});

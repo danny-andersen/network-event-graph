@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('networkEventGraphApp')
-  .controller('DeviceCtrl', function ($scope, $routeParams, $window, $location, $timeout, deviceModel,
+  .controller('DeviceCtrl', function ($scope, $routeParams, $window, $location, deviceModel,
 	deviceByIpAddr, deviceDetailById, webSitesByIp, webSitesByHostname,
 	sessionsByIp, sessionsBySrcIp, sessionsByDestIp) {
 	$scope.detail = {};
@@ -16,6 +16,11 @@ angular.module('networkEventGraphApp')
 			}, function(device) {
 				deviceModel.setDeviceDetail($scope.detail.id, device);
 				$scope.sessionParams.ipAddr = device.ipaddr[0].ipAddr;
+                if (device.description !== undefined || device.description !== '') {
+                    device.hasDescription = true;
+                } else {
+                    device.hasDescription = false;
+                }
 			});
 		}
 	} else if ($routeParams.ipaddr !== undefined) {
@@ -31,90 +36,6 @@ angular.module('networkEventGraphApp')
 			});
 		}
 	}
-	//Date control
-  // var d = new Date();
-  // d.setHours(0);
-  // d.setMinutes(0);
-  $scope.period = {
-  	timeType: -1,
-	showTimePicker: false,
-    fromDate: new Date(0),
-    fromTime: "00:00",
-    toTime: "00:00",
-    fromOpened: false,
-    toOpened: false
-  // $scope.timepicker = {
-  // 	"time": "00:00"
-  // };
-  };
-  var d = new Date();
-  d.setHours(0);
-  d.setMinutes(0);
-  $scope.period.toDate = d;
-
-  $scope.period.dateOptions = {
-    'year-format': "'yy'",
-    'starting-day': 1
-  };
-
-  $scope.fromOpen = function() {
-    $timeout(function() {
-      $scope.fromOpened = true;
-    });
-  };
-
-  $scope.toOpen = function() {
-    $timeout(function() {
-      $scope.toOpened = true;
-    });
-  };
-
-  var setPeriodParams = function() {
-  			var parts = $scope.period.fromTime.split(":");
-  			var ftime = parts[0] * 60 + parts[1];
-			parts = $scope.period.toTime.split(":");
-  			var ttime = parts[0] * 60 + parts[1];
-  			if ($scope.period.fromDate !== undefined) {
-  				$scope.sessionParams.start = ($scope.period.fromDate.getTime() / 1000).toFixed(0) + ftime;
-  			}
-  			if ($scope.period.toDate !== undefined) {
-				$scope.sessionParams.end = ($scope.period.toDate.getTime() / 1000).toFixed(0) + ttime;
-			}
-  };
-
-  var setTimePeriod = function() {
-  	var d,t;
-  	switch ($scope.period.timeType) {
-   		case 0:
-		    $scope.period.showTimePicker = true;
-			d = new Date();
-			d.setHours(0);
-			d.setMinutes(0);
-  			$scope.period.fromDate = d;
-  			setPeriodParams();
-  			break;
-  		case -1:  
-  			$scope.period.fromDate = new Date(0);
-		    $scope.period.showTimePicker = false;
-  			break;
-  		default:
-			$scope.period.showTimePicker = true;
-			t = new Date().getTime();
-			t -= $scope.period.timeType * 24 * 3600 * 1000;
-			d = new Date(t); 
-			d.setHours(0);
-			d.setMinutes(0);
-  			$scope.period.fromDate = d;
-  			setPeriodParams();
-  			break;
-  	}
-  };
-
-  $scope.$watch('period.timeType', setTimePeriod);
-  $scope.$watch('period.fromDate', setPeriodParams);
-  $scope.$watch('period.fromTime', setPeriodParams);
-  $scope.$watch('period.toDate', setPeriodParams);
-  $scope.$watch('period.toTime', setPeriodParams);
 
     //Tabs
 	$scope.navTabs = {};

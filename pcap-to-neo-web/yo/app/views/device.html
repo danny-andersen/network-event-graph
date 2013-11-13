@@ -1,6 +1,6 @@
   <div >
 	<h2 ng-bind="detail.device.hostName"></h2>
-	<h4>Description</h4>
+	<h4 ng-show="hasDescription">Description</h4>
 	<p ng-bind="detail.device.description"></p>
   </div>
   <div >
@@ -22,7 +22,7 @@
    	<br/>
   </div>
   <div class="row-fluid" ng-show="period.showTimePicker">
-	  <dsa-timespan-picker >
+	  <dsa-timespan-picker ng-controller="TimespanPickerCtrl">
 	  </dsa-timespan-picker>
   </div>
   <br/>
