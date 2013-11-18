@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Controller: DevicesCtrl', function () {
+describe('Controller: DevicesCtrl', function() {
 
   // load the controller's module
   beforeEach(module('networkEventGraphApp'));
@@ -11,7 +11,7 @@ describe('Controller: DevicesCtrl', function () {
     mockBackend;
 
   //Set up Matcher
-  beforeEach(function(){
+  beforeEach(function() {
     this.addMatchers({
       toEqualData: function(expected) {
         return angular.equals(this.actual, expected);
@@ -20,13 +20,13 @@ describe('Controller: DevicesCtrl', function () {
   });
 
   // Initialize the controller and a mock $scope
-  beforeEach(inject(function ($controller, $rootScope, _$httpBackend_, deviceModel, deviceByIpAddr, localDevices, remoteDevices) {
+  beforeEach(inject(function($controller, $rootScope, _$httpBackend_, deviceModel, deviceByIpAddr, localDevices, remoteDevices) {
     $scope = $rootScope.$new();
     mockBackend = _$httpBackend_;
     devModel = deviceModel;
     DevicesCtrl = $controller('DevicesCtrl', {
       $scope: $scope,
-      deviceModel: deviceModel, 
+      deviceModel: deviceModel,
       deviceByIpAddr: deviceByIpAddr,
       localDevices: localDevices,
       remoteDevices: remoteDevices
@@ -34,9 +34,13 @@ describe('Controller: DevicesCtrl', function () {
   }));
 
 
-  it('should retrieve devices by an ipaddress and set the deviceModel', function () {
+  it('should retrieve devices by an ipaddress and set the deviceModel', function() {
     $scope.ipaddr = "192.168.*";
-    var devices = [{deviceId: 1}, {deviceId: 2}];
+    var devices = [{
+      deviceId: 1
+    }, {
+      deviceId: 2
+    }];
 
     mockBackend.expectGET('/pcap-to-neo-web/rest/device/ipaddr/' + $scope.ipaddr).respond(devices);
     expect($scope.data.loading).toBe(false);
@@ -56,8 +60,12 @@ describe('Controller: DevicesCtrl', function () {
 
   });
 
-  it('should retrieve local devices and set the deviceModel', function () {
-    var devices = [{deviceId: 1}, {deviceId: 2}];
+  it('should retrieve local devices and set the deviceModel', function() {
+    var devices = [{
+      deviceId: 1
+    }, {
+      deviceId: 2
+    }];
 
     mockBackend.expectGET('/pcap-to-neo-web/rest/device/local').respond(devices);
     expect($scope.data.loading).toBe(false);
@@ -77,8 +85,12 @@ describe('Controller: DevicesCtrl', function () {
 
   });
 
-  it('should retrieve all remote devices and set the deviceModel', function () {
-    var devices = [{deviceId: 1}, {deviceId: 2}];
+  it('should retrieve all remote devices and set the deviceModel', function() {
+    var devices = [{
+      deviceId: 1
+    }, {
+      deviceId: 2
+    }];
 
     mockBackend.expectGET('/pcap-to-neo-web/rest/device/remote').respond(devices);
     expect($scope.data.loading).toBe(false);

@@ -30,9 +30,9 @@ describe('Controller: TimespanPickerCtrl', function () {
     //Trigger the watch on timeType
     scope.$apply();
 
-    var start = startDate.getTime();
-    expect(Number(scope.sessionParams.start)).toEqual(0);
-    expect(Number(scope.sessionParams.end)).toEqual(endDate.getTime());
+    var start = startDate.getTime() / 1000;
+    expect(scope.sessionParams.start).toEqual(0);
+    expect(scope.sessionParams.end).toEqual(endDate.getTime() / 1000);
     
   });
 
@@ -41,7 +41,6 @@ describe('Controller: TimespanPickerCtrl', function () {
     scope.period.currentDate = current;
     var endDate = new Date(2013, 11, 12, 23, 59, 59, 0);
     scope.period.toDate = endDate;
-    // console.log("Set test date to: " + startDate.getTime());
 
     //Run test
     scope.period.timeType = 0; 
@@ -49,8 +48,9 @@ describe('Controller: TimespanPickerCtrl', function () {
     scope.$apply();
 
     var start = current.getTime() / 1000;
-    expect(Number(scope.sessionParams.start)).toEqual(start);
-    expect(Number(scope.sessionParams.end)).toEqual(endDate.getTime());
+    console.log("Start: " + start);
+    expect(scope.sessionParams.start).toEqual(start);
+    expect(scope.sessionParams.end).toEqual(endDate.getTime() / 1000);
   });
 
   it('sets timespan to last week', function () {
@@ -65,9 +65,9 @@ describe('Controller: TimespanPickerCtrl', function () {
     scope.$apply();
 
     var startDate = new Date(2013, 11, 5, 0, 0, 0, 0);
-    var start = startDate.getTime();
-    expect(Number(scope.sessionParams.start)).toEqual(start);
-    expect(Number(scope.sessionParams.end)).toEqual(endDate.getTime());
+    var start = startDate.getTime() / 1000;
+    expect(scope.sessionParams.start).toEqual(start);
+    expect(scope.sessionParams.end).toEqual(endDate.getTime() / 1000);
   });
 
   it('sets timespan to last month', function () {
@@ -82,9 +82,9 @@ describe('Controller: TimespanPickerCtrl', function () {
     scope.$apply();
 
     var startDate = new Date(2013, 10, 12, 0, 0, 0, 0);
-    var start = startDate.getTime();
-    expect(Number(scope.sessionParams.start)).toEqual(start);
-    expect(Number(scope.sessionParams.end)).toEqual(endDate.getTime());
+    var start = startDate.getTime() / 1000;
+    expect(scope.sessionParams.start).toEqual(start);
+    expect(scope.sessionParams.end).toEqual(endDate.getTime() / 1000);
   });
 
 });

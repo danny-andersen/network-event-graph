@@ -38,12 +38,21 @@
     "karma": "~0.10.4",
     "karma-ng-html2js-preprocessor": "~0.1.0",
     "grunt-connect-proxy": "~0.1.6",
-    "karma-html-reporter": "~0.1.1"
+    "karma-html-reporter": "~0.1.1",
+    "grunt-contrib-jasmine": "~0.5.2",
+    "grunt-template-jasmine-istanbul": "~0.2.5",
+    "grunt-karma-coveralls": "~2.0.2",
+    "grunt-istanbul-coverage": "0.0.2",
+    "karma-coverage": "~0.1.2"
   },
   "engines": {
     "node": ">=0.8.0"
   },
   "scripts": {
     "test": "grunt test"
+  },
+  "jshintConfig": {
+    "smarttabs": true,
+    "jquery": true
   }
 }

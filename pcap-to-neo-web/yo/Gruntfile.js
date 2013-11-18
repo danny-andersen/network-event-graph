@@ -8,7 +8,7 @@
 // use this if you want to recursively match all subfolders:
 // 'test/spec/**/*.js'
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
   require('time-grunt')(grunt);
   // grunt.loadNpmTasks('grunt-connect-proxy');
@@ -113,7 +113,8 @@ module.exports = function(grunt) {
           ]
         }]
       },
-      server: '.tmp'
+      server: '.tmp',
+      coverage: 'coverage/*'
     },
     jshint: {
       options: {
@@ -284,7 +285,19 @@ module.exports = function(grunt) {
       unit: {
         configFile: 'karma.conf.js',
         // singleRun: true,
-         autoWatch: true
+        autoWatch: true
+      }
+    },
+    coverage: {
+      options: {
+        thresholds: {
+          statements: 100,
+          branches: 100,
+          functions: 100,
+          lines: 100
+        },
+        dir: 'coverage',
+        root: './'
       }
     },
     cdnify: {
@@ -313,7 +326,7 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('server', function(target) {
+  grunt.registerTask('server', function (target) {
     if (target === 'dist') {
       return grunt.task.run(['build', 'connect:dist:keepalive']);
     }
@@ -329,12 +342,19 @@ module.exports = function(grunt) {
     ]);
   });
 
+  grunt.registerTask('unit', [
+    'clean:coverage',
+    'karma',
+  ]);
+
   grunt.registerTask('test', [
     'clean:server',
+    'clean:coverage',
     'concurrent:test',
     'autoprefixer',
     'connect:test',
-    'karma'
+    'karma',
+    'coverage'
   ]);
 
   grunt.registerTask('build', [

@@ -25,12 +25,25 @@ module.exports = function (config) {
     // list of files / patterns to exclude
     exclude: [],
 
-    reporters: ['progress', 'html'],
+    reporters: ['progress', 'html', 'coverage'],
 
     // the default configuration
     htmlReporter: {
       outputDir: 'karma_html'
       // templatePath: __dirname+'/jasmine_template.html'
+    },
+
+    preprocessors: {
+      // source files, that you wanna generate coverage for
+      // do not include tests or libraries
+      // (these files will be instrumented by Istanbul)
+      'app/scripts/**/*.js': ['coverage']
+    },
+
+    // optionally, configure the reporter
+    coverageReporter: {
+      type: 'html',
+      dir: 'coverage/'
     },
 
     // web server port

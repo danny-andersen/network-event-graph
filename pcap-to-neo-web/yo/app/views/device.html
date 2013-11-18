@@ -1,4 +1,5 @@
   <div >
+  <img src="images/loader.gif" ng-show="loading" />
 	<h2 ng-bind="detail.device.hostName"></h2>
 	<h4 ng-show="hasDescription">Description</h4>
 	<p ng-bind="detail.device.description"></p>
@@ -26,7 +27,7 @@
 	  </dsa-timespan-picker>
   </div>
   <br/>
-  <div >
+  <div ng-controller="sessionTabCtrl" >
 	  <tabset >
 	  	<tab heading="Protocols used by host" active="navTabs.tabs[navTabs.protoTab].active" >
 			<li ng-repeat="proto in detail.device.protocols">

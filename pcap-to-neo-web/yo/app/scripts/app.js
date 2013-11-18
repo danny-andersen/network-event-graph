@@ -17,6 +17,10 @@ angular.module('networkEventGraphApp', [
         templateUrl: 'views/device.html',
         controller: 'DeviceCtrl'
       })
+      .when('/sessionDetail/:srcIpAddr', {
+        templateUrl: 'views/sessionDetail.html',
+        controller: 'SessionDetailCtrl'
+      })
       .otherwise({
         redirectTo: '/'
       });
