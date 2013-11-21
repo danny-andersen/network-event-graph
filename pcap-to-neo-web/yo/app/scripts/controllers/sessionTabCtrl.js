@@ -1,8 +1,15 @@
 'use strict';
 
 angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($scope, $window, webSitesByIp, webSitesByHostname, sessionsByIp, sessionsBySrcIp, sessionsByDestIp) {
-  $scope.$watch('period.timeType', function () {
-    $scope.refresh = true;
+
+  $scope.$watch('$parent.period.changed', function () {
+    if ($scope.$parent.period !== undefined && $scope.$parent.period.changed) {
+      $scope.refresh = true;
+      $scope.detail.device.allSessions = [];
+      $scope.detail.device.toSessions = [];
+      $scope.detail.device.fromSessions = [];
+      $scope.$parent.period.changed = false;
+    }
   });
 
   //Tabs
@@ -94,6 +101,14 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
 
   $scope.setSessions = function (tabId, refresh) {
     refresh = $scope.refresh || refresh || false;
+    var start = new Date($scope.sessionParams.start * 1000).toUTCString();
+    var end = new Date($scope.sessionParams.end * 1000).toUTCString();
+    if ($scope.sessionParams.start !== 0) {
+      $scope.timePhrase = 'between ' + start + ' and ' + end;
+    } else {
+      $scope.timePhrase = 'for all dates';
+    }
+
     $scope.activeTab = tabId;
     if (tabId === $scope.navTabs.webTab) {
       $scope.detail.device.websites = [];
@@ -124,6 +139,7 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
         $scope.currentSessions = $scope.getsessionsByDestIp();
       }
     }
+    $scope.refresh = false;
   };
 
   //Graphing

@@ -1,27 +1,31 @@
 'use strict';
 
 angular.module('networkEventGraphApp').controller('TimespanPickerCtrl', function ($scope, $timeout) {
-  //Hello
 
-  var date = new Date();
-  date.setHours(0);
-  date.setMinutes(0);
+  $scope.currentDate = new Date();
+  $scope.currentDate.setHours(0);
+  $scope.currentDate.setMinutes(0);
 
-  $scope.period = {
-    timeType: -1,
-    showTimePicker: false,
-    fromDate: new Date(0),
-    fromTime: '00:00',
-    toTime: '00:00',
-    fromOpened: false,
-    toOpened: false,
-    currentDate: date
+  $scope.resetSpan = function () {
+
+    $scope.period = {
+      timeType: -1,
+      showTimePicker: false,
+      fromDate: new Date(0),
+      fromTime: '00:00',
+      toTime: '00:00',
+      fromOpened: false,
+      toOpened: false,
+      changed: false
+    };
+    var d = new Date($scope.currentDate.getTime());
+    d.setHours(23);
+    d.setMinutes(59);
+    d.setSeconds(59);
+    $scope.period.toDate = d;
   };
-  var d = new Date(date.getTime());
-  d.setHours(23);
-  d.setMinutes(59);
-  d.setSeconds(59);
-  $scope.period.toDate = d;
+
+  $scope.resetSpan();
 
   $scope.period.dateOptions = {
     'year-format': '"yy"',
@@ -51,6 +55,7 @@ angular.module('networkEventGraphApp').controller('TimespanPickerCtrl', function
     if ($scope.period.toDate !== undefined) {
       $scope.sessionParams.end = Number(($scope.period.toDate.getTime() / 1000.0).toFixed(0)) + ttime;
     }
+    $scope.period.changed = true;
   };
 
   var setTimePeriod = function () {
@@ -59,18 +64,20 @@ angular.module('networkEventGraphApp').controller('TimespanPickerCtrl', function
     case 0:
       //Today
       $scope.period.showTimePicker = true;
-      $scope.period.fromDate = $scope.period.currentDate;
+      $scope.period.fromDate = $scope.currentDate;
       setPeriodParams();
       break;
     case -1:
       //None  
       // $scope.period.fromDate = $scope.period.currentDate;
       $scope.period.showTimePicker = false;
+      $scope.resetSpan();
+      setPeriodParams();
       break;
     default:
       //Number of t days ago
       $scope.period.showTimePicker = true;
-      t = $scope.period.currentDate.getTime();
+      t = $scope.currentDate.getTime();
       t -= $scope.period.timeType * 24 * 3600 * 1000;
       var d = new Date(t);
       $scope.period.fromDate = d;
@@ -80,7 +87,7 @@ angular.module('networkEventGraphApp').controller('TimespanPickerCtrl', function
   };
 
   $scope.$watch('period.timeType', function () {
-    setTimePeriod($scope.period.currentDate);
+    setTimePeriod();
   });
   $scope.$watch('period.fromDate', setPeriodParams);
   $scope.$watch('period.fromTime', setPeriodParams);

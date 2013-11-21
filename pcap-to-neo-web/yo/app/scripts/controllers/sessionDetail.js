@@ -12,7 +12,7 @@ angular.module('networkEventGraphApp')
       $scope.loading = true;
       var start = new Date($scope.start * 1000).toUTCString();
       var end = new Date($scope.end * 1000).toUTCString();
-      $scope.timePhrase = "between " + start + " and " + end;
+      $scope.timePhrase = 'between ' + start + ' and ' + end;
       $scope.sessions = sessionDetailByIp.query({
         'srcAddr': $scope.srcAddr,
         'destAddr': $scope.destAddr,

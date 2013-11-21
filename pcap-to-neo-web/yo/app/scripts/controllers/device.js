@@ -6,6 +6,7 @@ angular.module('networkEventGraphApp').controller('DeviceCtrl', function ($scope
   }
   $scope.sessionParams = {};
   $scope.loading = false;
+  $scope.refreshSessions = false;
 
   var setScopeParams = function (device) {
     $scope.sessionParams.ipAddr = device.ipaddr[0].ipAddr;

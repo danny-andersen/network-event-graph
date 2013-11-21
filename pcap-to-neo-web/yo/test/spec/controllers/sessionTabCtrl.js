@@ -112,6 +112,7 @@ describe('Controller: sessionTabCtrl', function () {
     expect($scope.detail.device.allSessions).toEqual([]);
     expect($scope.currentSessions).toEqual([]);
     expect($scope.direction).toEqual("from/to");
+    expect($scope.timePhrase).toEqual("for all dates");
 
     mockBackend.flush();
 
@@ -174,6 +175,8 @@ describe('Controller: sessionTabCtrl', function () {
     expect($scope.detail.device.allSessions).toEqual([]);
     expect($scope.currentSessions).toEqual([]);
     expect($scope.direction).toEqual("from/to");
+    expect($scope.refresh).toEqual(false);
+    expect($scope.timePhrase).not.toBe(undefined);
 
     mockBackend.flush();
 
@@ -182,46 +185,45 @@ describe('Controller: sessionTabCtrl', function () {
     expect($scope.currentSessions).toEqualData(sessions);
   });
 
-  it('retrieve all sessions By Ip Address with forced refresh', function () {
+  it('clear saved sessions when period changed', function () {
     $scope.detail = {};
     $scope.detail.device = {};
-    $scope.sessionParams = {
-      start: 0,
-      end: 1000000
-    };
-    $scope.sessionParams.ipAddr = '192.168.1.255';
-    var sessions = [{
-      id: 1
-    }, {
-      id: 2
-    }];
     $scope.detail.device.allSessions = [{
       id: 1
     }];
+    // $scope.sessionParams = {
+    //   start: 0,
+    //   end: 1000000
+    // };
+    // $scope.sessionParams.ipAddr = '192.168.1.255';
+    // var sessions = [{
+    //   id: 1
+    // }, {
+    //   id: 2
+    // }];
 
-    var params = $scope.sessionParams.ipAddr + '?startdate=' + $scope.sessionParams.start + '&enddate=' + $scope.sessionParams.end;
-    mockBackend.expectGET('/pcap-to-neo-web/rest/session/ip/summary/ipaddr/' + params).respond(sessions);
-    expect($scope.loading).toEqual(false);
+    // var params = $scope.sessionParams.ipAddr + '?startdate=' + $scope.sessionParams.start + '&enddate=' + $scope.sessionParams.end;
+    // mockBackend.expectGET('/pcap-to-neo-web/rest/session/ip/summary/ipaddr/' + params).respond(sessions);
+    // expect($scope.loading).toEqual(false);
 
-    //Set timetype, and apply to force refresh
-    $scope.period = {};
-    $scope.period.timeType = 0;
-
+    //Change period and apply to force refresh
+    $scope.activeTab = $scope.navTabs.allTab;
+    $scope.$parent.period = {};
+    $scope.$parent.period.changed = true;
     $scope.$apply();
 
-    //Call method undertest
-    $scope.setSessions($scope.navTabs.allTab);
-    expect($scope.loading).toEqual(true);
+    // expect($scope.loading).toEqual(true);
     expect($scope.detail.device.allSessions).toEqual([]);
-    expect($scope.currentSessions).toEqual([]);
-    expect($scope.direction).toEqual("from/to");
+    // expect($scope.currentSessions).toEqual([]);
+    // expect($scope.direction).toEqual("from/to");
 
-    mockBackend.flush();
+    // mockBackend.flush();
 
-    expect($scope.loading).toBe(false);
-    expect($scope.detail.device.allSessions).toEqualData(sessions);
-    expect($scope.currentSessions).toEqualData(sessions);
+    // expect($scope.loading).toBe(false);
+    // expect($scope.detail.device.allSessions).toEqualData(sessions);
+    // expect($scope.currentSessions).toEqualData(sessions);
   });
+
 
   it('retrieve from sessions By Ip Address', function () {
     $scope.detail = {};
@@ -249,6 +251,7 @@ describe('Controller: sessionTabCtrl', function () {
     expect($scope.detail.device.fromSessions).toEqual([]);
     expect($scope.currentSessions).toEqual([]);
     expect($scope.direction).toEqual("from");
+    expect($scope.timePhrase).not.toBe(undefined);
 
     mockBackend.flush();
 
@@ -310,6 +313,7 @@ describe('Controller: sessionTabCtrl', function () {
     expect($scope.detail.device.toSessions).toEqual([]);
     expect($scope.currentSessions).toEqual([]);
     expect($scope.direction).toEqual('to');
+    expect($scope.timePhrase).not.toBe(undefined);
 
     mockBackend.flush();
 

@@ -286,15 +286,20 @@ module.exports = function (grunt) {
         configFile: 'karma.conf.js',
         // singleRun: true,
         autoWatch: true
+      },
+      noCoverage: {
+        configFile: 'karma-no-coverage.conf.js',
+        // singleRun: true,
+        autoWatch: true
       }
     },
     coverage: {
       options: {
         thresholds: {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100
+          statements: 85,
+          branches: 70,
+          functions: 80,
+          lines: 85
         },
         dir: 'coverage',
         root: './'
@@ -344,7 +349,11 @@ module.exports = function (grunt) {
 
   grunt.registerTask('unit', [
     'clean:coverage',
-    'karma',
+    'karma'
+  ]);
+
+  grunt.registerTask('unit-no-coverage', [
+    'karma:noCoverage'
   ]);
 
   grunt.registerTask('test', [
