@@ -125,6 +125,26 @@ module.exports = function (grunt) {
         '<%= yeoman.app %>/scripts/{,*/}*.js'
       ]
     },
+    shell: { // Task
+      makeSigma: { // Target
+        options: { // Options
+          stdout: true,
+          execOptions: {
+            cwd: '<%= yeoman.app %>/bower_components/sigma'
+          }
+        },
+        command: 'make concat; cp build/sigma.concat.js sigma.js'
+      },
+      makeSigmaMin: { // Target
+        options: { // Options
+          stdout: true,
+          execOptions: {
+            cwd: '<%= yeoman.app %>/bower_components/sigma'
+          }
+        },
+        command: 'make minify-simple; cp build/sigma.min.js sigma.js'
+      }
+    },
     coffee: {
       options: {
         sourceMap: true,
@@ -284,8 +304,8 @@ module.exports = function (grunt) {
     karma: {
       unit: {
         configFile: 'karma.conf.js',
-        // singleRun: true,
-        autoWatch: true
+        singleRun: true,
+        autoWatch: false
       },
       noCoverage: {
         configFile: 'karma-no-coverage.conf.js',
@@ -349,7 +369,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('unit', [
     'clean:coverage',
-    'karma'
+    'karma:unit'
   ]);
 
   grunt.registerTask('unit-no-coverage', [
@@ -359,10 +379,11 @@ module.exports = function (grunt) {
   grunt.registerTask('test', [
     'clean:server',
     'clean:coverage',
+    'shell:makeSigma',
     'concurrent:test',
     'autoprefixer',
     'connect:test',
-    'karma',
+    'karma:unit',
     'coverage'
   ]);
 
@@ -375,6 +396,7 @@ module.exports = function (grunt) {
     'copy:dist',
     'cdnify',
     'ngmin',
+    'shell:makeSigmaMin',
     'cssmin',
     'uglify',
     'rev',

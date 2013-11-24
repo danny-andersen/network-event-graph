@@ -9,11 +9,19 @@ angular.module('networkEventGraphApp', [
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
+      .when('/allSessionGraph', {
+        templateUrl: 'views/allSessionGraph.html',
+        controller: 'allSessionCtrl'
+      })
       .when('/devices', {
         templateUrl: 'views/devices.html',
         controller: 'DevicesCtrl'
       })
       .when('/device/:deviceId', {
+        templateUrl: 'views/device.html',
+        controller: 'DeviceCtrl'
+      })
+      .when('/ipaddr/:ipaddr', {
         templateUrl: 'views/device.html',
         controller: 'DeviceCtrl'
       })

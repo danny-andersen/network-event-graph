@@ -5,9 +5,16 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
   $scope.$watch('$parent.period.changed', function () {
     if ($scope.$parent.period !== undefined && $scope.$parent.period.changed) {
       $scope.refresh = true;
-      $scope.detail.device.allSessions = [];
-      $scope.detail.device.toSessions = [];
-      $scope.detail.device.fromSessions = [];
+      if ($scope.$parent.detail === undefined) {
+        $scope.$parent.detail = {
+          device: {}
+        };
+      } else if ($scope.$parent.detail.device === undefined) {
+        $scope.$parent.detail.device = {};
+      }
+      $scope.$parent.detail.device.allSessions = [];
+      $scope.$parent.detail.device.toSessions = [];
+      $scope.$parent.detail.device.fromSessions = [];
       $scope.$parent.period.changed = false;
     }
   });
@@ -49,8 +56,8 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
     $scope.navTabs.tabs[$scope.navTabs.webTab].active = true;
     $scope.loading = true;
     $scope.webAddress = ipaddr;
-    $scope.detail.device.websites = [];
-    $scope.detail.device.websites = webSitesByIp.query({
+    $scope.$parent.detail.device.websites = [];
+    $scope.$parent.detail.device.websites = webSitesByIp.query({
       'ipAddr': ipaddr
     }, function () {
       $scope.loading = false;
@@ -61,8 +68,8 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
     $scope.navTabs.tabs[$scope.navTabs.webTab].active = true;
     $scope.loading = true;
     $scope.webAddress = $scope.detail.device.hostName;
-    $scope.detail.device.websites = [];
-    $scope.detail.device.websites = webSitesByHostname.query({
+    $scope.$parent.detail.device.websites = [];
+    $scope.$parent.detail.device.websites = webSitesByHostname.query({
       'hostName': $scope.detail.device.hostName
     }, function () {
       $scope.loading = false;
@@ -73,30 +80,30 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
     $scope.navTabs.tabs[$scope.navTabs.allTab].active = true;
     $scope.loading = true;
     $scope.ipAddress = $scope.sessionParams.ipAddr;
-    $scope.detail.device.allSessions = sessionsByIp.query($scope.sessionParams, function () {
+    $scope.$parent.detail.device.allSessions = sessionsByIp.query($scope.sessionParams, function () {
       $scope.loading = false;
     });
-    return $scope.detail.device.allSessions;
+    return $scope.$parent.detail.device.allSessions;
   };
 
   $scope.getsessionsBySrcIp = function () {
     $scope.navTabs.tabs[$scope.navTabs.fromTab].active = true;
     $scope.loading = true;
     $scope.ipAddress = $scope.sessionParams.ipAddr;
-    $scope.detail.device.fromSessions = sessionsBySrcIp.query($scope.sessionParams, function () {
+    $scope.$parent.detail.device.fromSessions = sessionsBySrcIp.query($scope.sessionParams, function () {
       $scope.loading = false;
     });
-    return $scope.detail.device.fromSessions;
+    return $scope.$parent.detail.device.fromSessions;
   };
 
   $scope.getsessionsByDestIp = function () {
     $scope.navTabs.tabs[$scope.navTabs.toTab].active = true;
     $scope.loading = true;
     $scope.ipAddress = $scope.sessionParams.ipAddr;
-    $scope.detail.device.toSessions = sessionsByDestIp.query($scope.sessionParams, function () {
+    $scope.$parent.detail.device.toSessions = sessionsByDestIp.query($scope.sessionParams, function () {
       $scope.loading = false;
     });
-    return $scope.detail.device.toSessions;
+    return $scope.$parent.detail.device.toSessions;
   };
 
   $scope.setSessions = function (tabId, refresh) {
@@ -111,7 +118,7 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
 
     $scope.activeTab = tabId;
     if (tabId === $scope.navTabs.webTab) {
-      $scope.detail.device.websites = [];
+      $scope.$parent.detail.device.websites = [];
       if ($scope.sessionParams.ipAddr === undefined) {
         $scope.getWebSitesVisitedByHost();
       } else {
@@ -119,22 +126,22 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
       }
     } else if (tabId === $scope.navTabs.allTab) {
       $scope.direction = 'from/to';
-      if (!refresh && ($scope.detail.device.allSessions !== undefined && $scope.detail.device.allSessions.length > 0)) {
-        $scope.currentSessions = $scope.detail.device.allSessions;
+      if (!refresh && ($scope.$parent.detail.device.allSessions !== undefined && $scope.$parent.detail.device.allSessions.length > 0)) {
+        $scope.currentSessions = $scope.$parent.detail.device.allSessions;
       } else {
         $scope.currentSessions = $scope.getsessionsByIp();
       }
     } else if (tabId === $scope.navTabs.fromTab) {
       $scope.direction = 'from';
-      if ($scope.detail.device.fromSessions !== undefined && $scope.detail.device.fromSessions.length > 0) {
-        $scope.currentSessions = $scope.detail.device.fromSessions;
+      if ($scope.$parent.detail.device.fromSessions !== undefined && $scope.$parent.detail.device.fromSessions.length > 0) {
+        $scope.currentSessions = $scope.$parent.detail.device.fromSessions;
       } else {
         $scope.currentSessions = $scope.getsessionsBySrcIp();
       }
     } else if (tabId === $scope.navTabs.toTab) {
       $scope.direction = 'to';
-      if ($scope.detail.device.toSessions !== undefined && $scope.detail.device.toSessions.length > 0) {
-        $scope.currentSessions = $scope.detail.device.toSessions;
+      if ($scope.$parent.detail.device.toSessions !== undefined && $scope.$parent.detail.device.toSessions.length > 0) {
+        $scope.currentSessions = $scope.$parent.detail.device.toSessions;
       } else {
         $scope.currentSessions = $scope.getsessionsByDestIp();
       }

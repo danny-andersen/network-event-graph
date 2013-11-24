@@ -38,9 +38,9 @@ describe('Controller: sessionTabCtrl', function () {
 
   it('retrieve websites By hostname when tab selected', function () {
     $scope.sessionParams = {};
-    $scope.detail = {};
-    $scope.detail.device = {};
-    $scope.detail.device.hostName = "danny";
+    $scope.$parent.detail = {};
+    $scope.$parent.detail.device = {};
+    $scope.$parent.detail.device.hostName = "danny";
     var websites = [{
       id: 1
     }, {
@@ -63,8 +63,8 @@ describe('Controller: sessionTabCtrl', function () {
   });
 
   it('retrieve websites By Ip Address when tab selected', function () {
-    $scope.detail = {};
-    $scope.detail.device = {};
+    $scope.$parent.detail = {};
+    $scope.$parent.detail.device = {};
     $scope.sessionParams = {};
     $scope.sessionParams.ipAddr = '192.168.1.255';
     var websites = [{
@@ -89,8 +89,8 @@ describe('Controller: sessionTabCtrl', function () {
   });
 
   it('retrieve all sessions By Ip Address all dates', function () {
-    $scope.detail = {};
-    $scope.detail.device = {};
+    $scope.$parent.detail = {};
+    $scope.$parent.detail.device = {};
     $scope.sessionParams = {
       start: 0,
       end: 1000000
@@ -122,8 +122,8 @@ describe('Controller: sessionTabCtrl', function () {
   });
 
   it('retrieve all sessions By Ip Address already retrieved', function () {
-    $scope.detail = {};
-    $scope.detail.device = {};
+    $scope.$parent.detail = {};
+    $scope.$parent.detail.device = {};
     $scope.sessionParams = {
       start: 23000,
       end: 1000000
@@ -149,8 +149,8 @@ describe('Controller: sessionTabCtrl', function () {
   });
 
   it('retrieve all sessions By Ip Address with refresh', function () {
-    $scope.detail = {};
-    $scope.detail.device = {};
+    $scope.$parent.detail = {};
+    $scope.$parent.detail.device = {};
     $scope.sessionParams = {
       start: 0,
       end: 1000000
@@ -186,9 +186,9 @@ describe('Controller: sessionTabCtrl', function () {
   });
 
   it('clear saved sessions when period changed', function () {
-    $scope.detail = {};
-    $scope.detail.device = {};
-    $scope.detail.device.allSessions = [{
+    $scope.$parent.detail = {};
+    $scope.$parent.detail.device = {};
+    $scope.$parent.detail.device.allSessions = [{
       id: 1
     }];
     // $scope.sessionParams = {
@@ -226,8 +226,8 @@ describe('Controller: sessionTabCtrl', function () {
 
 
   it('retrieve from sessions By Ip Address', function () {
-    $scope.detail = {};
-    $scope.detail.device = {};
+    $scope.$parent.detail = {};
+    $scope.$parent.detail.device = {};
     $scope.sessionParams = {
       start: 23000,
       end: 1000000
@@ -261,8 +261,8 @@ describe('Controller: sessionTabCtrl', function () {
   });
 
   it('retrieve from sessions By Ip Address already retrieved', function () {
-    $scope.detail = {};
-    $scope.detail.device = {};
+    $scope.$parent.detail = {};
+    $scope.$parent.detail.device = {};
     $scope.sessionParams = {
       start: 23000,
       end: 1000000
@@ -288,8 +288,8 @@ describe('Controller: sessionTabCtrl', function () {
   });
 
   it('retrieve to sessions By Ip Address', function () {
-    $scope.detail = {};
-    $scope.detail.device = {};
+    $scope.$parent.detail = {};
+    $scope.$parent.detail.device = {};
     $scope.sessionParams = {
       start: 23000,
       end: 1000000
@@ -323,8 +323,8 @@ describe('Controller: sessionTabCtrl', function () {
   });
 
   it('retrieve to sessions By Ip Address already retrieved', function () {
-    $scope.detail = {};
-    $scope.detail.device = {};
+    $scope.$parent.detail = {};
+    $scope.$parent.detail.device = {};
     $scope.sessionParams = {
       ipAddr: '192.168.1.255',
       start: 23000,
