@@ -9,6 +9,7 @@ angular.module('networkEventGraphApp').controller('deviceGraphCtrl', function ($
   $scope.direction = direction;
   $scope.ipaddr = ipAddr;
   $scope.hasDate = false;
+  //Set date for view
   if ($routeParams.start !== undefined && $routeParams.end !== undefined) {
     var d = new Date();
     d.setTime($routeParams.start * 1000);
@@ -27,21 +28,27 @@ angular.module('networkEventGraphApp').controller('deviceGraphCtrl', function ($
   switch (direction) {
   case 'from':
     sessions = sessionsBySrcIp.query({
-      'ipAddr': ipAddr
+      'ipAddr': ipAddr,
+      'start': $routeParams.start,
+      'end': $routeParams.end
     }, function () {
       graphService.showGraph($scope, $window, sessions, ipAddr);
     });
     break;
   case 'to':
     sessions = sessionsByDestIp.query({
-      'ipAddr': ipAddr
+      'ipAddr': ipAddr,
+      'start': $routeParams.start,
+      'end': $routeParams.end
     }, function () {
       graphService.showGraph($scope, $window, sessions, ipAddr);
     });
     break;
   default:
     sessions = sessionsByIp.query({
-      'ipAddr': ipAddr
+      'ipAddr': ipAddr,
+      'start': $routeParams.start,
+      'end': $routeParams.end
     }, function () {
       graphService.showGraph($scope, $window, sessions, ipAddr);
     });

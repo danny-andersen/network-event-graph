@@ -22,8 +22,9 @@ describe('Controller: TimespanPickerCtrl', function () {
   it('sets timespan to none', function () {
     var startDate = new Date(2013, 11, 12, 0, 0, 0, 0);
     scope.currentDate = startDate;
+    var toDate = new Date(2013, 11, 12, 0, 0, 0, 0);
+    scope.period.toDate = toDate;
     var endDate = new Date(2013, 11, 12, 23, 59, 59, 0);
-    scope.period.toDate = endDate;
 
     //Run test
     scope.period.timeType = -1;
@@ -40,8 +41,9 @@ describe('Controller: TimespanPickerCtrl', function () {
   it('sets timespan to today', function () {
     var current = new Date(2013, 11, 12, 0, 0, 0, 0);
     scope.currentDate = current;
+    var toDate = new Date(2013, 11, 12, 0, 0, 0, 0);
+    scope.period.toDate = toDate;
     var endDate = new Date(2013, 11, 12, 23, 59, 59, 0);
-    scope.period.toDate = endDate;
 
     //Run test
     scope.period.timeType = 0;
@@ -57,8 +59,9 @@ describe('Controller: TimespanPickerCtrl', function () {
   it('sets timespan to last week', function () {
     var current = new Date(2013, 11, 12, 0, 0, 0, 0);
     scope.currentDate = current;
+    var toDate = new Date(2013, 11, 12, 0, 0, 0, 0);
+    scope.period.toDate = toDate;
     var endDate = new Date(2013, 11, 12, 23, 59, 59, 0);
-    scope.period.toDate = endDate;
 
     //Run test
     scope.period.timeType = 7;
@@ -74,8 +77,9 @@ describe('Controller: TimespanPickerCtrl', function () {
   it('sets timespan to last month', function () {
     var current = new Date(2013, 11, 12, 0, 0, 0, 0);
     scope.currentDate = current;
+    var toDate = new Date(2013, 11, 12, 0, 0, 0, 0);
+    scope.period.toDate = toDate;
     var endDate = new Date(2013, 11, 12, 23, 59, 59, 0);
-    scope.period.toDate = endDate;
 
     //Run test
     scope.period.timeType = 30;
@@ -91,8 +95,9 @@ describe('Controller: TimespanPickerCtrl', function () {
   it('change timespan from today to none', function () {
     var current = new Date(2013, 11, 12, 0, 0, 0, 0);
     scope.currentDate = current;
+    var toDate = new Date(2013, 11, 12, 0, 0, 0, 0);
+    scope.period.toDate = toDate;
     var endDate = new Date(2013, 11, 12, 23, 59, 59, 0);
-    scope.period.toDate = endDate;
 
     //Run test
 

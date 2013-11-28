@@ -5,6 +5,7 @@ angular.module('networkEventGraphApp').controller('TimespanPickerCtrl', function
   $scope.currentDate = new Date();
   $scope.currentDate.setHours(0);
   $scope.currentDate.setMinutes(0);
+  $scope.currentDate.setSeconds(0);
 
   $scope.resetSpan = function () {
 
@@ -12,16 +13,16 @@ angular.module('networkEventGraphApp').controller('TimespanPickerCtrl', function
       timeType: -1,
       showTimePicker: false,
       fromDate: new Date(0),
-      fromTime: '00:00',
-      toTime: '00:00',
+      fromTime: '00:00:00',
+      toTime: '23:59:59',
       fromOpened: false,
       toOpened: false,
       changed: false
     };
     var d = new Date($scope.currentDate.getTime());
-    d.setHours(23);
-    d.setMinutes(59);
-    d.setSeconds(59);
+    d.setHours(0);
+    d.setMinutes(0);
+    d.setSeconds(0);
     $scope.period.toDate = d;
   };
 
@@ -44,16 +45,18 @@ angular.module('networkEventGraphApp').controller('TimespanPickerCtrl', function
     });
   };
   var setPeriodParams = function () {
+    var secs;
     var parts = $scope.period.fromTime.split(':');
-    var ftime = Number(parts[0]) * 60 + Number(parts[1]);
+    var ftime = Number(parts[0]) * 3600 + Number(parts[1] * 60 + Number(parts[2]));
     parts = $scope.period.toTime.split(':');
-    var ttime = Number(parts[0]) * 60 + Number(parts[1]);
+    var ttime = Number(parts[0]) * 3600 + Number(parts[1] * 60 + Number(parts[2]));
     if ($scope.period.fromDate !== undefined) {
-      var secs = $scope.period.fromDate.getTime() / 1000.0;
+      secs = $scope.period.fromDate.getTime() / 1000.0;
       $scope.sessionParams.start = Number(secs.toFixed(0)) + ftime;
     }
     if ($scope.period.toDate !== undefined) {
-      $scope.sessionParams.end = Number(($scope.period.toDate.getTime() / 1000.0).toFixed(0)) + ttime;
+      secs = $scope.period.toDate.getTime() / 1000.0;
+      $scope.sessionParams.end = Number(secs.toFixed(0)) + ttime;
     }
     $scope.period.changed = true;
   };

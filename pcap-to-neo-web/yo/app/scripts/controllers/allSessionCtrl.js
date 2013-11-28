@@ -8,16 +8,17 @@ angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($s
   $scope.graphLoading = false;
   $scope.timeType = -1;
   $scope.showTimePicker = false;
-  $scope.fromDate = 0;
-  $scope.fromTime = "00:00";
+  $scope.fromDate = new Date(0);
+  $scope.fromTime = "00:00:00";
   // $scope.timepicker = {
   // "time": "00:00"
   // };
   var d = new Date();
-  d.setHours(0);
-  d.setMinutes(0);
+  d.setHours(23);
+  d.setMinutes(59);
+  d.setSeconds(59);
   $scope.toDate = d;
-  $scope.toTime = "00:00";
+  $scope.toTime = "23:59:59";
   $scope.fromOpened = false;
   $scope.toOpened = false;
 
@@ -25,6 +26,7 @@ angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($s
     'year-format': "'yy'",
     'starting-day': 1
   };
+  graphService.showKey();
 
   $scope.fromOpen = function () {
     $timeout(function () {
@@ -46,6 +48,8 @@ angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($s
       d = new Date();
       d.setHours(0);
       d.setMinutes(0);
+      d.setSeconds(0);
+      d.setMilliseconds(0);
       $scope.fromDate = d;
       break;
     case -1:
@@ -59,6 +63,8 @@ angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($s
       d = new Date(t);
       d.setHours(0);
       d.setMinutes(0);
+      d.setSeconds(0);
+      d.setMilliseconds(0);
       $scope.fromDate = d;
       break;
     }
@@ -91,7 +97,6 @@ angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($s
       graphService.startForceAtlas2();
     }
   };
-  graphService.showKey();
   $scope.plotGraph = function () {
     var i, j, ipAddr, devices = [],
       sessions = [],
@@ -116,13 +121,18 @@ angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($s
       for (j = 0; j < ipaddrs.length; j++) {
         ipAddr = ipaddrs[j].ipAddr;
         params.ipAddr = ipAddr;
-        sessions = sessionsByIp.query(params, function (sessions) {
-          graphService.plotSessions($scope, $window, nodes, edges, ipAddr, sessions);
+        // sessions = sessionsByIp.query(params, function (sessions) {
+        //   graphService.plotSessions($scope, $window, nodes, edges, params.ipAddr, sessions);
+        //   $scope.graphLoading = false;
+        //   graphService.startForceAtlas2();
+        // });
+        sessions[i] = sessionsByIp.query(params, function (sessions) {
+          graphService.plotSessions($scope, $window, nodes, edges, params.ipAddr, sessions);
+          $scope.graphLoading = false;
+          graphService.startForceAtlas2();
         });
       }
     }
-    $scope.graphLoading = false;
-    graphService.startForceAtlas2();
   };
 
   $scope.filterSessions = function (direction) {
