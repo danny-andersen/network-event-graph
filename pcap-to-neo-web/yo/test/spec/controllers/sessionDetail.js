@@ -18,13 +18,13 @@ describe('Controller: SessiondetailCtrl', function () {
     scope;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller, $rootScope, _$httpBackend_, sessionDetailByIp) {
+  beforeEach(inject(function ($controller, $rootScope, _$httpBackend_, ipSessionService) {
     scope = $rootScope.$new();
     mockBackend = _$httpBackend_;
     mockBackend.expectGET('/pcap-to-neo-web/rest/session/ip/detail/ipaddr/src/?destaddr=&startdate=&enddate=').respond(null);
     sessionDetailCtrl = $controller('sessionDetailCtrl', {
-      sessionDetailByIp: sessionDetailByIp,
-      $scope: scope
+      $scope: scope,
+      ipSessionService: ipSessionService
     });
     mockBackend.flush();
   }));

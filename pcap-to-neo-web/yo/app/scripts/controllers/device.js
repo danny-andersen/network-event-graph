@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('networkEventGraphApp').controller('DeviceCtrl', function ($scope, $routeParams, deviceModel, deviceByIpAddr, deviceDetailById) {
+angular.module('networkEventGraphApp').controller('DeviceCtrl', function ($scope, $routeParams, deviceModel, deviceService) {
   if ($scope.detail === undefined) {
     $scope.detail = {};
   }
@@ -22,7 +22,7 @@ angular.module('networkEventGraphApp').controller('DeviceCtrl', function ($scope
     $scope.detail.device = deviceModel.getDeviceDetail($scope.detail.id);
     if ($scope.detail.device === undefined) {
       $scope.loading = true;
-      $scope.detail.device = deviceDetailById.get({
+      $scope.detail.device = deviceService.deviceDetailById.get({
         'deviceId': $scope.detail.id
       }, function (device) {
         $scope.loading = false;
@@ -40,7 +40,7 @@ angular.module('networkEventGraphApp').controller('DeviceCtrl', function ($scope
     if ($scope.detail.device === undefined) {
       var devs = [];
       $scope.loading = true;
-      devs = deviceByIpAddr.query({
+      devs = deviceService.deviceByIpAddr.query({
         'ipAddr': $scope.sessionParams.ipAddr
       }, function (devs) {
         $scope.loading = false;

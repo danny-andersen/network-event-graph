@@ -1,4 +1,4 @@
-angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($scope, $window, $timeout, graphService, sessionsByIp, deviceModel, deviceByIpAddr, localDevices, remoteDevices) {
+angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($scope, $window, $timeout, $q, graphService, ipSessionService, deviceModel, deviceService) {
   var nodes = {};
   var edges = {};
   $scope.data = {};
@@ -77,15 +77,15 @@ angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($s
   };
   $scope.getDevices = function () {
     $scope.deviceLoading = true;
-    $scope.data.devices = deviceByIpAddr.query({
+    $scope.data.devices = deviceService.deviceByIpAddr.query({
       'ipAddr': $scope.ipaddr
     }, setDevices);
   };
   $scope.getLocalDevices = function () {
-    $scope.data.devices = localDevices.query({}, setDevices);
+    $scope.data.devices = deviceService.localDevices.query({}, setDevices);
   };
   $scope.getRemoteDevices = function () {
-    $scope.data.devices = remoteDevices.query({}, setDevices);
+    $scope.data.devices = deviceService.remoteDevices.query({}, setDevices);
   };
   $scope.stopLayout = function () {
     if (!$scope.graphLoading) {
@@ -98,9 +98,9 @@ angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($s
     }
   };
   $scope.plotGraph = function () {
-    var i, j, ipAddr, devices = [],
-      sessions = [],
-      ipaddrs = [];
+    var i, j, devices = [],
+      ipaddrs = [],
+      params = {};
     $scope.graphLoading = true;
     $scope.data = {};
     $scope.data.devices = deviceModel.getDevices();
@@ -108,31 +108,34 @@ angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($s
     graphService.initGraph();
     graphService.plotDevices(devices, nodes);
 
-    var params = {
-      'ipAddr': ipAddr
-    };
     if ($scope.timeType !== -1) {
       params.start = ($scope.fromDate.getTime() / 1000).toFixed(0);
       params.end = ($scope.toDate.getTime() / 1000).toFixed(0);
     }
     //For each device, retrieve sessions and then plot them
+    var promises = [];
+    var plots = [];
+    var plot;
+    var ipAddr;
     for (i = 0; i < devices.length; i++) {
       ipaddrs = devices[i].ipaddr;
       for (j = 0; j < ipaddrs.length; j++) {
+        plot = {};
         ipAddr = ipaddrs[j].ipAddr;
         params.ipAddr = ipAddr;
-        // sessions = sessionsByIp.query(params, function (sessions) {
-        //   graphService.plotSessions($scope, $window, nodes, edges, params.ipAddr, sessions);
-        //   $scope.graphLoading = false;
-        //   graphService.startForceAtlas2();
-        // });
-        sessions[i] = sessionsByIp.query(params, function (sessions) {
-          graphService.plotSessions($scope, $window, nodes, edges, params.ipAddr, sessions);
-          $scope.graphLoading = false;
-          graphService.startForceAtlas2();
-        });
+        plot.ipAddr = ipAddr;
+        plot.promise = ipSessionService.sessionsByIpHttp(params);
+        promises.push(plot.promise);
+        plots.push(plot);
       }
     }
+    $q.all(promises).then(function (sessions) {
+      for (i = 0; i < plots.length; i++) {
+        graphService.plotSessions($scope, $window, nodes, edges, plots[i].ipAddr, sessions[i].data);
+      }
+      $scope.graphLoading = false;
+      graphService.startForceAtlas2();
+    });
   };
 
   $scope.filterSessions = function (direction) {

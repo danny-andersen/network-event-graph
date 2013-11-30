@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Controller: DevicesCtrl', function() {
+describe('Controller: DevicesCtrl', function () {
 
   // load the controller's module
   beforeEach(module('networkEventGraphApp'));
@@ -11,30 +11,28 @@ describe('Controller: DevicesCtrl', function() {
     mockBackend;
 
   //Set up Matcher
-  beforeEach(function() {
+  beforeEach(function () {
     this.addMatchers({
-      toEqualData: function(expected) {
+      toEqualData: function (expected) {
         return angular.equals(this.actual, expected);
       }
     });
   });
 
   // Initialize the controller and a mock $scope
-  beforeEach(inject(function($controller, $rootScope, _$httpBackend_, deviceModel, deviceByIpAddr, localDevices, remoteDevices) {
+  beforeEach(inject(function ($controller, $rootScope, _$httpBackend_, deviceModel, deviceService) {
     $scope = $rootScope.$new();
     mockBackend = _$httpBackend_;
     devModel = deviceModel;
     DevicesCtrl = $controller('DevicesCtrl', {
       $scope: $scope,
       deviceModel: deviceModel,
-      deviceByIpAddr: deviceByIpAddr,
-      localDevices: localDevices,
-      remoteDevices: remoteDevices
+      deviceService: deviceService
     });
   }));
 
 
-  it('should retrieve devices by an ipaddress and set the deviceModel', function() {
+  it('should retrieve devices by an ipaddress and set the deviceModel', function () {
     $scope.ipaddr = "192.168.*";
     var devices = [{
       deviceId: 1
@@ -60,7 +58,7 @@ describe('Controller: DevicesCtrl', function() {
 
   });
 
-  it('should retrieve local devices and set the deviceModel', function() {
+  it('should retrieve local devices and set the deviceModel', function () {
     var devices = [{
       deviceId: 1
     }, {
@@ -85,7 +83,7 @@ describe('Controller: DevicesCtrl', function() {
 
   });
 
-  it('should retrieve all remote devices and set the deviceModel', function() {
+  it('should retrieve all remote devices and set the deviceModel', function () {
     var devices = [{
       deviceId: 1
     }, {

@@ -1,8 +1,6 @@
 'use strict';
 
-angular.module('networkEventGraphApp', [
-  'ui.bootstrap', 'ngResource', 'menuControllers', 'deviceResources', 'websiteResources', 'ipSessionResources'
-])
+angular.module('networkEventGraphApp', ['ui.bootstrap', 'ngResource', 'menuControllers', 'websiteResources'])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {

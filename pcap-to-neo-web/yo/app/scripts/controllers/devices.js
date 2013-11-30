@@ -1,7 +1,7 @@
 /*jslint white:true */
 'use strict';
 
-angular.module('networkEventGraphApp').controller('DevicesCtrl', function ($scope, deviceModel, deviceByIpAddr, localDevices, remoteDevices) {
+angular.module('networkEventGraphApp').controller('DevicesCtrl', function ($scope, deviceModel, deviceService) {
   $scope.data = {};
   $scope.data.loading = false;
   $scope.data.query = deviceModel.getQuery();
@@ -14,19 +14,19 @@ angular.module('networkEventGraphApp').controller('DevicesCtrl', function ($scop
   $scope.getDevices = function () {
     $scope.data.loading = true;
     $scope.data.query = 'Ipaddr: ' + $scope.ipaddr;
-    $scope.data.devices = deviceByIpAddr.query({
+    $scope.data.devices = deviceService.deviceByIpAddr.query({
       'ipAddr': $scope.ipaddr
     }, setDevices);
   };
   $scope.getLocalDevices = function () {
     $scope.data.loading = true;
     $scope.data.query = 'All Local devices';
-    $scope.data.devices = localDevices.query({}, setDevices);
+    $scope.data.devices = deviceService.localDevices.query({}, setDevices);
   };
   $scope.getRemoteDevices = function () {
     $scope.data.loading = true;
     $scope.data.query = 'All Remote devices';
-    $scope.data.devices = remoteDevices.query({}, setDevices);
+    $scope.data.devices = deviceService.remoteDevices.query({}, setDevices);
   };
   $scope.addDevice = function (deviceId) {
     $scope.$parent.items.Devices.push({

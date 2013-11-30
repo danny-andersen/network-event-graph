@@ -21,7 +21,7 @@ describe('Controller: sessionTabCtrl', function () {
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($controller, $rootScope, _$httpBackend_, $window,
-    webSitesByIp, webSitesByHostname, sessionsByIp, sessionsBySrcIp, sessionsByDestIp) {
+    webSitesByIp, webSitesByHostname, ipSessionService) {
     $scope = $rootScope.$new();
     mockBackend = _$httpBackend_;
     window = $window;
@@ -30,9 +30,7 @@ describe('Controller: sessionTabCtrl', function () {
       $window: $window,
       webSitesByIp: webSitesByIp,
       webSitesByHostname: webSitesByHostname,
-      sessionsByIp: sessionsByIp,
-      sessionsBySrcIp: sessionsBySrcIp,
-      sessionsByDestIp: sessionsByDestIp
+      ipSessionService: ipSessionService
     });
   }));
 

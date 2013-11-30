@@ -1,28 +1,25 @@
 /*jslint white:true */
 'use strict';
 
-var devServices = angular.module('deviceResources', ['ngResource']);
+angular.module('networkEventGraphApp').service('deviceService', function ($resource) {
 
-devServices.factory('localDevices', function ($resource) {
-  return $resource('/pcap-to-neo-web/rest/device/local', {}, {
-    query: {method: 'GET', params: {}, isArray: true}
+  this.localDevices = $resource('/pcap-to-neo-web/rest/device/local', {}, {
+    query: {
+      method: 'GET',
+      params: {},
+      isArray: true
+    }
   });
-});
 
-devServices.factory('remoteDevices', function ($resource) {
-  return $resource('/pcap-to-neo-web/rest/device/remote', {}, {
-    query: {method: 'GET', params: {}, isArray: true}
+  this.remoteDevices = $resource('/pcap-to-neo-web/rest/device/remote', {}, {
+    query: {
+      method: 'GET',
+      params: {},
+      isArray: true
+    }
   });
-});
 
-devServices.factory('deviceByIpAddr', function ($resource) {
-  return $resource('/pcap-to-neo-web/rest/device/ipaddr/:ipAddr', {});
-  // return $resource('/pcap-to-neo-web/rest/device/ipaddr/:ipAddr', {
-  //   query: {method: 'GET', params: {}, isArray: true}
-  // });
-});
+  this.deviceByIpAddr = $resource('/pcap-to-neo-web/rest/device/ipaddr/:ipAddr', {});
 
-devServices.factory('deviceDetailById', function ($resource) {
-  return $resource('/pcap-to-neo-web/rest/device/detail/:deviceId', {});
+  this.deviceDetailById = $resource('/pcap-to-neo-web/rest/device/detail/:deviceId', {});
 });
-

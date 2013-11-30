@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($scope, $window, webSitesByIp, webSitesByHostname, sessionsByIp, sessionsBySrcIp, sessionsByDestIp) {
+angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($scope, $window, webSitesByIp, webSitesByHostname, ipSessionService) {
 
   $scope.$watch('$parent.period.changed', function () {
     if ($scope.$parent.period !== undefined && $scope.$parent.period.changed) {
@@ -80,7 +80,7 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
     $scope.navTabs.tabs[$scope.navTabs.allTab].active = true;
     $scope.loading = true;
     $scope.ipAddress = $scope.sessionParams.ipAddr;
-    $scope.$parent.detail.device.allSessions = sessionsByIp.query($scope.sessionParams, function () {
+    $scope.$parent.detail.device.allSessions = ipSessionService.sessionsByIp.query($scope.sessionParams, function () {
       $scope.loading = false;
     });
     return $scope.$parent.detail.device.allSessions;
@@ -90,7 +90,7 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
     $scope.navTabs.tabs[$scope.navTabs.fromTab].active = true;
     $scope.loading = true;
     $scope.ipAddress = $scope.sessionParams.ipAddr;
-    $scope.$parent.detail.device.fromSessions = sessionsBySrcIp.query($scope.sessionParams, function () {
+    $scope.$parent.detail.device.fromSessions = ipSessionService.sessionsBySrcIp.query($scope.sessionParams, function () {
       $scope.loading = false;
     });
     return $scope.$parent.detail.device.fromSessions;
@@ -100,7 +100,7 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
     $scope.navTabs.tabs[$scope.navTabs.toTab].active = true;
     $scope.loading = true;
     $scope.ipAddress = $scope.sessionParams.ipAddr;
-    $scope.$parent.detail.device.toSessions = sessionsByDestIp.query($scope.sessionParams, function () {
+    $scope.$parent.detail.device.toSessions = ipSessionService.sessionsByDestIp.query($scope.sessionParams, function () {
       $scope.loading = false;
     });
     return $scope.$parent.detail.device.toSessions;

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('networkEventGraphApp')
-  .controller('sessionDetailCtrl', function ($scope, $routeParams, sessionDetailByIp) {
+  .controller('sessionDetailCtrl', function ($scope, $routeParams, ipSessionService) {
     $scope.srcAddr = $routeParams.srcIpAddr;
     $scope.destAddr = $routeParams.destIpAddr;
     $scope.start = $routeParams.start;
@@ -13,7 +13,7 @@ angular.module('networkEventGraphApp')
       var start = new Date($scope.start * 1000).toUTCString();
       var end = new Date($scope.end * 1000).toUTCString();
       $scope.timePhrase = 'between ' + start + ' and ' + end;
-      $scope.sessions = sessionDetailByIp.query({
+      $scope.sessions = ipSessionService.sessionDetailByIp.query({
         'srcAddr': $scope.srcAddr,
         'destAddr': $scope.destAddr,
         'start': $scope.start,

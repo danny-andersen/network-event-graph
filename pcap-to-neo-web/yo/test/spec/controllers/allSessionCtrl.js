@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Controller: DeviceGraphCtrl', function () {
+describe('Controller: allSessionCtrl', function () {
 
   // load the controller's module
   beforeEach(module('networkEventGraphApp'));
@@ -25,7 +25,7 @@ describe('Controller: DeviceGraphCtrl', function () {
     scope;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller, $rootScope, _$httpBackend_, $window, $timeout, graphService, sessionsByIp, deviceModel, deviceByIpAddr, localDevices, remoteDevices) {
+  beforeEach(inject(function ($controller, $rootScope, _$httpBackend_, $window, $timeout, $q, graphService, ipSessionService, deviceModel, deviceService) {
     scope = $rootScope.$new();
     mockBackend = _$httpBackend_;
     window = $window;
@@ -35,12 +35,11 @@ describe('Controller: DeviceGraphCtrl', function () {
     allSessionCtrl = $controller('allSessionCtrl', {
       $scope: scope,
       $window: $window,
+      $q: $q,
       graphService: graphService,
-      sessionsByIp: sessionsByIp,
+      ipSessionService: ipSessionService,
       deviceModel: deviceModel,
-      deviceByIpAddr: deviceByIpAddr,
-      localDevices: localDevices,
-      remoteDevices: remoteDevices
+      deviceService: deviceService
     });
   }));
 
@@ -109,9 +108,9 @@ describe('Controller: DeviceGraphCtrl', function () {
     spyOn(graph, 'initGraph');
     spyOn(graph, 'plotDevices');
     spyOn(graph, 'startForceAtlas2');
-    var params = '1.1.1.1' + '?startdate=&enddate=';
+    var params = '1.1.1.1?';
     mockBackend.expectGET('/pcap-to-neo-web/rest/session/ip/summary/ipaddr/' + params).respond(sessions1);
-    params = '2.2.2.2' + '?startdate=&enddate=';
+    params = '2.2.2.2?';
     mockBackend.expectGET('/pcap-to-neo-web/rest/session/ip/summary/ipaddr/' + params).respond(sessions2);
     spyOn(graph, 'plotSessions');
 
@@ -126,7 +125,6 @@ describe('Controller: DeviceGraphCtrl', function () {
 
     //Flush tha call to the mock
     mockBackend.flush();
-    expect(scope.graphLoading).toEqual(false);
     expect(graph.plotSessions.calls.length).toEqual(2);
     expect(graph.plotSessions.calls[0].args[0]).toEqual(scope);
     expect(graph.plotSessions.calls[0].args[1]).toEqual(window);
@@ -134,5 +132,6 @@ describe('Controller: DeviceGraphCtrl', function () {
     expect(graph.plotSessions.calls[0].args[5]).toEqualData(sessions1);
     expect(graph.plotSessions.calls[1].args[4]).toEqual('2.2.2.2');
     expect(graph.plotSessions.calls[1].args[5]).toEqualData(sessions2);
+    expect(scope.graphLoading).toEqual(false);
   });
 });

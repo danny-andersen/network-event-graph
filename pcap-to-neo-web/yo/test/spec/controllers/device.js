@@ -19,15 +19,14 @@ describe('Controller: DeviceCtrl', function () {
     scope;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller, $rootScope, _$httpBackend_, deviceModel, deviceByIpAddr, deviceDetailById) {
+  beforeEach(inject(function ($controller, $rootScope, _$httpBackend_, deviceModel, deviceService) {
     scope = $rootScope.$new();
     mockBackend = _$httpBackend_;
     devModel = deviceModel;
     DeviceCtrl = $controller('DeviceCtrl', {
+      $scope: scope,
       deviceModel: deviceModel,
-      deviceByIpAddr: deviceByIpAddr,
-      deviceDetailById: deviceDetailById,
-      $scope: scope
+      deviceService: deviceService
     });
   }));
 

@@ -1,5 +1,5 @@
 'use strict';
-angular.module('networkEventGraphApp').controller('deviceGraphCtrl', function ($scope, $window, $routeParams, graphService, sessionsByIp, sessionsBySrcIp, sessionsByDestIp) {
+angular.module('networkEventGraphApp').controller('deviceGraphCtrl', function ($scope, $window, $routeParams, graphService, ipSessionService) {
   var ipAddr = $routeParams.ipAddr;
   var direction = $routeParams.direction;
   $scope.filter = 'all';
@@ -27,7 +27,7 @@ angular.module('networkEventGraphApp').controller('deviceGraphCtrl', function ($
   var sessions = [];
   switch (direction) {
   case 'from':
-    sessions = sessionsBySrcIp.query({
+    sessions = ipSessionService.sessionsBySrcIp.query({
       'ipAddr': ipAddr,
       'start': $routeParams.start,
       'end': $routeParams.end
@@ -36,7 +36,7 @@ angular.module('networkEventGraphApp').controller('deviceGraphCtrl', function ($
     });
     break;
   case 'to':
-    sessions = sessionsByDestIp.query({
+    sessions = ipSessionService.sessionsByDestIp.query({
       'ipAddr': ipAddr,
       'start': $routeParams.start,
       'end': $routeParams.end
@@ -45,7 +45,7 @@ angular.module('networkEventGraphApp').controller('deviceGraphCtrl', function ($
     });
     break;
   default:
-    sessions = sessionsByIp.query({
+    sessions = ipSessionService.sessionsByIp.query({
       'ipAddr': ipAddr,
       'start': $routeParams.start,
       'end': $routeParams.end

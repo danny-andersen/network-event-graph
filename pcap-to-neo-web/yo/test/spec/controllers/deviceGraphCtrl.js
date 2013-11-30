@@ -15,7 +15,7 @@ describe('Controller: DeviceGraphCtrl', function () {
 
   var mockBackend,
     window,
-    byIp,
+    ipService,
     bySrcIp,
     byDestIp,
     routeParams,
@@ -23,16 +23,14 @@ describe('Controller: DeviceGraphCtrl', function () {
     controller,
     scope;
 
-  beforeEach(inject(function ($controller, $rootScope, _$httpBackend_, $window, $routeParams, graphService, sessionsByIp, sessionsBySrcIp, sessionsByDestIp) {
+  beforeEach(inject(function ($controller, $rootScope, _$httpBackend_, $window, $routeParams, graphService, ipSessionService) {
     scope = $rootScope.$new();
     mockBackend = _$httpBackend_;
     window = $window;
     controller = $controller;
     routeParams = $routeParams;
     graph = graphService;
-    byIp = sessionsByIp;
-    bySrcIp = sessionsBySrcIp;
-    byDestIp = sessionsByDestIp;
+    ipService = ipSessionService;
   }));
 
   it('retrieve all session details and draws graph', function () {
@@ -52,9 +50,8 @@ describe('Controller: DeviceGraphCtrl', function () {
       $scope: scope,
       $window: window,
       $routeParams: routeParams,
-      sessionsByIp: byIp,
-      sessionsBySrcIp: bySrcIp,
-      sessionsByDestIp: byDestIp
+      graphService: graph,
+      ipSessionService: ipService
     });
 
     expect(scope.filter).toEqual('all');
@@ -93,9 +90,8 @@ describe('Controller: DeviceGraphCtrl', function () {
       $scope: scope,
       $window: window,
       $routeParams: routeParams,
-      sessionsByIp: byIp,
-      sessionsBySrcIp: bySrcIp,
-      sessionsByDestIp: byDestIp
+      graphService: graph,
+      ipSessionService: ipService
     });
 
     expect(scope.filter).toEqual('all');
@@ -133,9 +129,8 @@ describe('Controller: DeviceGraphCtrl', function () {
       $scope: scope,
       $window: window,
       $routeParams: routeParams,
-      sessionsByIp: byIp,
-      sessionsBySrcIp: bySrcIp,
-      sessionsByDestIp: byDestIp
+      graphService: graph,
+      ipSessionService: ipService
     });
 
     expect(graph.showGraph.calls.length).toEqual(0);
@@ -164,9 +159,8 @@ describe('Controller: DeviceGraphCtrl', function () {
       $scope: scope,
       $window: window,
       $routeParams: routeParams,
-      sessionsByIp: byIp,
-      sessionsBySrcIp: bySrcIp,
-      sessionsByDestIp: byDestIp
+      graphService: graph,
+      ipSessionService: ipService
     });
 
     expect(graph.showGraph.calls.length).toEqual(0);
