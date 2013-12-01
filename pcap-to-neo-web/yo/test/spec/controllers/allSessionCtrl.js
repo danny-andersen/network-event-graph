@@ -75,7 +75,6 @@ describe('Controller: allSessionCtrl', function () {
 
     //Set up mocks
     spyOn(graph, 'initGraph');
-    spyOn(graph, 'clearGraph');
     spyOn(graph, 'plotDevices');
     spyOn(graph, 'startForceAtlas2');
     var params = '1.1.1.1?';
@@ -146,7 +145,6 @@ describe('Controller: allSessionCtrl', function () {
 
     //Set up mocks
     spyOn(graph, 'initGraph');
-    spyOn(graph, 'clearGraph');
     spyOn(graph, 'plotDevices');
     spyOn(graph, 'startForceAtlas2');
     pstr = '1.1.1.1?' + 'enddate=' + scope.sessionParams.end + '&startdate=' + scope.sessionParams.start;

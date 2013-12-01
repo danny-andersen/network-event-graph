@@ -48,7 +48,6 @@ angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($s
     $scope.data.devices = deviceModel.getDevices();
     devices = $scope.data.devices;
     graphService.initGraph();
-    graphService.clearGraph();
     graphService.plotDevices(devices, nodes);
 
     if ($scope.sessionParams.start !== undefined) {
