@@ -3,10 +3,6 @@
 angular.module('networkEventGraphApp', ['ui.bootstrap', 'ngResource', 'menuControllers', 'websiteResources'])
   .config(function ($routeProvider) {
     $routeProvider
-      .when('/', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl'
-      })
       .when('/allSessionGraph', {
         templateUrl: 'views/allSessionGraph.html',
         controller: 'allSessionCtrl'
@@ -36,6 +32,6 @@ angular.module('networkEventGraphApp', ['ui.bootstrap', 'ngResource', 'menuContr
         controller: 'deviceGraphCtrl'
       })
       .otherwise({
-        redirectTo: '/'
+        redirectTo: '/devices'
       });
   });

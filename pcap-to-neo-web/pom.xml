@@ -117,6 +117,22 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>pcap-to-neo-webapp</finalName>
+		<finalName>pcap-to-neo-web</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<webResources>
+						<resource>
+						<!-- 
+							<directory>yo/dist</directory>
+						 -->
+							<directory>yo/app</directory>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 </project>

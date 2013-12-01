@@ -115,6 +115,9 @@ angular.module('networkEventGraphApp').service('graphService', function () {
   };
 
   this.initGraph = function () {
+    //Reset graph by removing and then adding element
+    $('#sessionGraph').remove();
+    $('#sessionGraphParent').html('<div class="sigma-graph" id="sessionGraph" />');
     var element = document.getElementById('sessionGraph');
     //     var element = $('#sessionGraph');
     sigInst = sigma.init(element);
