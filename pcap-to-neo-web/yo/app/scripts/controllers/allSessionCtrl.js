@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($scope, $window, $timeout, $q, graphService, ipSessionService, deviceModel, deviceService) {
   $scope.data = {};
   $scope.sessionParams = {};
@@ -14,6 +16,7 @@ angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($s
     $scope.deviceCnt = devices.length;
     $scope.deviceLoading = false;
   };
+
   $scope.getDevices = function () {
     $scope.deviceLoading = true;
     $scope.data.devices = deviceService.deviceByIpAddr.query({
@@ -60,7 +63,13 @@ angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($s
     var plot;
     var ipAddr;
     $scope.retrieved = 0;
-    $scope.percentRetrieved = 0;
+    $scope.percentRetrieved = [{
+      'value': 0,
+      'type': 'success'
+    }, {
+      'value': 100,
+      'type': 'danger'
+    }];
     //Assume total requests equals the numbe of devices (one ipaddr per)
     $scope.totalRequests = devices.length;
     for (i = 0; i < devices.length; i++) {
@@ -78,11 +87,11 @@ angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($s
           var success = 100 * $scope.retrieved / $scope.totalRequests;
           var out = 100 - success;
           $scope.percentRetrieved = [{
-            "value": success,
-            "type": "success"
+            'value': success,
+            'type': 'success'
           }, {
-            "value": out,
-            "type": "danger"
+            'value': out,
+            'type': 'danger'
           }];
         });
         promises.push(plot.promise);

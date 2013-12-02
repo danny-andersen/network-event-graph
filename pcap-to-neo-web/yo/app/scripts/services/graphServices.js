@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('networkEventGraphApp').service('graphService', function () {
   var sigInst;
   var colours = {

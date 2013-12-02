@@ -90,7 +90,13 @@ describe('Controller: allSessionCtrl', function () {
     expect(scope.graphLoading).toEqual(true);
     expect(scope.data.devices).toEqual(devices);
     expect(scope.retrieved).toEqual(0);
-    expect(scope.percentRetrieved).toEqual(0);
+    expect(scope.percentRetrieved).toEqual([{
+      "value": 0,
+      "type": "success"
+    }, {
+      "value": 100,
+      "type": "danger"
+    }]);
     expect(graph.initGraph.calls.length).toEqual(1);
     expect(graph.plotDevices.calls.length).toEqual(1);
 
@@ -160,7 +166,13 @@ describe('Controller: allSessionCtrl', function () {
     expect(scope.graphLoading).toEqual(true);
     expect(scope.data.devices).toEqual(devices);
     expect(scope.retrieved).toEqual(0);
-    expect(scope.percentRetrieved).toEqual(0);
+    expect(scope.percentRetrieved).toEqual([{
+      'value': 0,
+      'type': 'success'
+    }, {
+      'value': 100,
+      'type': 'danger'
+    }]);
     expect(graph.initGraph.calls.length).toEqual(1);
     expect(graph.plotDevices.calls.length).toEqual(1);
 
