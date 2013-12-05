@@ -11,6 +11,9 @@ angular.module('networkEventGraphApp').service('graphService', function () {
 
   this.plotSessions = function ($scope, $window, nodes, edges, coreIpAddr, sessions) {
     //Show device node centrally
+    if (coreIpAddr === undefined) {
+      return;
+    }
     if (nodes[coreIpAddr] === undefined) {
       sigInst.addNode(coreIpAddr, {
         label: coreIpAddr,
@@ -20,6 +23,9 @@ angular.module('networkEventGraphApp').service('graphService', function () {
         size: 5
       });
       nodes[coreIpAddr] = true;
+    }
+    if (sessions === undefined || sessions.length === 0) {
+      return;
     }
     //Find max and min session size
     var maxCnt = -1;
@@ -174,6 +180,9 @@ angular.module('networkEventGraphApp').service('graphService', function () {
   this.showGraph = function ($scope, $window, sessions, coreIpAddr) {
     var nodes = {};
     var edges = {};
+    if (coreIpAddr === undefined || sessions === undefined || sessions.length === 0) {
+      return;
+    }
     this.initGraph();
     this.plotSessions($scope, $window, nodes, edges, coreIpAddr, sessions);
   };

@@ -1,6 +1,9 @@
 'use strict';
 
-angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($scope, $window, webSitesByIp, webSitesByHostname, ipSessionService) {
+angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($scope, $window, $timeout, webSitesByIp, webSitesByHostname, ipSessionService, graphService) {
+  $scope.showTable = true;
+  $scope.showGraph = false;
+  $scope.showChart = false;
 
   $scope.$watch('$parent.period.changed', function () {
     if ($scope.$parent.period !== undefined && $scope.$parent.period.changed) {
@@ -146,29 +149,41 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
         $scope.currentSessions = $scope.getsessionsByDestIp();
       }
     }
+    if ($scope.showGraph) {
+      graphService.showGraph($scope, $window, $scope.currentSessions, $scope.ipAddress);
+    }
     $scope.refresh = false;
+  };
+
+  $scope.filterSessions = function (direction) {
+    graphService.filterSessions(direction);
+  };
+
+  $scope.showSessionTable = function () {
+    $scope.showTable = true;
+    $scope.showGraph = false;
+    $scope.showChart = false;
+  };
+
+  $scope.showSessionChart = function () {
+    $scope.showTable = false;
+    $scope.showGraph = false;
+    $scope.showChart = true;
   };
 
   //Graphing
   $scope.showSessionGraph = function () {
-    var direction = 'both';
-    switch ($scope.activeTab) {
-    case $scope.navTabs.allTab:
-      direction = 'both';
-      break;
-    case $scope.navTabs.fromTab:
-      direction = 'from';
-      break;
-    case $scope.navTabs.toTab:
-      direction = 'to';
-      break;
-    }
-    var currentPath = $window.location.pathname;
-    var url = currentPath + '#/device/graph/' + $scope.sessionParams.ipAddr + '/' + direction;
-    if ($scope.sessionParams.start !== undefined && $scope.sessionParams.end !== undefined) {
-      url = url + '?start=' + $scope.sessionParams.start + '&end=' + $scope.sessionParams.end;
-    }
-    $window.location = url;
-    // $window.open(url);
+    $scope.showTable = false;
+    $scope.showGraph = true;
+    $scope.showChart = false;
+    $scope.filter = 'all';
+    graphService.showKey();
+    $timeout(function () {
+      //Do it in the timeout so that the DOM has updated and graph canvas is visible
+      if ($scope.currentSessions !== undefined && $scope.currentSessions.length !== 0) {
+        graphService.showGraph($scope, $window, $scope.currentSessions, $scope.ipAddress);
+      }
+    });
   };
+
 });

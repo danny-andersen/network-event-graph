@@ -34,7 +34,7 @@ describe('Controller: sessionTabCtrl', function () {
     });
   }));
 
-  it('retrieve websites By hostname when tab selected', function () {
+  it('retrieve websites by hostname when tab selected', function () {
     $scope.sessionParams = {};
     $scope.$parent.detail = {};
     $scope.$parent.detail.device = {};
@@ -60,7 +60,7 @@ describe('Controller: sessionTabCtrl', function () {
     expect($scope.detail.device.websites).toEqualData(websites);
   });
 
-  it('retrieve websites By Ip Address when tab selected', function () {
+  it('retrieve websites by Ip Address when tab selected', function () {
     $scope.$parent.detail = {};
     $scope.$parent.detail.device = {};
     $scope.sessionParams = {};
