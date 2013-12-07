@@ -70,6 +70,18 @@ angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($s
       'value': 100,
       'type': 'danger'
     }];
+    var updateProgress = function () {
+      $scope.retrieved++;
+      var success = 100 * $scope.retrieved / $scope.totalRequests;
+      var out = 100 - success;
+      $scope.percentRetrieved = [{
+        'value': success,
+        'type': 'success'
+      }, {
+        'value': out,
+        'type': 'danger'
+      }];
+    };
     //Assume total requests equals the numbe of devices (one ipaddr per)
     $scope.totalRequests = devices.length;
     for (i = 0; i < devices.length; i++) {
@@ -82,18 +94,7 @@ angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($s
         params.ipAddr = ipAddr;
         plot.ipAddr = ipAddr;
         plot.promise = ipSessionService.sessionsByIpHttp(params);
-        plot.promise.then(function () {
-          $scope.retrieved++;
-          var success = 100 * $scope.retrieved / $scope.totalRequests;
-          var out = 100 - success;
-          $scope.percentRetrieved = [{
-            'value': success,
-            'type': 'success'
-          }, {
-            'value': out,
-            'type': 'danger'
-          }];
-        });
+        plot.promise.then(updateProgress);
         promises.push(plot.promise);
         plots.push(plot);
       }
