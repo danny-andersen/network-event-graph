@@ -17,20 +17,25 @@ describe('Controller: sessionTabCtrl', function () {
   var sessionTabCtrl,
     mockBackend,
     window,
+    graph,
+    timeout,
     $scope;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($controller, $rootScope, _$httpBackend_, $window,
-    webSitesByIp, webSitesByHostname, ipSessionService) {
+    webSitesByIp, webSitesByHostname, ipSessionService, graphService, $timeout) {
     $scope = $rootScope.$new();
     mockBackend = _$httpBackend_;
     window = $window;
+    timeout = $timeout;
+    graph = graphService;
     sessionTabCtrl = $controller('sessionTabCtrl', {
       $scope: $scope,
       $window: $window,
       webSitesByIp: webSitesByIp,
       webSitesByHostname: webSitesByHostname,
-      ipSessionService: ipSessionService
+      ipSessionService: ipSessionService,
+      graphService: graphService
     });
   }));
 
@@ -347,44 +352,38 @@ describe('Controller: sessionTabCtrl', function () {
     expect($scope.detail.device.toSessions).toEqualData(sessions);
   });
 
-  it('set window to graph location for both', function () {
+  it('shows the session graph', function () {
+    $scope.ipAddress = '192.168.1.255';
     $scope.sessionParams = {
-      ipAddr: '192.168.1.255',
+      ipAddr: $scope.ipAddress,
       start: 23000,
       end: 1000000
     };
+
     $scope.activeTab = $scope.navTabs.allTab;
+    $scope.currentSessions = [{
+      id: 1
+    }, {
+      id: 2
+    }, {
+      id: 3
+    }];
+    spyOn(graph, 'showKey');
+    spyOn(graph, 'showGraph');
     //Call method under test
     $scope.showSessionGraph();
-    var url = '#/device/graph/' + $scope.sessionParams.ipAddr + '/' + 'both' + '?start=' + $scope.sessionParams.start + '&end=' + $scope.sessionParams.end;
-    expect(window.location.hash).toEqual(url);
+
+    expect(graph.showKey.calls.length).toEqual(1);
+    expect(graph.showGraph.calls.length).toEqual(0);
+
+    timeout.flush();
+
+    expect(graph.showGraph.calls.length).toEqual(1);
+    expect(graph.showGraph.calls[0].args[0]).toEqual($scope);
+    expect(graph.showGraph.calls[0].args[1]).toEqual(window);
+    expect(graph.showGraph.calls[0].args[2]).toEqualData($scope.currentSessions);
+    expect(graph.showGraph.calls[0].args[3]).toEqual($scope.sessionParams.ipAddr);
 
   });
 
-  it('set window to graph location for from', function () {
-    $scope.sessionParams = {
-      ipAddr: '192.168.1.255',
-      start: 23000,
-      end: 1000000
-    };
-    $scope.activeTab = $scope.navTabs.fromTab;
-    //Call method under test
-    $scope.showSessionGraph();
-    var url = '#/device/graph/' + $scope.sessionParams.ipAddr + '/' + 'from' + '?start=' + $scope.sessionParams.start + '&end=' + $scope.sessionParams.end;
-    expect(window.location.hash).toEqual(url);
-
-  });
-  it('set window to graph location for to', function () {
-    $scope.sessionParams = {
-      ipAddr: '192.168.1.255',
-      start: 23000,
-      end: 1000000
-    };
-    $scope.activeTab = $scope.navTabs.toTab;
-    //Call method under test
-    $scope.showSessionGraph();
-    var url = '#/device/graph/' + $scope.sessionParams.ipAddr + '/' + 'to' + '?start=' + $scope.sessionParams.start + '&end=' + $scope.sessionParams.end;
-    expect(window.location.hash).toEqual(url);
-
-  });
 });
