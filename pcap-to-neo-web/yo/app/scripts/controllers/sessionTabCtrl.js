@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($scope, $window, $timeout, webSitesByIp, webSitesByHostname, ipSessionService, graphService) {
+angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($scope, $window, $timeout, webSitesByIp, webSitesByHostname, ipSessionService, graphService, chartService) {
   $scope.showTable = true;
   $scope.showGraph = false;
   $scope.showChart = false;
@@ -169,6 +169,21 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
     $scope.showTable = false;
     $scope.showGraph = false;
     $scope.showChart = true;
+    var i, points = [];
+    for (i = 0; i < $scope.currentSessions.length; i++) {
+      var session = $scope.currentSessions[i];
+      var ip;
+      if (session.srcIpAddr !== $scope.ipAddress) {
+        ip = session.srcIpAddr;
+      } else {
+        ip = session.destIpAddr;
+      }
+      points.push({
+        'label': ip,
+        'size': session.numSessions
+      });
+    }
+    chartService.drawCircles('#sessionChart', 300, 300, points);
   };
 
   //Graphing

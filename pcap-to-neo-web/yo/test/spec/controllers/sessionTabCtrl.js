@@ -18,24 +18,27 @@ describe('Controller: sessionTabCtrl', function () {
     mockBackend,
     window,
     graph,
+    chart,
     timeout,
     $scope;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller, $rootScope, _$httpBackend_, $window,
-    webSitesByIp, webSitesByHostname, ipSessionService, graphService, $timeout) {
+  beforeEach(inject(function ($controller, $rootScope, _$httpBackend_, $window, $timeout,
+    webSitesByIp, webSitesByHostname, ipSessionService, graphService, chartService) {
     $scope = $rootScope.$new();
     mockBackend = _$httpBackend_;
     window = $window;
     timeout = $timeout;
     graph = graphService;
+    chart = chartService;
     sessionTabCtrl = $controller('sessionTabCtrl', {
       $scope: $scope,
       $window: $window,
       webSitesByIp: webSitesByIp,
       webSitesByHostname: webSitesByHostname,
       ipSessionService: ipSessionService,
-      graphService: graphService
+      graphService: graphService,
+      chartService: chart
     });
   }));
 
@@ -383,6 +386,42 @@ describe('Controller: sessionTabCtrl', function () {
     expect(graph.showGraph.calls[0].args[1]).toEqual(window);
     expect(graph.showGraph.calls[0].args[2]).toEqualData($scope.currentSessions);
     expect(graph.showGraph.calls[0].args[3]).toEqual($scope.sessionParams.ipAddr);
+
+  });
+
+  it('shows the session chart', function () {
+    $scope.ipAddress = '192.168.1.255';
+    $scope.currentSessions = [{
+      srcIpAddr: '192.168.1.255',
+      destIpAddr: '192.168.1.1',
+      numSessions: 20
+    }, {
+      srcIpAddr: '192.168.1.2',
+      destIpAddr: '192.168.1.255',
+      numSessions: 30
+    }, {
+      srcIpAddr: '192.168.1.4',
+      destIpAddr: '192.168.1.255',
+      numSessions: 40
+    }];
+    var points = [{
+      'label': '192.168.1.1',
+      'size': 20
+    }, {
+      'label': '192.168.1.2',
+      'size': 30
+    }, {
+      'label': '192.168.1.4',
+      'size': 40
+    }];
+
+    spyOn(chart, 'drawCircles');
+    //Call method under test
+    $scope.showSessionChart();
+
+    expect(chart.drawCircles.calls.length).toEqual(1);
+    expect(chart.drawCircles.calls[0].args[0]).toEqual('#sessionChart');
+    expect(chart.drawCircles.calls[0].args[3]).toEqual(points);
 
   });
 
