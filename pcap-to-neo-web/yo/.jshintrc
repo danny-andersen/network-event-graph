@@ -19,9 +19,21 @@
   "trailing": true,
   "smarttabs": true,
   "globals": {
+    "after": false,
+    "afterEach": false,
+    "angular": false,
+    "before": false,
+    "beforeEach": false,
+    "browser": false,
+    "describe": false,
+    "expect": false,
+    "inject": false,
+    "it": false,
+    "spyOn": false,
     "angular": false,
     "$": false,
     "jQuery": false,
-    "sigma": false
+    "sigma": false,
+    "d3": false
   }
 }

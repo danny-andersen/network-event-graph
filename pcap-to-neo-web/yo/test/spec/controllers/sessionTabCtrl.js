@@ -415,7 +415,7 @@ describe('Controller: sessionTabCtrl', function () {
       'size': 40
     }];
 
-    spyOn(chart, 'drawCircles');
+    spyOn(chart, 'drawBubble');
     //Call method under test
     $scope.showSessionChart();
 

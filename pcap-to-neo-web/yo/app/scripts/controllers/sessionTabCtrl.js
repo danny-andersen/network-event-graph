@@ -165,7 +165,7 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
     $scope.showChart = false;
   };
 
-  $scope.showSessionChart = function () {
+  $scope.showSessionChart = function (type) {
     $scope.showTable = false;
     $scope.showGraph = false;
     $scope.showChart = true;
@@ -174,16 +174,20 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
       var session = $scope.currentSessions[i];
       var ip;
       if (session.srcIpAddr !== $scope.ipAddress) {
-        ip = session.srcIpAddr;
+        ip = session.srcIpAddr + '-In';
       } else {
-        ip = session.destIpAddr;
+        ip = session.destIpAddr + '-Out';
       }
       points.push({
         'label': ip,
         'size': session.numSessions
       });
     }
-    chartService.drawCircles('#sessionChart', 300, 300, points);
+    if (type === 'bubble') {
+      chartService.drawBubble('#sessionChart', 500, 500, points);
+    } else if (type === 'circle') {
+      chartService.drawCircles('#sessionChart', 500, 500, points);
+    }
   };
 
   //Graphing
