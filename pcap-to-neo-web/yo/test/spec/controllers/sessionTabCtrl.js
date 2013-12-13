@@ -405,19 +405,19 @@ describe('Controller: sessionTabCtrl', function () {
       numSessions: 40
     }];
     var points = [{
-      'label': '192.168.1.1',
+      'label': '192.168.1.1-Out',
       'size': 20
     }, {
-      'label': '192.168.1.2',
+      'label': '192.168.1.2-In',
       'size': 30
     }, {
-      'label': '192.168.1.4',
+      'label': '192.168.1.4-In',
       'size': 40
     }];
 
-    spyOn(chart, 'drawBubble');
+    spyOn(chart, 'drawCircles');
     //Call method under test
-    $scope.showSessionChart();
+    $scope.showSessionChart('circle');
 
     expect(chart.drawCircles.calls.length).toEqual(1);
     expect(chart.drawCircles.calls[0].args[0]).toEqual('#sessionChart');

@@ -13,7 +13,7 @@ angular.module('networkEventGraphApp').service('chartService', function () {
 
   //Points is an array of {label, size}
   this.drawCircles = function (id, w, h, points) {
-    var i, svg = setSvg(id, w, h);
+    var svg = setSvg(id, w, h);
     var maxSize = d3.max(points, function (p) {
       return p.size;
     });
@@ -27,7 +27,7 @@ angular.module('networkEventGraphApp').service('chartService', function () {
     var edgeStep = dim / noEdges;
     rScale.range([edgeStep / 20, edgeStep / 2]);
     var colour = d3.scale.category20c();
-    var circles = svg.selectAll('circle')
+    svg.selectAll('circle')
       .data(points)
       .enter()
       .append('circle')
@@ -43,7 +43,7 @@ angular.module('networkEventGraphApp').service('chartService', function () {
           var mod = Math.floor(pos / noEdges);
           return (2 * mod + 1) * edgeStep / 2;
         },
-        'r': function (p, i) {
+        'r': function (p) {
           return rScale(p.size);
         }
       })
@@ -71,7 +71,7 @@ angular.module('networkEventGraphApp').service('chartService', function () {
       .sort(null)
       .size([w, h])
       .padding(1.5);
-    var format = d3.format(',d');
+    d3.format(',d');
     var colour = d3.scale.category20c();
     svg.attr('class', 'bubble');
     var node = svg.selectAll('.node')
