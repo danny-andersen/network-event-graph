@@ -169,19 +169,27 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
     $scope.showTable = false;
     $scope.showGraph = false;
     $scope.showChart = true;
-    var i, points = [];
+    var i, j, points = [];
     for (i = 0; i < $scope.currentSessions.length; i++) {
       var session = $scope.currentSessions[i];
-      var ip;
+      var ip, found = false;
       if (session.srcIpAddr !== $scope.ipAddress) {
-        ip = session.srcIpAddr + '-In';
+        ip = session.srcIpAddr;
       } else {
-        ip = session.destIpAddr + '-Out';
+        ip = session.destIpAddr;
       }
-      points.push({
-        'label': ip,
-        'size': session.numSessions
-      });
+      for (j = 0; j < points.length; j++) {
+        if (points[j].label === ip) {
+          points[j].size += session.numSessions;
+          found = true;
+        }
+      }
+      if (!found) {
+        points.push({
+          'label': ip,
+          'size': session.numSessions
+        });
+      }
     }
     if (type === 'bubble') {
       chartService.drawBubble('#sessionChart', 500, 500, points);

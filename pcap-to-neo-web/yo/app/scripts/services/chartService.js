@@ -95,7 +95,8 @@ angular.module('networkEventGraphApp').service('chartService', function () {
         if (d.name === 'root') {
           c = 'none';
         } else {
-          c = colour(d.name);
+          var parts = d.name.split('.');
+          c = colour(parts[0] + parts[1] + parts[2]);
         }
         return c;
       });
