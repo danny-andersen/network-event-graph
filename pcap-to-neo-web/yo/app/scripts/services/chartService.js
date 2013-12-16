@@ -27,29 +27,47 @@ angular.module('networkEventGraphApp').service('chartService', function () {
     var edgeStep = dim / noEdges;
     rScale.range([edgeStep / 20, edgeStep / 2]);
     var colour = d3.scale.category20c();
-    svg.selectAll('circle')
+    var nodes = svg.selectAll('.node')
       .data(points)
       .enter()
-      .append('circle')
-      .attr({
-        'cx': function (p, i) {
-          var pos = i;
-          var mod = Math.floor(pos / noEdges);
-          var rem = pos - (mod * noEdges);
-          return (2 * rem + 1) * edgeStep / 2;
-        },
-        'cy': function (p, i) {
-          var pos = i;
-          var mod = Math.floor(pos / noEdges);
-          return (2 * mod + 1) * edgeStep / 2;
-        },
-        'r': function (p) {
-          return rScale(p.size);
-        }
+      .append('g')
+      .attr('class', 'node')
+      .attr('transform', function (p, i) {
+        var pos = i;
+        var mod = Math.floor(pos / noEdges);
+        var rem = pos - (mod * noEdges);
+        var x = (2 * rem + 1) * edgeStep / 2;
+        var y = (2 * mod + 1) * edgeStep / 2;
+        return 'translate(' + x + ',' + y + ')';
+      });
+    nodes.append('title')
+      .text(function (p) {
+        return (p.label);
+      });
+    nodes.append('circle')
+      .attr('r', function (p) {
+        return rScale(p.size);
       })
       .style('fill', function (p) {
-        return colour(p.label);
+        var parts = p.label.split('.');
+        return colour(parts[0] + parts[1] + parts[2]);
       });
+    nodes.append('text')
+      .attr('dy', '1.5em')
+      .style('text-anchor', 'middle')
+      .text(function (p) {
+        // var parts = p.label.split('.');
+        // var str = parts[0].substring(0, p.r / 3);
+        // var str;
+        // if (rScale(p.size) > 10) {
+        //   //Just get the first network part
+        // } else {
+        //   str = '';
+        // }
+        return p.label.split('\n')[0];
+      });
+
+
   };
 
   var createHierarchy = function (points) {

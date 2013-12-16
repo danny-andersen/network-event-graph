@@ -400,18 +400,22 @@ describe('Controller: sessionTabCtrl', function () {
       destIpAddr: '192.168.1.255',
       numSessions: 30
     }, {
+      srcIpAddr: '192.168.1.255',
+      destIpAddr: '192.168.1.2',
+      numSessions: 15
+    }, {
       srcIpAddr: '192.168.1.4',
       destIpAddr: '192.168.1.255',
       numSessions: 40
     }];
     var points = [{
-      'label': '192.168.1.1-Out',
+      'label': '192.168.1.1\n20 sessions',
       'size': 20
     }, {
-      'label': '192.168.1.2-In',
-      'size': 30
+      'label': '192.168.1.2\n45 sessions',
+      'size': 45
     }, {
-      'label': '192.168.1.4-In',
+      'label': '192.168.1.4\n40 sessions',
       'size': 40
     }];
 

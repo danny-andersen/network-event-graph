@@ -179,14 +179,15 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
         ip = session.destIpAddr;
       }
       for (j = 0; j < points.length; j++) {
-        if (points[j].label === ip) {
+        if (points[j].label.search(ip) !== -1) {
           points[j].size += session.numSessions;
+          points[j].label = ip + '\n' + points[j].size + ' sessions';
           found = true;
         }
       }
       if (!found) {
         points.push({
-          'label': ip,
+          'label': ip + '\n' + session.numSessions + ' sessions',
           'size': session.numSessions
         });
       }
