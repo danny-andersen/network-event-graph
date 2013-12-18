@@ -122,12 +122,11 @@ angular.module('networkEventGraphApp').service('graphService', function () {
     }
   };
 
-  this.initGraph = function () {
+  this.initGraph = function (id) {
     //Reset graph by removing and then adding element
-    $('#sessionGraph').remove();
-    $('#sessionGraphParent').html('<div class="sigma-graph" id="sessionGraph" />');
-    var element = document.getElementById('sessionGraph');
-    //     var element = $('#sessionGraph');
+    $(id + '#sessionGraph').remove();
+    $(id + '#sessionGraphParent').html('<div class="sigma-graph" id="sessionGraph" />');
+    var element = $(id + '#sessionGraph')[0];
     sigInst = sigma.init(element);
     sigInst.emptyGraph();
     sigInst.refresh();
@@ -177,13 +176,13 @@ angular.module('networkEventGraphApp').service('graphService', function () {
     sigInst.draw();
   };
 
-  this.showGraph = function ($scope, $window, sessions, coreIpAddr) {
+  this.showGraph = function (id, $scope, $window, sessions, coreIpAddr) {
     var nodes = {};
     var edges = {};
     if (coreIpAddr === undefined || sessions === undefined || sessions.length === 0) {
       return;
     }
-    this.initGraph();
+    this.initGraph(id);
     this.plotSessions($scope, $window, nodes, edges, coreIpAddr, sessions);
   };
 

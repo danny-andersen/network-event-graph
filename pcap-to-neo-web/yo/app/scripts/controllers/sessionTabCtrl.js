@@ -4,6 +4,7 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
   $scope.showTable = true;
   $scope.showGraph = false;
   $scope.showChart = false;
+  $scope.currentSessions = [];
 
   $scope.$watch('$parent.period.changed', function () {
     if ($scope.$parent.period !== undefined && $scope.$parent.period.changed) {
@@ -19,6 +20,16 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
       $scope.$parent.detail.device.toSessions = [];
       $scope.$parent.detail.device.fromSessions = [];
       $scope.$parent.period.changed = false;
+    }
+  });
+
+  $scope.$watch('loading', function () {
+    if ($scope.loading === false && $scope.currentSessions.length > 0) {
+      if ($scope.showGraph) {
+        $scope.showSessionGraph();
+      } else if ($scope.showChart) {
+        $scope.showSessionChart($scope.currentChartType);
+      }
     }
   });
 
@@ -149,9 +160,6 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
         $scope.currentSessions = $scope.getsessionsByDestIp();
       }
     }
-    if ($scope.showGraph) {
-      graphService.showGraph($scope, $window, $scope.currentSessions, $scope.ipAddress);
-    }
     $scope.refresh = false;
   };
 
@@ -169,6 +177,7 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
     $scope.showTable = false;
     $scope.showGraph = false;
     $scope.showChart = true;
+    $scope.currentChartType = type;
     var i, j, points = [];
     for (i = 0; i < $scope.currentSessions.length; i++) {
       var session = $scope.currentSessions[i];
@@ -192,10 +201,18 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
         });
       }
     }
-    if (type === 'bubble') {
-      chartService.drawBubble('#sessionChart', 500, 500, points);
-    } else if (type === 'circle') {
-      chartService.drawCircles('#sessionChart', 500, 500, points);
+    var selector = ' #sessionChart';
+    if ($scope.direction === 'from/to') {
+      selector = '.all' + selector;
+    } else {
+      selector = '.' + $scope.direction + selector;
+    }
+    if ($scope.currentSessions.length > 0) {
+      if (type === 'bubble') {
+        chartService.drawBubble(selector, 500, 500, points);
+      } else if (type === 'circle') {
+        chartService.drawCircles(selector, 500, 500, points);
+      }
     }
   };
 
@@ -206,10 +223,12 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
     $scope.showChart = false;
     $scope.filter = 'all';
     graphService.showKey();
+    $scope.fireGraph = true;
     $timeout(function () {
       //Do it in the timeout so that the DOM has updated and graph canvas is visible
-      if ($scope.currentSessions !== undefined && $scope.currentSessions.length !== 0) {
-        graphService.showGraph($scope, $window, $scope.currentSessions, $scope.ipAddress);
+      if ($scope.fireGraph && $scope.currentSessions !== undefined && $scope.currentSessions.length !== 0) {
+        $scope.fireGraph = false;
+        graphService.showGraph('.active ', $scope, $window, $scope.currentSessions, $scope.ipAddress);
       }
     });
   };

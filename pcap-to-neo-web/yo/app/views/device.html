@@ -34,14 +34,14 @@
     				<td><ul class="list-unstyled" ng-repeat="device in website.devices">{{device.hostName}}</ul></td>
     		</table>
     </tab>
-    <tab heading="All Sessions" select="setSessions(navTabs.allTab)" active="navTabs.tabs[navTabs.allTab].active">
-	     	 <div ng-include src="navTabs.tabs[navTabs.allTab].url" ></div>
+    <tab heading="All Sessions" select="setSessions(navTabs.allTab)" active="navTabs.tabs[navTabs.allTab].active" >
+	     	 <div ng-include src="navTabs.tabs[navTabs.allTab].url" class="all"></div>
     </tab>
     <tab heading="Outgoing Sessions" select="setSessions(navTabs.fromTab)" active="navTabs.tabs[navTabs.fromTab].active">
-	     	 <div ng-include src="navTabs.tabs[navTabs.fromTab].url"></div>
+	     	 <div ng-include src="navTabs.tabs[navTabs.fromTab].url" class="from"></div>
     </tab>
     <tab heading="Incoming Sessions" select="setSessions(navTabs.toTab)" active="navTabs.tabs[navTabs.toTab].active">
-     	 <div ng-include src="navTabs.tabs[navTabs.toTab].url"></div>
+     	 <div ng-include src="navTabs.tabs[navTabs.toTab].url" class="to"></div>
     </tab>
   </tabset>
 </div>			

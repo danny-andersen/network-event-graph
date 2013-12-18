@@ -357,6 +357,7 @@ describe('Controller: sessionTabCtrl', function () {
 
   it('shows the session graph', function () {
     $scope.ipAddress = '192.168.1.255';
+    $scope.loading = true;
     $scope.sessionParams = {
       ipAddr: $scope.ipAddress,
       start: 23000,
@@ -382,15 +383,17 @@ describe('Controller: sessionTabCtrl', function () {
     timeout.flush();
 
     expect(graph.showGraph.calls.length).toEqual(1);
-    expect(graph.showGraph.calls[0].args[0]).toEqual($scope);
-    expect(graph.showGraph.calls[0].args[1]).toEqual(window);
-    expect(graph.showGraph.calls[0].args[2]).toEqualData($scope.currentSessions);
-    expect(graph.showGraph.calls[0].args[3]).toEqual($scope.sessionParams.ipAddr);
+    expect(graph.showGraph.calls[0].args[0]).toEqual('.active ');
+    expect(graph.showGraph.calls[0].args[1]).toEqual($scope);
+    expect(graph.showGraph.calls[0].args[2]).toEqual(window);
+    expect(graph.showGraph.calls[0].args[3]).toEqualData($scope.currentSessions);
+    expect(graph.showGraph.calls[0].args[4]).toEqual($scope.sessionParams.ipAddr);
 
   });
 
   it('shows the session chart', function () {
     $scope.ipAddress = '192.168.1.255';
+    $scope.direction = 'from/to';
     $scope.currentSessions = [{
       srcIpAddr: '192.168.1.255',
       destIpAddr: '192.168.1.1',
@@ -424,7 +427,7 @@ describe('Controller: sessionTabCtrl', function () {
     $scope.showSessionChart('circle');
 
     expect(chart.drawCircles.calls.length).toEqual(1);
-    expect(chart.drawCircles.calls[0].args[0]).toEqual('#sessionChart');
+    expect(chart.drawCircles.calls[0].args[0]).toEqual('.all #sessionChart');
     expect(chart.drawCircles.calls[0].args[3]).toEqual(points);
 
   });
