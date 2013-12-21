@@ -23,7 +23,7 @@
 
 	<camel:camelContext id="camel1" >
 		<camel:route>
-			<camel:from uri="file:///home/danny/pcapIn?include=.*.pcap&amp;recursive=true&amp;readLock=changed&amp;delete=true" />
+			<camel:from uri="file:///home/danny/pcapIn/pcap?include=.*.pcap&amp;recursive=true&amp;readLock=changed&amp;delete=true" />
 			<camel:bean ref="pcapImportBean" method="parseFile"/>
 		</camel:route>
 	</camel:camelContext>
