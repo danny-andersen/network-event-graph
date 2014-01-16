@@ -8,9 +8,7 @@
 		<groupId>com.dsa</groupId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
-	<groupId>com.dsa</groupId>
 	<artifactId>pcap-to-neo-rest</artifactId>
-	<version>1.0-SNAPSHOT</version>
 	<name>pcap-to-neo-rest</name>
 	<url>http://maven.apache.org</url>
 	<properties>
@@ -22,6 +20,24 @@
 			<artifactId>pcap-to-neo-domain</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+	<!-- Failed attempt at getting Neo server working in embedded mode
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.10</version>
+		</dependency>
+		<dependency>
+			<groupId>org.neo4j.app</groupId>
+			<artifactId>neo4j-server</artifactId>
+			<version>1.9.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.neo4j.app</groupId>
+			<artifactId>neo4j-server</artifactId>
+			<classifier>static-web</classifier>
+			<version>1.9.3</version>
+		</dependency>
+	 -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>

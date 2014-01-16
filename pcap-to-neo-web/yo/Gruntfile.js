@@ -403,9 +403,18 @@ module.exports = function (grunt) {
     'usemin'
   ]);
 
-  grunt.registerTask('default', [
+  grunt.registerTask('quickBuild', [
+    'clean:dist',
+    'copy:dist'
+  ]);
+
+  grunt.registerTask('full', [
     'jshint',
     'test',
     'build'
+  ]);
+
+  grunt.registerTask('default', [
+    'quickBuild'
   ]);
 };

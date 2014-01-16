@@ -8,9 +8,7 @@
 		<groupId>com.dsa</groupId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
-	<groupId>com.dsa</groupId>
 	<artifactId>pcap-to-neo-web</artifactId>
-	<version>1.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>pcap-to-neo-web Maven Webapp</name>
 	<url>http://maven.apache.org</url>
@@ -119,6 +117,20 @@
 	<build>
 		<finalName>pcap-to-neo-web</finalName>
 		<plugins>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>yo/dist</directory>
+						</fileset>
+						<fileset>
+							<directory>yo/.tmp</directory>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>com.github.trecloux</groupId>
 				<artifactId>yeoman-maven-plugin</artifactId>
