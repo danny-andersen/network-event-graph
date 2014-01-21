@@ -6,6 +6,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,6 +21,8 @@ import com.dsa.pcapneo.domain.graph.Device;
 import com.dsa.pcapneo.domain.graph.DeviceType;
 import com.dsa.pcapneo.domain.graph.HttpSession;
 import com.dsa.pcapneo.domain.graph.IpAddress;
+import com.dsa.pcapneo.domain.graph.IpSession;
+import com.dsa.pcapneo.domain.graph.Port;
 import com.dsa.pcapneo.domain.graph.User;
 import com.dsa.pcapneo.domain.graph.WebSite;
 
@@ -282,5 +285,62 @@ public class DeviceRepositoryTest {
 		}
 		assertThat(devs.size(), is(2));
 		assertThat(devs, hasItems("test1", "test3"));
+	}
+	
+	@Test
+	@Transactional
+	public void findDevicesByPort() {
+		Device device = new Device("test1", template.save(new DeviceType(
+				"laptop")), template.save(new User("user1")));
+		Device dev2 = new Device("test2",
+				template.save(new DeviceType("laptop")),
+				template.save(new User("user1")));
+		Device dev3 = new Device("test3",
+				template.save(new DeviceType("laptop2")),
+				template.save(new User("user1")));
+		Device dev4 = new Device("test4",
+				template.save(new DeviceType("laptop3")),
+				template.save(new User("user1")));
+		template.save(device);
+		template.save(dev2);
+		template.save(dev3);
+		template.save(dev4);
+		Port port = template.save(new Port(1000));
+		Port port2 = template.save(new Port(2000));
+		Port port3 = template.save(new Port(3000));
+
+		IpSession ip = new IpSession(this.factory);
+		ip.setDestPort(port);
+		ip.setSrcPort(port2);
+		ip.setFromDevice(device);
+		ip.setToDevice(dev2);
+		template.save(ip);
+		ip = new IpSession(this.factory);
+		ip.setToDevice(dev2);
+		ip.setFromDevice(dev3);
+		ip.setDestPort(port);
+		ip.setSrcPort(port3);
+		template.save(ip);
+		ip = new IpSession(this.factory);
+		ip.setToDevice(dev2);
+		ip.setFromDevice(dev3);
+		ip.setDestPort(port);
+		ip.setSrcPort(port3);
+		template.save(ip);
+		Iterable<Map<String,Object>> res = deviceRepository.getDevicesConnectedToPort(port);
+		List<Device> devices = new ArrayList<Device>();
+		List<Integer> sess = new ArrayList<Integer>();
+		for (Map<String,Object> r : res) {
+			Device dev = template.convert(r.get("device"), Device.class);
+			devices.add(dev);
+			sess.add(template.convert(r.get("numSessions"), Integer.class));
+		}
+		assertThat(devices.size(), is(3));
+		assertThat(devices.get(0).getDeviceId(), is(dev2.getDeviceId()));
+		assertThat(sess.get(0), is(3));
+		assertThat(devices.get(1).getDeviceId(), is(dev3.getDeviceId()));
+		assertThat(sess.get(1), is(2));
+		assertThat(devices.get(2).getDeviceId(), is(device.getDeviceId()));
+		assertThat(sess.get(2), is(1));
 	}
 }

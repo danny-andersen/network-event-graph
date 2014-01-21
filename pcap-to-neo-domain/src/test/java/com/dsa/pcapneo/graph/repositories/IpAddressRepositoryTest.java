@@ -43,4 +43,25 @@ public class IpAddressRepositoryTest {
 		assertThat(addrs, hasItems("192.168.1.1", "192.168.1.2"));
 	}
 
+	@Transactional
+	@Test
+	public void findAllIpAddresses() {
+		String ip1 = "192.168.1.1";
+		String ip2 = "83.33.1.2";
+		String ip3 = "10.168.1.3";
+		String ip4 = "1.1.1.4";
+		template.save(new IpAddress(ip1));
+		template.save(new IpAddress(ip2));
+		template.save(new IpAddress(ip3));
+		template.save(new IpAddress(ip4));
+		
+		//Find ips
+		Iterable<IpAddress> res = ipAddressRepository.findByIpAddrLike("*");
+		List<String> addrs = new ArrayList<String>();
+		for (IpAddress addr : res) {
+			addrs.add(addr.getIpAddr());
+		}
+		assertThat(addrs.size(), is(4));
+		assertThat(addrs, hasItems("192.168.1.1", "83.33.1.2", "10.168.1.3", "1.1.1.4"));
+	}
 }

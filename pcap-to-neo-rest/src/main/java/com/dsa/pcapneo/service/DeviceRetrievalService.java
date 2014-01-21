@@ -1,6 +1,7 @@
 package com.dsa.pcapneo.service;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.dsa.pcapneo.domain.graph.Device;
 import com.dsa.pcapneo.domain.graph.IpAddress;
+import com.dsa.pcapneo.domain.graph.Port;
 import com.dsa.pcapneo.graph.repositories.DeviceRepository;
 import com.dsa.pcapneo.graph.repositories.IpAddressRepository;
 
@@ -21,7 +23,45 @@ public class DeviceRetrievalService {
 	
 	public Device[] getDevicesByHostname(String hostname) {
 		Device[] devices = null;
+		//TODO: Complete
 		return devices;
+	}
+	
+	/**
+	 * Returns the local devices that pass a K core decomposition
+	 * where K is at least the number of edges that each connected 
+	 * device has to other devices (by IP sessions)
+	 * 
+	 * @param kCore The number of edges that each graph must have
+	 * @param port Optional. Set to 0 if dont care, 
+	 * otherwise filter all device edges by the given port
+	 * @return all matching devices
+	 */
+	public Device[] getLocalDevicesByKCore(int kCore, int port) {
+		Set<Device> devices = new HashSet<Device>();
+		//TODO: Complete this
+		//First get all local devices as start points
+		Iterable<Device> local = repo.getLocalDevices();
+		for (Device d : local) {
+			//For each device, check edges from / to other devices
+			Set<Device> connected = getConnectedDevices(d);
+			if (connected.size() >= kCore) {
+				//Check that connected devices are part of the sub-graph
+				//in that they have >= kCore edges
+			}
+			devices.add(d);
+		}
+		
+		return devices.toArray(new Device[devices.size()]);
+	}
+
+	private Set<Device> getConnectedDevices(Device d) {
+		Iterable<Device> c = repo.getDevicesConnectedToDevice(d);
+		Set<Device> connected = new HashSet<Device>();
+		for (Device dc : c) {
+			connected.add(dc);
+		}
+		return connected;
 	}
 	
 	public Device[] getDevicesByIpAddr(String ipaddr) {
