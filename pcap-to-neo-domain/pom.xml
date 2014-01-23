@@ -6,10 +6,8 @@
 		<artifactId>pcap-to-neo-parent</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
-	<groupId>com.dsa</groupId>
 	<artifactId>pcap-to-neo-domain</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0-SNAPSHOT</version>
 	<name>pcap-to-neo-domain</name>
 	<url>http://maven.apache.org</url>
 	<properties>
