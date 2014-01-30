@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -327,7 +328,7 @@ public class DeviceRepositoryTest {
 		ip.setDestPort(port);
 		ip.setSrcPort(port3);
 		template.save(ip);
-		Iterable<Map<String,Object>> res = deviceRepository.getDevicesConnectedToPort(port);
+		Iterable<Map<String,Object>> res = deviceRepository.getDevicesUsingPort(port, 0, new Date().getTime());
 		List<Device> devices = new ArrayList<Device>();
 		List<Integer> sess = new ArrayList<Integer>();
 		for (Map<String,Object> r : res) {

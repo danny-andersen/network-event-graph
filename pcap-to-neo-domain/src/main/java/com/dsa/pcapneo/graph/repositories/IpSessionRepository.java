@@ -5,6 +5,7 @@ import org.springframework.data.neo4j.repository.CypherDslRepository;
 import org.springframework.data.neo4j.repository.GraphRepository;
 
 import com.dsa.pcapneo.domain.graph.IpSession;
+import com.dsa.pcapneo.domain.graph.Port;
 
 public interface IpSessionRepository extends GraphRepository<IpSession>, CypherDslRepository<IpSession> {
 
@@ -31,4 +32,11 @@ public interface IpSessionRepository extends GraphRepository<IpSession>, CypherD
 			"WHERE ip.startTime >= {2} AND ip.startTime <= {3} AND destIp.ipAddr = {1} " +
 			"RETURN ip;")
 	public Iterable<IpSession> getIpSessionsByIpAddr(String ipaddr, String destIp, long startTime, long endTime);
+	
+	@Query ("START port=node({0})" +
+			"MATCH port-[:CONNECTS_FROM_PORT|CONNECTS_TO_PORT]-s " +
+			"AND s.startTime >= {1} AND s.startTime <= {2} " +
+			"RETURN s")
+	public Iterable<IpSession> findSessionsByPort(Port port, long startTime, long endTime);
+
 }

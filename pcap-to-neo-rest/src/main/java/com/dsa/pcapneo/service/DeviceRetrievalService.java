@@ -2,6 +2,7 @@ package com.dsa.pcapneo.service;
 
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -12,14 +13,17 @@ import org.springframework.stereotype.Component;
 import com.dsa.pcapneo.domain.graph.Device;
 import com.dsa.pcapneo.domain.graph.IpAddress;
 import com.dsa.pcapneo.domain.graph.Port;
+import com.dsa.pcapneo.domain.session.PortUsage;
 import com.dsa.pcapneo.graph.repositories.DeviceRepository;
 import com.dsa.pcapneo.graph.repositories.IpAddressRepository;
+import com.dsa.pcapneo.graph.repositories.PortRepository;
 
 @Component
 public class DeviceRetrievalService {
 	@Autowired Neo4jTemplate template;
 	@Autowired DeviceRepository repo;
 	@Autowired IpAddressRepository ipaddrRepo;
+	@Autowired PortRepository portRepo;
 	
 	public Device[] getDevicesByHostname(String hostname) {
 		Device[] devices = null;
@@ -65,17 +69,7 @@ public class DeviceRetrievalService {
 	}
 	
 	public Device[] getDevicesByIpAddr(String ipaddr) {
-		Set<Device> devSet = new TreeSet<Device>(new Comparator<Device>() {
-
-			@Override
-			public int compare(Device o1, Device o2) {
-				if (o1.getHostName() != null && o2.getHostName() != null) {
-					return o1.getHostName().compareTo(o2.getHostName());
-				}
-				return o1.getDeviceId().compareTo(o2.getDeviceId());
-			}
-			
-		});
+		Set<Device> devSet = getDeviceSet();
 		//Find matching ipddrs
 		Iterable<IpAddress> ipaddrs = ipaddrRepo.findByIpAddrLike(ipaddr);
 		for (IpAddress addr : ipaddrs) {
@@ -84,18 +78,18 @@ public class DeviceRetrievalService {
 		return devSet.toArray(new Device[devSet.size()]);
 	}
 
-	public Device[] getLocalOrRemoteDevices(boolean local) {
-		Set<Device> devSet = new TreeSet<Device>(new Comparator<Device>() {
+	public Device[] getDevicesUsingPort(int portNo, long startDate, long endDate) {
+		Set<Device> devSet = getDeviceSet();
+		Iterable<Port> port = portRepo.findByPort(portNo);
+		Iterable<Map<String, Object>> devIter = repo.getDevicesUsingPort(port.iterator().next(), startDate, endDate);
+		for (Map<String, Object> dev : devIter) {
+			devSet.add(template.convert(dev.get("device"), Device.class));
+		}
+		return devSet.toArray(new Device[devSet.size()]);
+	}
 
-			@Override
-			public int compare(Device o1, Device o2) {
-				if (o1.getHostName() != null && o2.getHostName() != null) {
-					return o1.getHostName().compareTo(o2.getHostName());
-				}
-				return o1.getDeviceId().compareTo(o2.getDeviceId());
-			}
-			
-		});
+	public Device[] getLocalOrRemoteDevices(boolean local) {
+		Set<Device> devSet = getDeviceSet();
 		Iterable<Device> devIter = null;
 		if (local) {
 			devIter = repo.getLocalDevices();
@@ -128,4 +122,19 @@ public class DeviceRetrievalService {
 		return devices;
 	}
 	
+	private Set<Device> getDeviceSet() {
+		return new TreeSet<Device>(new Comparator<Device>() {
+
+			@Override
+			public int compare(Device o1, Device o2) {
+				if (o1.getHostName() != null && o2.getHostName() != null) {
+					return o1.getHostName().compareTo(o2.getHostName());
+				}
+				return o1.getDeviceId().compareTo(o2.getDeviceId());
+			}
+			
+		});
+
+	}
+	 
 }

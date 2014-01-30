@@ -29,10 +29,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 @Path("/session/ip")
 @Api(value="/session/ip", description="Find and retrieve IP Sessions")
 @Produces(MediaType.APPLICATION_JSON)
-public class IpSessionResource {
+public class IpSessionResource extends Resource {
 	private static final Log log = LogFactory.getLog(IpSessionResource.class);
-	public static final String DATE_FORMAT_LONG = "YYYY-MM-dd'T'HH:mm:ss";
-	public static final String DATE_FORMAT_SHORT = "YYYY-MM-dd";
 	@Autowired
 	SessionRetrievalService sessionService;
 
@@ -168,32 +166,4 @@ public class IpSessionResource {
 		return sessions;
 	}
 
-	private long parseDateString(String startDate, long def) {
-		long start = def;
-		//See if is a long date
-		if (startDate != null && !startDate.isEmpty()) {
-			try {
-				start = Long.parseLong(startDate);
-			} catch (NumberFormatException ne) {
-				//Not a number - must be a date string
-				SimpleDateFormat format = null;
-				if (startDate.length() == DATE_FORMAT_LONG.length()) {
-					format = new SimpleDateFormat(DATE_FORMAT_LONG);
-				} else if (startDate.length() == DATE_FORMAT_SHORT.length()) {
-					format = new SimpleDateFormat(DATE_FORMAT_SHORT);
-				}
-				if (format != null) {
-					try {
-						Date date = format.parse(startDate);
-						start = date.getTime();
-					} catch (ParseException pe) {
-						log.error("Invalid date format: " + startDate);
-						throw new ParamException.QueryParamException(pe, startDate,
-								"Invalid date format");
-					}
-				}
-			}
-		}
-		return start;
-	}
 }
