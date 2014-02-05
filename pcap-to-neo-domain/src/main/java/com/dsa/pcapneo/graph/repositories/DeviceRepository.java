@@ -9,6 +9,7 @@ import com.dsa.pcapneo.domain.graph.Device;
 import com.dsa.pcapneo.domain.graph.DeviceType;
 import com.dsa.pcapneo.domain.graph.IpAddress;
 import com.dsa.pcapneo.domain.graph.Port;
+import com.dsa.pcapneo.domain.graph.Protocol;
 import com.dsa.pcapneo.domain.graph.User;
 import com.dsa.pcapneo.domain.graph.WebSite;
 
@@ -66,4 +67,11 @@ public interface DeviceRepository extends GraphRepository<Device> {
 			"WHERE s.startTime >= {1} AND s.startTime <= {2} " +
 			"RETURN DISTINCT device, count(s) AS numSessions ORDER BY numSessions DESC")
 	public Iterable<Map<String, Object>> getDevicesUsingPort(Port port, long startTime, long endTime);
+
+	@Query ("START proto=node({0}) " +
+			"MATCH proto-[:VIA_PROTOCOL]-s-" +
+			"[:CONNECTS_TO_DEVICE|CONNECTS_FROM_DEVICE]-device " +
+			"WHERE s.startTime >= {1} AND s.startTime <= {2} " +
+			"RETURN DISTINCT device, count(s) AS numSessions ORDER BY numSessions DESC")
+	public Iterable<Map<String, Object>> getDevicesConnectedViaProtocol(Protocol proto, long startTime, long endTime);
 }
