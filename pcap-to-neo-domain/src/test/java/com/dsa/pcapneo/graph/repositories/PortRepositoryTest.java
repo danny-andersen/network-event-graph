@@ -1,5 +1,6 @@
 package com.dsa.pcapneo.graph.repositories;
 
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -246,19 +247,18 @@ public class PortRepositoryTest {
 		ip.setFromDevice(dev3);
 		template.save(ip);
 		Iterable<Map<String,Object>> res = portRepository.findAllPortDeviceUsage();
-		List<Port> ports = new ArrayList<Port>();
+		List<Integer> ports = new ArrayList<Integer>();
 		List<Integer> devs = new ArrayList<Integer>();
 		for (Map<String,Object> r : res) {
 			Port p = template.convert(r.get("port"), Port.class);
-			ports.add(p);
+			ports.add(p.getPort());
 			devs.add(template.convert(r.get("numDevices"), Integer.class));
 		}
 		assertThat(ports.size(), is(3));
-		assertThat(ports.get(0).getPort(), is(port.getPort()));
+		assertThat(ports.get(0), is(port.getPort()));
 		assertThat(devs.get(0), is(3));
-		assertThat(ports.get(1).getPort(), is(port2.getPort()));
+		assertThat(ports, hasItems(1000, 2000, 3000));
 		assertThat(devs.get(1), is(2));
-		assertThat(ports.get(2).getPort(), is(port3.getPort()));
-		assertThat(devs.get(1), is(2));
+		assertThat(devs.get(2), is(2));
 	}
 }

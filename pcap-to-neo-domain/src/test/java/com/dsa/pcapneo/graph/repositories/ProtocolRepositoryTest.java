@@ -237,4 +237,71 @@ public class ProtocolRepositoryTest {
 		assertThat(protoNames, hasItems("ip", "udp"));
 		assertThat(sess.get(0), is(1));
 	}
+
+	@Test
+	@Transactional
+	public void findProtocolUsageByDevice() {
+		Device device = new Device("test1", template.save(new DeviceType(
+				"laptop")), template.save(new User("user1")));
+		Device dev2 = new Device("test2",
+				template.save(new DeviceType("laptop")),
+				template.save(new User("user1")));
+		Device dev3 = new Device("test3", template.save(new DeviceType(
+				"laptop2")), template.save(new User("user1")));
+		Device dev4 = new Device("test4", template.save(new DeviceType(
+				"laptop3")), template.save(new User("user1")));
+		template.save(device);
+		template.save(dev2);
+		template.save(dev3);
+		template.save(dev4);
+		Protocol protoIp = template.save(new Protocol("ip"));
+		Protocol protoTcp = template.save(new Protocol("tcp"));
+		Protocol protoUdp = template.save(new Protocol("udp"));
+		Port port = template.save(new Port(1000));
+		Port port2 = template.save(new Port(2000));
+		Port port3 = template.save(new Port(3000));
+		Port port4 = template.save(new Port(900));
+
+		IpSession ip = new IpSession(this.factory);
+		Set<Protocol> protos = new HashSet<Protocol>();
+		protos.add(protoIp);
+		protos.add(protoTcp);
+		ip.setProtocols(protos);
+		ip.setFromDevice(device);
+		ip.setToDevice(dev2);
+		ip.setDestPort(port);
+		ip.setSrcPort(port2);
+		template.save(ip);
+		ip = new IpSession(this.factory);
+		ip.setToDevice(dev2);
+		ip.setFromDevice(dev3);
+		ip.setDestPort(port2);
+		ip.setSrcPort(port3);
+		protos = new HashSet<Protocol>();
+		protos.add(protoIp);
+		protos.add(protoTcp);
+		ip.setProtocols(protos);
+		template.save(ip);
+		ip = new IpSession(this.factory);
+		ip.setToDevice(dev2);
+		ip.setFromDevice(dev3);
+		ip.setDestPort(port2);
+		ip.setSrcPort(port4);
+		protos = new HashSet<Protocol>();
+		protos.add(protoIp);
+		protos.add(protoUdp);
+		ip.setProtocols(protos);
+		template.save(ip);
+		Iterable<Map<String, Object>> res = protoRepo.findProtocolUsageByDevice(device, 0, new Date().getTime());
+		List<String> protocols = new ArrayList<String>();
+		List<Integer> sess = new ArrayList<Integer>();
+		for (Map<String, Object> r : res) {
+			Protocol p = template.convert(r.get("proto"), Protocol.class);
+			protocols.add(p.getName());
+			sess.add(template.convert(r.get("numSessions"), Integer.class));
+		}
+		assertThat(protocols.size(), is(2));
+		assertThat(protocols, hasItems("ip", "tcp"));
+		assertThat(sess, hasItems(1, 1));
+	}
 }

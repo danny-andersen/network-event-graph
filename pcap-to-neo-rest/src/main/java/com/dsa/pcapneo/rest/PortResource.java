@@ -22,7 +22,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 
 @Component
 @Path("/port")
-@Api(value="/port", description="Find and retrieve Ports")
+@Api(value="/port", description="Find and retrieve Port usage")
 @Produces(MediaType.APPLICATION_JSON)
 public class PortResource extends Resource {
 	private static final Log log = LogFactory.getLog(DeviceResource.class);
