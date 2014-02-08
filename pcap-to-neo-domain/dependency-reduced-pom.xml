@@ -6,10 +6,8 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.dsa</groupId>
   <artifactId>pcap-to-neo-domain</artifactId>
   <name>pcap-to-neo-domain</name>
-  <version>1.0-SNAPSHOT</version>
   <url>http://maven.apache.org</url>
   <build>
     <plugins>
