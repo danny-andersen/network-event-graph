@@ -1,9 +1,13 @@
 package com.dsa.pcapneo.rest;
 
+import java.util.Date;
+
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.logging.Log;
@@ -23,7 +27,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Path("/device")
 @Api(value="/device", description="Find and retrieve Devices")
 @Produces(MediaType.APPLICATION_JSON)
-public class DeviceResource {
+public class DeviceResource extends Resource {
 	private static final Log log = LogFactory.getLog(DeviceResource.class);
 
 	@Autowired
@@ -34,13 +38,10 @@ public class DeviceResource {
 	@ApiOperation(value="Find Devices by hostname search string", notes="Enter a hostname or a host search expression")
 	public Device[] getDevicesByHostname(
 			@ApiParam(value="hostname search string - if not set * is assumed", required = false)
-			@PathParam("hostname") 
+			@DefaultValue("*") @PathParam("hostname") 
 			String hostname) {
 		Device[] devices = null;
 		long start = System.currentTimeMillis();
-		if (hostname == null) {
-			hostname = "*";
-		}
 		devices = deviceService.getDevicesByHostname(hostname);
 		log.info(String.format(
 				"Retrieved %d devices for hostname: %s in %d ms",
@@ -109,6 +110,19 @@ public class DeviceResource {
 		Device[] devices = deviceService.getLocalOrRemoteDevices(false);
 		log.info(String.format("Retrieved %d remote devices in %d ms",
 				devices.length, System.currentTimeMillis() - start));
+		return devices;
+	}
+
+	@Path("/port/{portNo}")
+	@ApiOperation(value="Find all devices that have used a particular port", notes="")
+	@GET
+	public Device[] getDevicesUsingPort(@PathParam("portNo") int portNo,
+			@QueryParam("startDate") String startDate,
+			@QueryParam("endDate") String endDate) {
+		long start = System.currentTimeMillis();
+		Device[] devices = deviceService.getDevicesUsingPort(portNo, parseDateString(startDate, 0), parseDateString(endDate, new Date().getTime()));
+		log.info(String.format("Retrieved %d devices using port %d in %d ms",
+				devices.length, portNo, System.currentTimeMillis() - start));
 		return devices;
 	}
 }
