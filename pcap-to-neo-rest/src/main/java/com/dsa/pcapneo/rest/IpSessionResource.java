@@ -40,31 +40,39 @@ public class IpSessionResource extends Resource {
 	public SessionSummary[] getIpSessionSummariesByIpAddrBoth(
 			@ApiParam(value="ip address", required = true)
 			@PathParam("ipaddr") String ipAddr,
-			@ApiParam(value="start date", required = true)
+			@ApiParam(value="start date", required = false)
 			@QueryParam("startdate") String startDate,
-			@ApiParam(value="end date", required = true)
+			@ApiParam(value="end date", required = false)
 			@QueryParam("enddate") String endDate) {
-		return getIpSessionSummaries(ipAddr, startDate, endDate,
+		return getIpSessionSummariesByIpAddr(ipAddr, startDate, endDate,
 				SessionQueryType.BOTH);
 	}
 
 	@GET
 	@Path("/summary/ipaddr/src/{ipaddr}")
+	@ApiOperation(value="Retrieve Ip session summaries for source IP address", notes="Specify a source IP address to view all IP sessions, filtered by date")
 	public SessionSummary[] getIpSessionSummariesByIpAddrSrc(
+			@ApiParam(value="source ip address", required = true)
 			@PathParam("ipaddr") String ipAddr,
+			@ApiParam(value="start date", required = false)
 			@QueryParam("startdate") String startDate,
+			@ApiParam(value="end date", required = false)
 			@QueryParam("enddate") String endDate) {
-		return getIpSessionSummaries(ipAddr, startDate, endDate,
+		return getIpSessionSummariesByIpAddr(ipAddr, startDate, endDate,
 				SessionQueryType.SRC);
 	}
 
 	@GET
 	@Path("/summary/ipaddr/dest/{ipaddr}")
+	@ApiOperation(value="Retrieve Ip session summaries for destination IP address", notes="Specify a destination IP address to view all IP sessions, filtered by date")
 	public SessionSummary[] getIpSessionSummariesByIpAddrDest(
+			@ApiParam(value="destination ip address", required = true)
 			@PathParam("ipaddr") String ipAddr,
+			@ApiParam(value="start date", required = false)
 			@QueryParam("startdate") String startDate,
+			@ApiParam(value="end date", required = false)
 			@QueryParam("enddate") String endDate) {
-		return getIpSessionSummaries(ipAddr, startDate, endDate,
+		return getIpSessionSummariesByIpAddr(ipAddr, startDate, endDate,
 				SessionQueryType.DEST);
 	}
 
@@ -74,7 +82,7 @@ public class IpSessionResource extends Resource {
 			@PathParam("deviceid") long id,
 			@QueryParam("startdate") String startDate,
 			@QueryParam("enddate") String endDate) {
-		return getIpSessionSummaries(id, startDate, endDate,
+		return getIpSessionSummariesByDevice(id, startDate, endDate,
 				SessionQueryType.BOTH);
 	}
 
@@ -84,7 +92,7 @@ public class IpSessionResource extends Resource {
 			@PathParam("deviceid") long id,
 			@QueryParam("startdate") String startDate,
 			@QueryParam("enddate") String endDate) {
-		return getIpSessionSummaries(id, startDate, endDate,
+		return getIpSessionSummariesByDevice(id, startDate, endDate,
 				SessionQueryType.SRC);
 	}
 
@@ -94,11 +102,11 @@ public class IpSessionResource extends Resource {
 			@PathParam("deviceid") long id,
 			@QueryParam("startdate") String startDate,
 			@QueryParam("enddate") String endDate) {
-		return getIpSessionSummaries(id, startDate, endDate,
+		return getIpSessionSummariesByDevice(id, startDate, endDate,
 				SessionQueryType.DEST);
 	}
 
-	private SessionSummary[] getIpSessionSummaries(String ipAddr,
+	private SessionSummary[] getIpSessionSummariesByIpAddr(String ipAddr,
 			String startDate, String endDate, SessionQueryType type) {
 		long start = parseDateString(startDate, 0);
 		long end = parseDateString(endDate, new Date().getTime());
@@ -115,7 +123,7 @@ public class IpSessionResource extends Resource {
 		return sessions;
 	}
 
-	private SessionSummary[] getIpSessionSummaries(long id, String startDate,
+	private SessionSummary[] getIpSessionSummariesByDevice(long id, String startDate,
 			String endDate, SessionQueryType type) {
 		long start = parseDateString(startDate, 0);
 		long end = parseDateString(endDate, new Date().getTime());
@@ -132,17 +140,25 @@ public class IpSessionResource extends Resource {
 
 	@GET
 	@Path("/detail/device/src/{deviceid}")
-	public IpSession[] getIpSessionsByDevices(@PathParam("deviceid") long id,
-			@QueryParam("destid") long destId,
+	@ApiOperation(value="Retrieve Ip session details for a device", notes="Specify a deviceId to view all IP sessions, optionally filtered by protocol and date")
+	public IpSession[] getIpSessionsByDevice(
+			@ApiParam(value="deviceId", required = true)
+			@PathParam("deviceid") long id,
+			@ApiParam(value="dest deviceId", required = true)
+			@PathParam("destId") long destId,
+			@ApiParam(value="protocol", required = false)
+			@QueryParam("protocol") String protocol,
+			@ApiParam(value="start date", required = false)
 			@QueryParam("startdate") String startDate,
+			@ApiParam(value="end date", required = false)
 			@QueryParam("enddate") String endDate) {
 		long start = parseDateString(startDate, 0);
 		long end = parseDateString(endDate, new Date().getTime());
 		IpSession[] sessions = null;
-		sessions = sessionService.getDeviceIpSessions(id, destId, start, end);
+		sessions = sessionService.getDeviceIpSessions(id, destId, protocol, start, end);
 		log.info(String
-				.format("Retrieved %d sessions for device %d for date range %s (%d) to %s (%d)",
-						sessions.length, id, startDate, start, endDate, end));
+				.format("Retrieved %d sessions for device %d, destId %d and protocol %s for date range %s (%d) to %s (%d)",
+						sessions.length, id, destId, protocol, startDate, start, endDate, end));
 		return sessions;
 	}
 
@@ -166,4 +182,5 @@ public class IpSessionResource extends Resource {
 		return sessions;
 	}
 
+	
 }

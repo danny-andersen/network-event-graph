@@ -1,5 +1,7 @@
 package com.dsa.pcapneo.graph.repositories;
 
+import java.util.Map;
+
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.CypherDslRepository;
 import org.springframework.data.neo4j.repository.GraphRepository;
@@ -10,16 +12,31 @@ import com.dsa.pcapneo.domain.graph.Port;
 public interface IpSessionRepository extends GraphRepository<IpSession>, CypherDslRepository<IpSession> {
 
 	@Query ("start device=node({0}) " +
-			"MATCH device<-[:CONNECTS_FROM_DEVICE|CONNECTS_TO_DEVICE]-ip " +
-			"WHERE ip.startTime >= {1} AND ip.startTime <= {2} AND" +
+			"MATCH device-[:CONNECTS_FROM_DEVICE|CONNECTS_TO_DEVICE]-ip " +
+			"WHERE ip.startTime >= {1} AND ip.startTime <= {2} " +
 			"RETURN ip;")
 	public Iterable<IpSession> getIpSessionsByDevice(long deviceId, long startTime, long endTime);
 
 	@Query ("start device=node({0}) " +
-			"MATCH device<-[:CONNECTS_FROM_DEVICE|CONNECTS_TO_DEVICE]-ip-[:CONNECTS_TO_DEVICE|CONNECTS_FROM_DEVICE]-destdev " +
-			"WHERE ip.startTime >= {2} AND ip.startTime <= {3} AND destdev.id = {1}" +
+			"MATCH device-[:CONNECTS_FROM_DEVICE|CONNECTS_TO_DEVICE]-ip-" +
+			"[:VIA_PROTOCOL]-protocol " +
+			"WHERE ip.startTime >= {2} AND ip.startTime <= {3} " +
+			"AND protocol.name =~ {1} " +
+			"RETURN ip;")
+	public Iterable<IpSession> getIpSessionsByDeviceAndProtocol(long deviceId, String protocol, long startTime, long endTime);
+
+	@Query ("start device=node({0}), destdev=node({1}) " +
+			"MATCH device-[:CONNECTS_FROM_DEVICE]-ip-[:CONNECTS_TO_DEVICE]-destdev " +
+			"WHERE ip.startTime >= {2} AND ip.startTime <= {3} " +
 			"RETURN ip;")
 	public Iterable<IpSession> getIpSessionsByDeviceIds(long deviceId, long destId, long startTime, long endTime);
+
+	@Query ("start device=node({0}), destdev=node({1}) " +
+			"MATCH device-[:CONNECTS_FROM_DEVICE]-ip-[:CONNECTS_TO_DEVICE]-destdev, " +
+			"device-[:CONNECTS_FROM_DEVICE]-ip-[:VIA_PROTOCOL]-protocol " +
+			"WHERE ip.startTime >= {3} AND ip.startTime <= {4} AND protocol.name=~{2} " +
+			"RETURN ip;")
+	public Iterable<IpSession> getIpSessionsByDeviceIdsAndProtocol(long deviceId, long destId, String protocol, long startTime, long endTime);
 
 	@Query ("start ipaddr=node:IpAddress(ipAddr={0}) " +
 			"MATCH ipaddr-[:CONNECTS_FROM_IP|CONNECTS_TO_IP]-ip " +

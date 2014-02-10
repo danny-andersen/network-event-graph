@@ -27,8 +27,13 @@ public class SessionRetrievalService {
 		return sessions;
 	}
 	
-	public IpSession[] getDeviceIpSessions(long deviceId, long destDev, long startTime, long endTime) {
-		List<IpSession> sessList = repo.getIpSessionsByDeviceId(deviceId, destDev, startTime, endTime);
+	public IpSession[] getDeviceIpSessions(long deviceId, long destDev, String protocol, long startTime, long endTime) {
+		List<IpSession> sessList = null;
+		if (protocol == null || protocol.isEmpty()) {
+			sessList = repo.getIpSessionsByDeviceId(deviceId, destDev, startTime, endTime);
+		} else {
+			sessList = repo.getIpSessionsByDeviceIdProtocol(deviceId, destDev, protocol, startTime, endTime);
+		}
 		IpSession[] sessions = sessList.toArray(new IpSession[sessList.size()]);
 		return sessions;
 	}

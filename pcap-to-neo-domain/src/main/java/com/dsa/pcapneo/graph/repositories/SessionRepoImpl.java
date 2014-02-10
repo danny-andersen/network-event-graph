@@ -85,6 +85,20 @@ public class SessionRepoImpl {
 		return sessList;
 	}
 	
+	public List<IpSession> getIpSessionsByDeviceIdProtocol(long deviceId, long destId, String protocol, long startTime, long endTime) {
+		Iterable<IpSession> iter;
+		if (destId != -1 || destId != 0) {
+			iter = ipRepo.getIpSessionsByDeviceIdsAndProtocol(deviceId, destId, protocol, startTime, endTime);
+		} else {
+			iter = ipRepo.getIpSessionsByDeviceAndProtocol(deviceId, protocol, startTime, endTime);
+		}
+		List<IpSession> sessList = new ArrayList<IpSession>();
+		for (IpSession session : iter) {
+			sessList.add(session);
+		}
+		return sessList;
+	}
+	
 	private static final String IP_SESSION_SUMMARY_BY_DEVICE_SRC = "start dev=node({deviceId}) " + 
 			"MATCH dev-[:CONNECTS_FROM_DEVICE]-ips-[:CONNECTS_TO_DEVICE]-devdest " +
 			"WHERE ips.startTime >= {startTime} AND ips.startTime <= {endTime} " +
