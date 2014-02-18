@@ -40,6 +40,20 @@ public class SessionRepoImpl {
 		return sessList;
 	}
 
+	public List<IpSession> getIpSessionsByIpAddrAndProtocol(String ipAddr, String destIp, String protocol, long startTime, long endTime) {
+		Iterable<IpSession> iter;
+		if (destIp != null && !destIp.isEmpty()) {
+			iter = ipRepo.getIpSessionsByIpAddrsAndProtocol(ipAddr, destIp, protocol, startTime, endTime);
+		} else {
+			iter = ipRepo.getIpSessionsByIpAddrAndProtocol(ipAddr, protocol, startTime, endTime);
+		}
+		List<IpSession> sessList = new ArrayList<IpSession>();
+		for (IpSession session : iter) {
+			sessList.add(session);
+		}
+		return sessList;
+	}
+
 	private static final String IP_SESSION_SUMMARY_BY_IPADDR_SRC = "start ipsrc=node:IpAddress(ipAddr={ipAddr}) " + 
 			"MATCH ipsrc-[:CONNECTS_FROM_IP]-ips-[:CONNECTS_TO_IP]-ipdest " +
 			"WHERE ips.startTime >= {startTime} AND ips.startTime <= {endTime} " +

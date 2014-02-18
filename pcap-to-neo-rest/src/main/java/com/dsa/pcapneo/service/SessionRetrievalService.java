@@ -38,8 +38,13 @@ public class SessionRetrievalService {
 		return sessions;
 	}
 
-	public IpSession[] getIpSessionsByIpAddr(String ipAddr, String destIp, long startTime, long endTime) {
-		List<IpSession> sessList = repo.getIpSessionsByIpAddr(ipAddr, destIp, startTime, endTime);
+	public IpSession[] getIpSessionsByIpAddr(String ipAddr, String destIp, String protocol, long startTime, long endTime) {
+		List<IpSession> sessList = null;
+		if (protocol == null || protocol.isEmpty()) {
+			sessList = repo.getIpSessionsByIpAddr(ipAddr, destIp, startTime, endTime);
+		} else {
+			sessList = repo.getIpSessionsByIpAddrAndProtocol(ipAddr, destIp, protocol, startTime, endTime);
+		}
 		IpSession[] sessions = sessList.toArray(new IpSession[sessList.size()]);
 		return sessions;
 	}

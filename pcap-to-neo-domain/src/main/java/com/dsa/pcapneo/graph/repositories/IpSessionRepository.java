@@ -33,7 +33,7 @@ public interface IpSessionRepository extends GraphRepository<IpSession>, CypherD
 
 	@Query ("start device=node({0}), destdev=node({1}) " +
 			"MATCH device-[:CONNECTS_FROM_DEVICE]-ip-[:CONNECTS_TO_DEVICE]-destdev, " +
-			"device-[:CONNECTS_FROM_DEVICE]-ip-[:VIA_PROTOCOL]-protocol " +
+			"ip-[:VIA_PROTOCOL]-protocol " +
 			"WHERE ip.startTime >= {3} AND ip.startTime <= {4} AND protocol.name=~{2} " +
 			"RETURN ip;")
 	public Iterable<IpSession> getIpSessionsByDeviceIdsAndProtocol(long deviceId, long destId, String protocol, long startTime, long endTime);
@@ -58,7 +58,7 @@ public interface IpSessionRepository extends GraphRepository<IpSession>, CypherD
 	
 	@Query ("start ipaddr=node:IpAddress(ipAddr={0}) " +
 			"MATCH ipaddr-[:CONNECTS_FROM_IP|CONNECTS_TO_IP]-ip-[:CONNECTS_TO_IP|CONNECTS_FROM_IP]-destIp, " +
-			"ipaddr-[:CONNECTS_FROM_IP|CONNECTS_TO_IP]-ip-[:VIA_PROTOCOL]-protocol " +
+			"ip-[:VIA_PROTOCOL]-protocol " +
 			"WHERE ip.startTime >= {3} AND ip.startTime <= {4} AND destIp.ipAddr = {1} AND protocol.name=~{2} " +
 			"RETURN ip;")
 	public Iterable<IpSession> getIpSessionsByIpAddrsAndProtocol(String ipaddr, String destIp, String protocol, long startTime, long endTime);

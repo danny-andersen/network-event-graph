@@ -159,6 +159,14 @@ public class IpSessionRepositoryTest {
 		template.save(ip);
 		ip = new IpSession(this.factory);
 		protos = new HashSet<Protocol>();
+		protos.add(protoIp);
+		protos.add(protoUdp);
+		ip.setProtocols(protos);
+		ip.setIpSrc(addr1);
+		ip.setIpDest(addr2);
+		template.save(ip);
+		ip = new IpSession(this.factory);
+		protos = new HashSet<Protocol>();
 		ip.setIpSrc(addr2);
 		ip.setIpDest(addr3);
 		protos.add(protoIp);

@@ -221,6 +221,32 @@ public class TestPcapSummary extends TestCase {
 	
 	@Test
 	@Transactional
+	public void parseVeryShortSession2() {
+		String pcapStr = "1392757512.818971000,eth:ip:tcp:ssh,19";
+		
+		PcapSummary pcap = null;
+		try {
+			pcap = new PcapSummary(pcapStr);
+		} catch (Exception e) {
+			log.error("Failed to parse pcap str: ", e);
+			Assert.fail("Failed to parse pcap str: " + e);
+		}
+		Session session = sessionFactory.createSession(pcap);
+		assertNotNull(session);
+		//Persist session
+		Long id = template.save(session).getSessionId();
+		assertEquals(session.getClass(), IpSession.class);
+		IpSession ret = template.findOne(id, IpSession.class);
+		assertThat(ret.getDtoi(), is(1392757512L));
+		List<String> protos = new ArrayList<String>();
+		for (Protocol proto : template.fetch(ret.getProtocols())) {
+			protos.add(proto.getName());
+		}
+		assertThat(protos, hasItems("eth","ip","tcp", "ssh"));
+	}
+
+	@Test
+	@Transactional
 	public void parseWithHostnames() {
 		String pcapStr = "1381670318.287555000,eth:ip:tcp,192.168.1.102,192.168.1.68,52,6,46793,22,,,,,192.168.1.102,192.168.1.68";
 		PcapSummary pcap = null;

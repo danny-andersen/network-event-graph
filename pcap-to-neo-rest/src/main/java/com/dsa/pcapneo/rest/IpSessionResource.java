@@ -1,7 +1,5 @@
 package com.dsa.pcapneo.rest;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.ws.rs.GET;
@@ -20,7 +18,6 @@ import com.dsa.pcapneo.domain.graph.IpSession;
 import com.dsa.pcapneo.domain.graph.SessionSummary;
 import com.dsa.pcapneo.graph.repositories.SessionRepository.SessionQueryType;
 import com.dsa.pcapneo.service.SessionRetrievalService;
-import com.sun.jersey.api.ParamException;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -214,7 +211,7 @@ public class IpSessionResource extends Resource {
 		long end = parseDateString(endDate, new Date().getTime());
 		IpSession[] sessions = null;
 		if (ipAddr != null && !ipAddr.isEmpty()) {
-			sessions = sessionService.getIpSessionsByIpAddr(ipAddr, destIpAddr, start, end);
+			sessions = sessionService.getIpSessionsByIpAddr(ipAddr, destIpAddr, protocol, start, end);
 			log.info(String
 					.format("Retrieved %d sessions for address %s for date range %s (%d) to %s (%d)",
 							sessions.length, ipAddr, startDate, start, endDate,
@@ -238,7 +235,7 @@ public class IpSessionResource extends Resource {
 		long end = parseDateString(endDate, new Date().getTime());
 		IpSession[] sessions = null;
 		if (ipAddr != null && !ipAddr.isEmpty()) {
-			sessions = sessionService.getIpSessionsByIpAddr(ipAddr, null, start, end);
+			sessions = sessionService.getIpSessionsByIpAddr(ipAddr, null, protocol, start, end);
 			log.info(String
 					.format("Retrieved %d sessions for address %s for date range %s (%d) to %s (%d)",
 							sessions.length, ipAddr, startDate, start, endDate,
