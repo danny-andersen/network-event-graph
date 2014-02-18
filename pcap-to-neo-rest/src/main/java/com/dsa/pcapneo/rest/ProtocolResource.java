@@ -32,7 +32,7 @@ public class ProtocolResource extends Resource {
 	
 	@GET
 	@Path("/usage")
-	@ApiOperation(value="Find Protocol usage for a protocol by number of IP sessions for a port and time range", notes="Returns ports and number of sessions used in desc order")
+	@ApiOperation(value="Find Protocol usage for a protocol name by number of IP sessions for a time range", notes="Returns ports and number of sessions used in desc order")
 	public ProtocolUsage[] findProtocolUsage(
 			@ApiParam(value="protocol", required = false)
 			@QueryParam("protocol") String protocol,

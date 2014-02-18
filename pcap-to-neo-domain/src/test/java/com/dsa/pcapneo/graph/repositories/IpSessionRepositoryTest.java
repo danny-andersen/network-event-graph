@@ -59,6 +59,124 @@ public class IpSessionRepositoryTest {
 
 	@Transactional
 	@Test
+	public void getIpSessionsByIpAddrs() {
+		String ip1 = "192.168.1.1";
+		String ip2 = "192.168.1.2";
+		IpAddress addr1 = template.save(new IpAddress(ip1));
+		IpAddress addr2 = template.save(new IpAddress(ip2));
+
+		IpSession ip = new IpSession(this.factory);
+		ip.setIpSrc(addr1);
+		ip.setIpDest(addr2);
+		long start = new Date().getTime();
+		ip.setStartTime(start);
+		template.save(ip);
+
+		Iterable<IpSession> ips = this.ipSessionRepository.getIpSessionsByIpAddrs(ip1, ip2, 0, new Date().getTime());
+		List<String> src = new ArrayList<String>();
+		for (IpSession s : ips) {
+			src.add(s.getSrcIp().getIpAddr());
+		}
+		assertThat(src.size(), is(1));
+		assertThat(src, hasItems("192.168.1.1"));
+	}
+
+	@Transactional
+	@Test
+	public void getIpSessionsByIpAddrAndProto() {
+		String ip1 = "192.168.1.1";
+		String ip2 = "192.168.1.2";
+		String ip3 = "192.168.1.3";
+		IpAddress addr1 = template.save(new IpAddress(ip1));
+		IpAddress addr2 = template.save(new IpAddress(ip2));
+		IpAddress addr3 = template.save(new IpAddress(ip3));
+		Protocol protoIp = template.save(new Protocol("ip"));
+		Protocol protoTcp = template.save(new Protocol("tcp"));
+		Protocol protoUdp = template.save(new Protocol("udp"));
+
+		IpSession ip = new IpSession(this.factory);
+		Set<Protocol> protos = new HashSet<Protocol>();
+		protos.add(protoIp);
+		protos.add(protoTcp);
+		ip.setProtocols(protos);
+		ip.setIpSrc(addr1);
+		ip.setIpDest(addr2);
+		template.save(ip);
+		ip = new IpSession(this.factory);
+		protos = new HashSet<Protocol>();
+		protos.add(protoIp);
+		protos.add(protoTcp);
+		ip.setProtocols(protos);
+		ip.setIpSrc(addr2);
+		ip.setIpDest(addr3);
+		template.save(ip);
+		ip = new IpSession(this.factory);
+		protos = new HashSet<Protocol>();
+		ip.setIpSrc(addr2);
+		ip.setIpDest(addr3);
+		protos.add(protoIp);
+		protos.add(protoUdp);
+		ip.setProtocols(protos);
+		template.save(ip);
+
+		Iterable<IpSession> ips = this.ipSessionRepository.getIpSessionsByIpAddrAndProtocol(ip2, "udp", 0, new Date().getTime());
+		List<String> src = new ArrayList<String>();
+		for (IpSession s : ips) {
+			src.add(s.getSrcIp().getIpAddr());
+		}
+		assertThat(src.size(), is(1));
+		assertThat(src, hasItems(ip2));
+	}
+
+	@Transactional
+	@Test
+	public void getIpSessionsByIpAddrsAndProto() {
+		String ip1 = "192.168.1.1";
+		String ip2 = "192.168.1.2";
+		String ip3 = "192.168.1.3";
+		IpAddress addr1 = template.save(new IpAddress(ip1));
+		IpAddress addr2 = template.save(new IpAddress(ip2));
+		IpAddress addr3 = template.save(new IpAddress(ip3));
+		Protocol protoIp = template.save(new Protocol("ip"));
+		Protocol protoTcp = template.save(new Protocol("tcp"));
+		Protocol protoUdp = template.save(new Protocol("udp"));
+
+		IpSession ip = new IpSession(this.factory);
+		Set<Protocol> protos = new HashSet<Protocol>();
+		protos.add(protoIp);
+		protos.add(protoTcp);
+		ip.setProtocols(protos);
+		ip.setIpSrc(addr1);
+		ip.setIpDest(addr2);
+		template.save(ip);
+		ip = new IpSession(this.factory);
+		protos = new HashSet<Protocol>();
+		protos.add(protoIp);
+		protos.add(protoTcp);
+		ip.setProtocols(protos);
+		ip.setIpSrc(addr2);
+		ip.setIpDest(addr3);
+		template.save(ip);
+		ip = new IpSession(this.factory);
+		protos = new HashSet<Protocol>();
+		ip.setIpSrc(addr2);
+		ip.setIpDest(addr3);
+		protos.add(protoIp);
+		protos.add(protoUdp);
+		ip.setProtocols(protos);
+		template.save(ip);
+
+		Iterable<IpSession> ips = this.ipSessionRepository.getIpSessionsByIpAddrsAndProtocol(ip1, ip2, "tcp", 0, new Date().getTime());
+		List<String> src = new ArrayList<String>();
+		for (IpSession s : ips) {
+			src.add(s.getSrcIp().getIpAddr());
+		}
+		assertThat(src.size(), is(1));
+		assertThat(src, hasItems(ip1));
+	}
+
+	@Transactional
+	@Test
 	public void getIpSessionsByDeviceId() {
 		String ip1 = "192.168.1.1";
 		String ip2 = "192.168.1.2";

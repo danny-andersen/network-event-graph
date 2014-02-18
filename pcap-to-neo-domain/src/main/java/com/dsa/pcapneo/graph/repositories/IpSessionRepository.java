@@ -45,11 +45,24 @@ public interface IpSessionRepository extends GraphRepository<IpSession>, CypherD
 	public Iterable<IpSession> getIpSessionsByIpAddr(String ipaddr, long startTime, long endTime);
 
 	@Query ("start ipaddr=node:IpAddress(ipAddr={0}) " +
+			"MATCH ipaddr-[:CONNECTS_FROM_IP|CONNECTS_TO_IP]-ip-[:VIA_PROTOCOL]-protocol " +
+			"WHERE ip.startTime >= {2} AND ip.startTime <= {3} AND protocol.name=~{1} " +
+			"RETURN ip;")
+	public Iterable<IpSession> getIpSessionsByIpAddrAndProtocol(String ipaddr, String protocol, long startTime, long endTime);
+
+	@Query ("start ipaddr=node:IpAddress(ipAddr={0}) " +
 			"MATCH ipaddr-[:CONNECTS_FROM_IP|CONNECTS_TO_IP]-ip-[:CONNECTS_TO_IP|CONNECTS_FROM_IP]-destIp " +
 			"WHERE ip.startTime >= {2} AND ip.startTime <= {3} AND destIp.ipAddr = {1} " +
 			"RETURN ip;")
-	public Iterable<IpSession> getIpSessionsByIpAddr(String ipaddr, String destIp, long startTime, long endTime);
+	public Iterable<IpSession> getIpSessionsByIpAddrs(String ipaddr, String destIp, long startTime, long endTime);
 	
+	@Query ("start ipaddr=node:IpAddress(ipAddr={0}) " +
+			"MATCH ipaddr-[:CONNECTS_FROM_IP|CONNECTS_TO_IP]-ip-[:CONNECTS_TO_IP|CONNECTS_FROM_IP]-destIp, " +
+			"ipaddr-[:CONNECTS_FROM_IP|CONNECTS_TO_IP]-ip-[:VIA_PROTOCOL]-protocol " +
+			"WHERE ip.startTime >= {3} AND ip.startTime <= {4} AND destIp.ipAddr = {1} AND protocol.name=~{2} " +
+			"RETURN ip;")
+	public Iterable<IpSession> getIpSessionsByIpAddrsAndProtocol(String ipaddr, String destIp, String protocol, long startTime, long endTime);
+
 	@Query ("START port=node({0})" +
 			"MATCH port-[:CONNECTS_FROM_PORT|CONNECTS_TO_PORT]-s " +
 			"AND s.startTime >= {1} AND s.startTime <= {2} " +

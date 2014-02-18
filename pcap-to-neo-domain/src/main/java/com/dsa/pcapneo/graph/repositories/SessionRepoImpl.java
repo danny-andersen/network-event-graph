@@ -29,7 +29,7 @@ public class SessionRepoImpl {
 	public List<IpSession> getIpSessionsByIpAddr(String ipAddr, String destIp, long startTime, long endTime) {
 		Iterable<IpSession> iter;
 		if (destIp != null && !destIp.isEmpty()) {
-			iter = ipRepo.getIpSessionsByIpAddr(ipAddr, destIp, startTime, endTime);
+			iter = ipRepo.getIpSessionsByIpAddrs(ipAddr, destIp, startTime, endTime);
 		} else {
 			iter = ipRepo.getIpSessionsByIpAddr(ipAddr, startTime, endTime);
 		}
