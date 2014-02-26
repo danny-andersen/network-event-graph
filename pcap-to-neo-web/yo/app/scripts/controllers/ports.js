@@ -3,13 +3,17 @@
 angular.module('networkEventGraphApp')
   .controller('portsCtrl', function ($scope, portService) {
     $scope.startPort = 0;
-    $scope.endPort = 65536;
+    $scope.endPort = 65535;
     $scope.loading = false;
     $scope.showTable = true;
     $scope.sessionParams = {};
     $scope.refreshSessions = false;
     $scope.getPortUsage = function (usageType) {
-      $scope.usageType = usageType;
+      if (usageType === undefined || usageType === "") {
+        $scope.usageType = 'session';
+      } else {
+        $scope.usageType = usageType;
+      }
       $scope.loading = true;
       $scope.ports = portService.portUsage.query({
         'usageType': $scope.usageType,

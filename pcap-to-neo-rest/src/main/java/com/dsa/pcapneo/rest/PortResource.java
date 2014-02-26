@@ -38,7 +38,7 @@ public class PortResource extends Resource {
 			@DefaultValue("0") @QueryParam("minPort") 
 			int minPort, 
 			@ApiParam(value="top of port range (65536 if not set)", required = false)
-			@DefaultValue("65536") @QueryParam("maxPort") 
+			@DefaultValue("65535") @QueryParam("maxPort") 
 			int maxPort,
 			@ApiParam(value="start date", required = false)
 			@QueryParam("startDate") 
