@@ -144,7 +144,6 @@ public class IpSessionResource extends Resource {
 						sessions.length, id, startDate, start, endDate, end,
 						(new Date().getTime() - qtime)));
 		return sessions;
-
 	}
 
 	@GET
@@ -153,6 +152,8 @@ public class IpSessionResource extends Resource {
 	public IpSession[] getIpSessionsByDevice(
 			@ApiParam(value="deviceId", required = true)
 			@PathParam("deviceid") long id,
+			@ApiParam(value="port", required = false)
+			@PathParam("port") int port,
 			@ApiParam(value="protocol", required = false)
 			@QueryParam("protocol") String protocol,
 			@ApiParam(value="start date", required = false)
@@ -162,7 +163,7 @@ public class IpSessionResource extends Resource {
 		long start = parseDateString(startDate, 0);
 		long end = parseDateString(endDate, new Date().getTime());
 		IpSession[] sessions = null;
-		sessions = sessionService.getDeviceIpSessions(id, -1, protocol, start, end);
+		sessions = sessionService.getDeviceIpSessions(id, -1, protocol, port, start, end);
 		log.info(String
 				.format("Retrieved %d sessions for device %d and protocol %s for date range %s (%d) to %s (%d)",
 						sessions.length, id, protocol, startDate, start, endDate, end));
@@ -177,6 +178,8 @@ public class IpSessionResource extends Resource {
 			@PathParam("deviceid") long id,
 			@ApiParam(value="dest deviceId", required = true)
 			@PathParam("destId") long destId,
+			@ApiParam(value="port", required = false)
+			@PathParam("port") int port,
 			@ApiParam(value="protocol", required = false)
 			@QueryParam("protocol") String protocol,
 			@ApiParam(value="start date", required = false)
@@ -186,7 +189,7 @@ public class IpSessionResource extends Resource {
 		long start = parseDateString(startDate, 0);
 		long end = parseDateString(endDate, new Date().getTime());
 		IpSession[] sessions = null;
-		sessions = sessionService.getDeviceIpSessions(id, destId, protocol, start, end);
+		sessions = sessionService.getDeviceIpSessions(id, destId, protocol, port, start, end);
 		log.info(String
 				.format("Retrieved %d sessions for device %d, destId %d and protocol %s for date range %s (%d) to %s (%d)",
 						sessions.length, id, destId, protocol, startDate, start, endDate, end));
@@ -224,6 +227,7 @@ public class IpSessionResource extends Resource {
 	@Path("/detail/ipaddr/{ipaddr}")
 	@ApiOperation(value="Retrieve Ip session details for an Ip Addr", notes="Specify an Ip addr to view all IP sessions, optionally filtered by protocol and date")
 	public IpSession[] getIpSessionsByIpAddr(
+			@ApiParam(value="ipaddr", required = true)
 			@PathParam("ipaddr") String ipAddr,
 			@ApiParam(value="protocol", required = false)
 			@QueryParam("protocol") String protocol,
@@ -244,4 +248,28 @@ public class IpSessionResource extends Resource {
 		return sessions;
 	}
 	
+	@GET
+	@Path("/detail/port/{port}")
+	@ApiOperation(value="Retrieve Ip session details for a port, filtered by protocol and date", notes="Specify an port to view all IP sessions, optionally filtered by protocol and date")
+	public IpSession[] getIpSessionsByPort(
+			@ApiParam(value="port", required = true)
+			@PathParam("port") int port,
+			@ApiParam(value="protocol", required = false)
+			@QueryParam("protocol") String protocol,
+			@ApiParam(value="start date", required = false)
+			@QueryParam("startdate") String startDate,
+			@ApiParam(value="end date", required = false)
+			@QueryParam("enddate") String endDate) {
+		long start = parseDateString(startDate, 0);
+		long end = parseDateString(endDate, new Date().getTime());
+		IpSession[] sessions = null;
+		if (port != 0) {
+			sessions = sessionService.getIpSessionsByPort(port, protocol, start, end);
+			log.info(String
+					.format("Retrieved %d sessions for port %d for protocol %s date range %s (%d) to %s (%d)",
+							sessions.length, port, protocol, startDate, start, endDate,
+							end));
+		}
+		return sessions;
+	}
 }

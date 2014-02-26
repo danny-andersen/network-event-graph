@@ -36,7 +36,7 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
   });
 
   //Tabs
-  $scope.loading = true;
+  $scope.loading = false;
   $scope.navTabs = {};
   $scope.navTabs.protoTab = 1;
   $scope.navTabs.webTab = 2;
@@ -64,9 +64,9 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
   }];
 
   var setTimePhrase = function () {
-    var start = new Date($scope.sessionParams.start * 1000).toUTCString();
-    var end = new Date($scope.sessionParams.end * 1000).toUTCString();
     if ($scope.sessionParams.start !== 0) {
+      var start = new Date($scope.sessionParams.start * 1000).toUTCString();
+      var end = new Date($scope.sessionParams.end * 1000).toUTCString();
       $scope.timePhrase = 'between ' + start + ' and ' + end;
     } else {
       $scope.timePhrase = 'for all dates';
@@ -121,7 +121,11 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
     $scope.navTabs.tabs[$scope.navTabs.allTab].active = true;
     $scope.loading = true;
     $scope.ipAddress = $scope.sessionParams.ipAddr;
-    $scope.$parent.detail.device.allSessions = ipSessionService.sessionsByIp.query($scope.sessionParams, function () {
+    $scope.$parent.detail.device.allSessions = ipSessionService.sessionsByIp.query({
+      ipAddr: $scope.sessionParams.ipAddr,
+      start: $scope.sessionParams.start,
+      'end': $scope.sessionParams.end
+    }, function () {
       $scope.loading = false;
     });
     return $scope.$parent.detail.device.allSessions;
@@ -131,7 +135,11 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
     $scope.navTabs.tabs[$scope.navTabs.fromTab].active = true;
     $scope.loading = true;
     $scope.ipAddress = $scope.sessionParams.ipAddr;
-    $scope.$parent.detail.device.fromSessions = ipSessionService.sessionsBySrcIp.query($scope.sessionParams, function () {
+    $scope.$parent.detail.device.fromSessions = ipSessionService.sessionsBySrcIp.query({
+      ipAddr: $scope.sessionParams.ipAddr,
+      start: $scope.sessionParams.start,
+      'end': $scope.sessionParams.end
+    }, function () {
       $scope.loading = false;
     });
     return $scope.$parent.detail.device.fromSessions;
@@ -141,7 +149,11 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
     $scope.navTabs.tabs[$scope.navTabs.toTab].active = true;
     $scope.loading = true;
     $scope.ipAddress = $scope.sessionParams.ipAddr;
-    $scope.$parent.detail.device.toSessions = ipSessionService.sessionsByDestIp.query($scope.sessionParams, function () {
+    $scope.$parent.detail.device.toSessions = ipSessionService.sessionsByDestIp.query({
+      ipAddr: $scope.sessionParams.ipAddr,
+      start: $scope.sessionParams.start,
+      'end': $scope.sessionParams.end
+    }, function () {
       $scope.loading = false;
     });
     return $scope.$parent.detail.device.toSessions;

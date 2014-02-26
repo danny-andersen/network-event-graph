@@ -21,12 +21,12 @@ describe('Controller: SessiondetailCtrl', function () {
   beforeEach(inject(function ($controller, $rootScope, _$httpBackend_, ipSessionService) {
     scope = $rootScope.$new();
     mockBackend = _$httpBackend_;
-    mockBackend.expectGET('/pcap-to-neo-web/rest/session/ip/detail/ipaddr/src/?destaddr=&startdate=&enddate=').respond(null);
+    // mockBackend.expectGET('/pcap-to-neo-web/rest/session/ip/detail/ipaddr/src/?destaddr=&startdate=&enddate=&protocol=').respond(null);
     sessionDetailCtrl = $controller('sessionDetailCtrl', {
       $scope: scope,
       ipSessionService: ipSessionService
     });
-    mockBackend.flush();
+    // mockBackend.flush();
   }));
 
   it('should retrieve sessions', function () {
@@ -41,7 +41,7 @@ describe('Controller: SessiondetailCtrl', function () {
       id: 2
     }];
 
-    mockBackend.expectGET('/pcap-to-neo-web/rest/session/ip/detail/ipaddr/src/' + scope.srcAddr + '?destaddr=' + scope.destAddr + '&startdate=' + scope.start + '&enddate=' + scope.end).respond(sessions);
+    mockBackend.expectGET('/pcap-to-neo-web/rest/session/ip/detail/ipaddr/src/' + scope.srcAddr + '?destaddr=' + scope.destAddr + '&startdate=' + scope.start + '&enddate=' + scope.end + '&protocol=').respond(sessions);
 
     expect(scope.loading).toEqual(false);
 

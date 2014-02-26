@@ -66,7 +66,7 @@ public class IpSession extends Session {
 //				this.destIp.addServerPort(destPort);
 //			}
 			this.protocolNumber = pcap.getProtocolNumber();
-			this.setFromDevice(factory.getDeviceFromIpAddr(this.getIpSrc()));
+			this.setFromDevice(factory.getDeviceFromIpAddr(this.getSrcIp()));
 			this.setToDevice(factory.getDeviceFromIpAddr(this.getIpDest()));
 		} catch (Exception e) {
 			log.error("Failed to create IpSession from pcap: " + pcap.toString(), e);
@@ -104,14 +104,6 @@ public class IpSession extends Session {
 			}
 		}
 		return retBytes;
-	}
-
-	public IpAddress getIpSrc() {
-		return srcIp;
-	}
-
-	public void setIpSrc(IpAddress ipSrc) {
-		this.srcIp = ipSrc;
 	}
 
 	public IpAddress getIpDest() {

@@ -29,7 +29,7 @@
 				<td >{{showSessionSrc(session)}}</td>
 				<td >{{showSessionDest(session)}}</td>
 				<td >{{session.webAddress}} </td>
-				<td ><a href="#/sessionDetail/{{session.srcIpAddr}}?destIpAddr={{session.destIpAddr}}&start={{session.earliest}}&end={{session.latest}}">{{session.numSessions}}</a></td>
+				<td ><a href="#/sessionDetail/?srcIpAddr={{session.srcIpAddr}}?destIpAddr={{session.destIpAddr}}&start={{session.earliest}}&end={{session.latest}}">{{session.numSessions}}</a></td>
 			</tr>
 		</table>
 </div>

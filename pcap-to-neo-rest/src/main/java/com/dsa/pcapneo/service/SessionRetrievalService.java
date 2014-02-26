@@ -27,10 +27,14 @@ public class SessionRetrievalService {
 		return sessions;
 	}
 	
-	public IpSession[] getDeviceIpSessions(long deviceId, long destDev, String protocol, long startTime, long endTime) {
+	public IpSession[] getDeviceIpSessions(long deviceId, long destDev, String protocol, int port, long startTime, long endTime) {
 		List<IpSession> sessList = null;
 		if (protocol == null || protocol.isEmpty()) {
-			sessList = repo.getIpSessionsByDeviceId(deviceId, destDev, startTime, endTime);
+			if (port != 0) {
+				sessList = repo.getIpSessionsByDeviceIdAndPort(deviceId, destDev, port, startTime, endTime);
+			} else {
+				sessList = repo.getIpSessionsByDeviceId(deviceId, destDev, startTime, endTime);
+			}
 		} else {
 			sessList = repo.getIpSessionsByDeviceIdProtocol(deviceId, destDev, protocol, startTime, endTime);
 		}
@@ -44,6 +48,17 @@ public class SessionRetrievalService {
 			sessList = repo.getIpSessionsByIpAddr(ipAddr, destIp, startTime, endTime);
 		} else {
 			sessList = repo.getIpSessionsByIpAddrAndProtocol(ipAddr, destIp, protocol, startTime, endTime);
+		}
+		IpSession[] sessions = sessList.toArray(new IpSession[sessList.size()]);
+		return sessions;
+	}
+
+	public IpSession[] getIpSessionsByPort(int port, String protocol, long startTime, long endTime) {
+		List<IpSession> sessList = null;
+		if (protocol == null || protocol.isEmpty()) {
+			sessList = repo.getIpSessionsByPort(port, startTime, endTime);
+		} else {
+			sessList = repo.getIpSessionsByPortAndProtocol(port, protocol, startTime, endTime);
 		}
 		IpSession[] sessions = sessList.toArray(new IpSession[sessList.size()]);
 		return sessions;

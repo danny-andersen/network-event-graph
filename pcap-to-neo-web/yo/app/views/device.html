@@ -25,7 +25,7 @@
           <tr><th>Protocol</th><th>Num Sessions</th></tr>
           <tr ng-repeat="proto in detail.device.protocols">
             <td>{{proto.protocol.name}}</td>
-            <td>{{proto.sessionCount}}</td>
+            <td ><a href="#/sessionDetail/?deviceId={{$parent.sessionParams.deviceId}}&start={{sessionParams.start}}&end={{sessionParams.end}}&protocol={{proto.protocol.name}}">{{proto.sessionCount}}</a></td>
           </tr>
         </table>
 		</tab>

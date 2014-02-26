@@ -41,7 +41,7 @@ public class SessionRepositoryImplTest {
 		IpAddress addr2 = template.save(new IpAddress(ip2));
 
 		IpSession ip = new IpSession(this.factory);
-		ip.setIpSrc(addr1);
+		ip.setSrcIp(addr1);
 		ip.setIpDest(addr2);
 		ip.setStartTime(new Date().getTime());
 		template.save(ip);
@@ -74,7 +74,7 @@ public class SessionRepositoryImplTest {
 		for (int i=0; i<cnts.length; i++) {
 			for (int j= 0; j < cnts[i]; j++) {
 				IpSession ip = new IpSession(this.factory);
-				ip.setIpSrc(srcIpAddress);
+				ip.setSrcIp(srcIpAddress);
 				ip.setIpDest(addrs[i]);
 				ip.setStartTime(dateOffset * (i + 1) * (j+1));
 				template.save(ip);
@@ -89,6 +89,5 @@ public class SessionRepositoryImplTest {
 			assertThat(s.getNumSessions(), is((long)cnts[0]));
 			assertThat(s.getEarliest(), is(dateOffset));
 			assertThat(s.getLatest(), is(dateOffset * cnts[0]));
-
 	}
 }

@@ -21,8 +21,8 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
 @Component
-@Path("/port")
-@Api(value="/port", description="Find and retrieve Port usage")
+@Path("/port/usage")
+@Api(value="/port/usage", description="Find and retrieve Port usage")
 @Produces(MediaType.APPLICATION_JSON)
 public class PortResource extends Resource {
 	private static final Log log = LogFactory.getLog(DeviceResource.class);
@@ -31,7 +31,7 @@ public class PortResource extends Resource {
 	PortRetrievalService portService;
 
 	@GET
-	@Path("/session/usage")
+	@Path("/session")
 	@ApiOperation(value="Find Port usage by number of IP sessions for a port and time range", notes="Returns ports and number of sessions used in desc order")
 	public PortUsage[] getPortBySessionUsage(
 			@ApiParam(value="bottom of port range (0 if not set)", required = false)
@@ -61,7 +61,7 @@ public class PortResource extends Resource {
 	}
 
 	@GET
-	@Path("/device/usage")
+	@Path("/device")
 	@ApiOperation(value="Find Port usage by number of devices it is connected to for a port and time range", notes="Returns ports and number of sessions used in desc order")
 	public PortUsage[] getPortByDeviceUsage(
 			@ApiParam(value="bottom of port range (0 if not set)", required = false)
@@ -89,4 +89,5 @@ public class PortResource extends Resource {
 				ports.length, minPort, maxPort, System.currentTimeMillis() - start));
 		return ports;
 	}
+	
 }

@@ -22,6 +22,7 @@ import com.dsa.pcapneo.domain.graph.Device;
 import com.dsa.pcapneo.domain.graph.DeviceType;
 import com.dsa.pcapneo.domain.graph.IpAddress;
 import com.dsa.pcapneo.domain.graph.IpSession;
+import com.dsa.pcapneo.domain.graph.Port;
 import com.dsa.pcapneo.domain.graph.Protocol;
 import com.dsa.pcapneo.domain.graph.User;
 
@@ -42,7 +43,7 @@ public class IpSessionRepositoryTest {
 		IpAddress addr2 = template.save(new IpAddress(ip2));
 
 		IpSession ip = new IpSession(this.factory);
-		ip.setIpSrc(addr1);
+		ip.setSrcIp(addr1);
 		ip.setIpDest(addr2);
 		long start = new Date().getTime();
 		ip.setStartTime(start);
@@ -66,7 +67,7 @@ public class IpSessionRepositoryTest {
 		IpAddress addr2 = template.save(new IpAddress(ip2));
 
 		IpSession ip = new IpSession(this.factory);
-		ip.setIpSrc(addr1);
+		ip.setSrcIp(addr1);
 		ip.setIpDest(addr2);
 		long start = new Date().getTime();
 		ip.setStartTime(start);
@@ -99,7 +100,7 @@ public class IpSessionRepositoryTest {
 		protos.add(protoIp);
 		protos.add(protoTcp);
 		ip.setProtocols(protos);
-		ip.setIpSrc(addr1);
+		ip.setSrcIp(addr1);
 		ip.setIpDest(addr2);
 		template.save(ip);
 		ip = new IpSession(this.factory);
@@ -107,12 +108,12 @@ public class IpSessionRepositoryTest {
 		protos.add(protoIp);
 		protos.add(protoTcp);
 		ip.setProtocols(protos);
-		ip.setIpSrc(addr2);
+		ip.setSrcIp(addr2);
 		ip.setIpDest(addr3);
 		template.save(ip);
 		ip = new IpSession(this.factory);
 		protos = new HashSet<Protocol>();
-		ip.setIpSrc(addr2);
+		ip.setSrcIp(addr2);
 		ip.setIpDest(addr3);
 		protos.add(protoIp);
 		protos.add(protoUdp);
@@ -146,7 +147,7 @@ public class IpSessionRepositoryTest {
 		protos.add(protoIp);
 		protos.add(protoTcp);
 		ip.setProtocols(protos);
-		ip.setIpSrc(addr1);
+		ip.setSrcIp(addr1);
 		ip.setIpDest(addr2);
 		template.save(ip);
 		ip = new IpSession(this.factory);
@@ -154,7 +155,7 @@ public class IpSessionRepositoryTest {
 		protos.add(protoIp);
 		protos.add(protoTcp);
 		ip.setProtocols(protos);
-		ip.setIpSrc(addr2);
+		ip.setSrcIp(addr2);
 		ip.setIpDest(addr3);
 		template.save(ip);
 		ip = new IpSession(this.factory);
@@ -162,12 +163,12 @@ public class IpSessionRepositoryTest {
 		protos.add(protoIp);
 		protos.add(protoUdp);
 		ip.setProtocols(protos);
-		ip.setIpSrc(addr1);
+		ip.setSrcIp(addr1);
 		ip.setIpDest(addr2);
 		template.save(ip);
 		ip = new IpSession(this.factory);
 		protos = new HashSet<Protocol>();
-		ip.setIpSrc(addr2);
+		ip.setSrcIp(addr2);
 		ip.setIpDest(addr3);
 		protos.add(protoIp);
 		protos.add(protoUdp);
@@ -214,7 +215,7 @@ public class IpSessionRepositoryTest {
 		ip.setProtocols(protos);
 		ip.setFromDevice(device);
 		ip.setToDevice(dev2);
-		ip.setIpSrc(addr1);
+		ip.setSrcIp(addr1);
 		template.save(ip);
 		ip = new IpSession(this.factory);
 		ip.setToDevice(dev2);
@@ -273,7 +274,7 @@ public class IpSessionRepositoryTest {
 		ip.setProtocols(protos);
 		ip.setFromDevice(device);
 		ip.setToDevice(dev2);
-		ip.setIpSrc(addr1);
+		ip.setSrcIp(addr1);
 		template.save(ip);
 		ip = new IpSession(this.factory);
 		ip.setToDevice(dev2);
@@ -289,7 +290,7 @@ public class IpSessionRepositoryTest {
 		protos = new HashSet<Protocol>();
 		protos.add(protoIp);
 		protos.add(protoUdp);
-		ip.setIpSrc(addr2);
+		ip.setSrcIp(addr2);
 		ip.setProtocols(protos);
 		template.save(ip);
 
@@ -302,6 +303,118 @@ public class IpSessionRepositoryTest {
 		assertThat(src, hasItems(ip2));
 	}
 	
+	@Transactional
+	@Test
+	public void getIpSessionsByDeviceIdAndPort() {
+		String ip1 = "192.168.1.1";
+		String ip2 = "192.168.1.2";
+		IpAddress addr1 = template.save(new IpAddress(ip1));
+		IpAddress addr2 = template.save(new IpAddress(ip2));
+		Device device = new Device("test1", template.save(new DeviceType(
+				"laptop")), template.save(new User("user1")));
+		Device dev2 = new Device("test2",
+				template.save(new DeviceType("laptop")),
+				template.save(new User("user1")));
+		Device dev3 = new Device("test3", template.save(new DeviceType(
+				"laptop2")), template.save(new User("user1")));
+		Device dev4 = new Device("test4", template.save(new DeviceType(
+				"laptop3")), template.save(new User("user1")));
+		template.save(device);
+		template.save(dev2);
+		template.save(dev3);
+		template.save(dev4);
+		Port port1 = template.save(new Port(23));
+		Port port2 = template.save(new Port(56));
+		Port port3 = template.save(new Port(3444));
+		Port port4 = template.save(new Port(5555));
+
+		IpSession ip = new IpSession(this.factory);
+		ip.setFromDevice(device);
+		ip.setToDevice(dev2);
+		ip.setSrcPort(port1);
+		ip.setDestPort(port2);
+		ip.setSrcIp(addr1);
+		template.save(ip);
+		ip = new IpSession(this.factory);
+		ip.setToDevice(dev2);
+		ip.setFromDevice(dev3);
+		ip.setSrcPort(port3);
+		ip.setDestPort(port4);
+		ip.setSrcIp(addr1);
+		template.save(ip);
+		ip = new IpSession(this.factory);
+		ip.setToDevice(dev2);
+		ip.setFromDevice(dev3);
+		ip.setSrcIp(addr2);
+		ip.setSrcPort(port1);
+		ip.setDestPort(port2);
+		template.save(ip);
+
+		Iterable<IpSession> ips = this.ipSessionRepository.getIpSessionsByDeviceAndPort(dev2.getDeviceId(), port1.getPort(), 0, new Date().getTime());
+		List<String> src = new ArrayList<String>();
+		for (IpSession s : ips) {
+			src.add(s.getSrcIp().getIpAddr());
+		}
+		assertThat(src.size(), is(2));
+		assertThat(src, hasItems(ip1, ip2));
+	}
+
+	@Transactional
+	@Test
+	public void getIpSessionsByPort() {
+		String ip1 = "192.168.1.1";
+		String ip2 = "192.168.1.2";
+		IpAddress addr1 = template.save(new IpAddress(ip1));
+		IpAddress addr2 = template.save(new IpAddress(ip2));
+		Device device = new Device("test1", template.save(new DeviceType(
+				"laptop")), template.save(new User("user1")));
+		Device dev2 = new Device("test2",
+				template.save(new DeviceType("laptop")),
+				template.save(new User("user1")));
+		Device dev3 = new Device("test3", template.save(new DeviceType(
+				"laptop2")), template.save(new User("user1")));
+		Device dev4 = new Device("test4", template.save(new DeviceType(
+				"laptop3")), template.save(new User("user1")));
+		template.save(device);
+		template.save(dev2);
+		template.save(dev3);
+		template.save(dev4);
+		Port port1 = template.save(new Port(23));
+		Port port2 = template.save(new Port(56));
+		Port port3 = template.save(new Port(3444));
+		Port port4 = template.save(new Port(5555));
+
+		IpSession ip = new IpSession(this.factory);
+		ip.setFromDevice(device);
+		ip.setToDevice(dev2);
+		ip.setSrcPort(port1);
+		ip.setDestPort(port2);
+		ip.setSrcIp(addr1);
+		template.save(ip);
+		ip = new IpSession(this.factory);
+		ip.setToDevice(dev2);
+		ip.setFromDevice(dev3);
+		ip.setSrcPort(port3);
+		ip.setDestPort(port4);
+		ip.setSrcIp(addr1);
+		template.save(ip);
+		ip = new IpSession(this.factory);
+		ip.setToDevice(dev2);
+		ip.setFromDevice(dev3);
+		ip.setSrcIp(addr2);
+		ip.setSrcPort(port1);
+		ip.setDestPort(port2);
+		template.save(ip);
+
+		Iterable<IpSession> ips = this.ipSessionRepository.getIpSessionsByPort(port1, 0, new Date().getTime());
+		List<String> src = new ArrayList<String>();
+		for (IpSession s : ips) {
+			src.add(s.getSrcIp().getIpAddr());
+		}
+		assertThat(src.size(), is(2));
+		assertThat(src, hasItems(ip1, ip2));
+	}
+
 	@Transactional
 	@Test
 	public void getIpSessionsByDeviceIds() {
@@ -335,7 +448,7 @@ public class IpSessionRepositoryTest {
 		ip.setProtocols(protos);
 		ip.setFromDevice(device);
 		ip.setToDevice(dev2);
-		ip.setIpSrc(addr1);
+		ip.setSrcIp(addr1);
 		template.save(ip);
 		ip = new IpSession(this.factory);
 		ip.setToDevice(dev2);
@@ -344,7 +457,7 @@ public class IpSessionRepositoryTest {
 		protos.add(protoIp);
 		protos.add(protoTcp);
 		ip.setProtocols(protos);
-		ip.setIpSrc(addr3);
+		ip.setSrcIp(addr3);
 		template.save(ip);
 		ip = new IpSession(this.factory);
 		ip.setToDevice(dev3);
@@ -353,7 +466,7 @@ public class IpSessionRepositoryTest {
 		protos.add(protoIp);
 		protos.add(protoUdp);
 		ip.setProtocols(protos);
-		ip.setIpSrc(addr2);
+		ip.setSrcIp(addr2);
 		template.save(ip);
 
 		Iterable<IpSession> ips = this.ipSessionRepository.getIpSessionsByDeviceIds(dev2.getDeviceId(), dev3.getDeviceId(), 0, new Date().getTime());
@@ -396,7 +509,7 @@ public class IpSessionRepositoryTest {
 		ip.setProtocols(protos);
 		ip.setFromDevice(device);
 		ip.setToDevice(dev2);
-		ip.setIpSrc(addr1);
+		ip.setSrcIp(addr1);
 		template.save(ip);
 		ip = new IpSession(this.factory);
 		ip.setToDevice(dev2);
@@ -412,7 +525,7 @@ public class IpSessionRepositoryTest {
 		protos = new HashSet<Protocol>();
 		protos.add(protoIp);
 		protos.add(protoUdp);
-		ip.setIpSrc(addr2);
+		ip.setSrcIp(addr2);
 		ip.setProtocols(protos);
 		template.save(ip);
 

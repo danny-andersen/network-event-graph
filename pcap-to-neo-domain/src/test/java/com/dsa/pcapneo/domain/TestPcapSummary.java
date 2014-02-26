@@ -64,7 +64,7 @@ public class TestPcapSummary extends TestCase {
 		assertThat(ret.getSrcPort().getPort(), is(38314));
 		assertThat(ret.getDtoi(), is(1367956351L));
 		assertThat(ret.getIpDest().getIpAddr(), is("31.13.72.33"));
-		assertThat(ret.getIpSrc().getIpAddr(), is("192.168.1.79"));
+		assertThat(ret.getSrcIp().getIpAddr(), is("192.168.1.79"));
 		assertThat(ret.getLength(), is(433));
 		//Check web site set
 		WebSite site = template.fetch(ret.getWebSite());
@@ -128,7 +128,7 @@ public class TestPcapSummary extends TestCase {
 		assertThat(ret.getSrcPort().getPort(), is(17500));
 		assertThat(ret.getDtoi(), is(1367871079L));
 		assertThat(ret.getIpDest().getIpAddr(), is("192.168.1.255"));
-		assertThat(ret.getIpSrc().getIpAddr(), is("192.168.1.82"));
+		assertThat(ret.getSrcIp().getIpAddr(), is("192.168.1.82"));
 		assertThat(ret.getLength(), is(140));
 		assertThat(ret.getProtocolNumber(), is(17));
 		List<String> protos = new ArrayList<String>();
@@ -182,7 +182,7 @@ public class TestPcapSummary extends TestCase {
 		Long id = template.save(session).getSessionId();
 		assertEquals(session.getClass(), IpSession.class);
 		IpSession ret = template.findOne(id, IpSession.class);
-		assertThat(ret.getIpSrc().getIpAddr(), is("192.168.1.72"));
+		assertThat(ret.getSrcIp().getIpAddr(), is("192.168.1.72"));
 		assertThat(ret.getIpDest().getIpAddr(), is("224.0.0.22"));
 		assertThat(ret.getLength(), is(40));
 		assertThat(ret.getDtoi(), is(1367871239L));
@@ -266,7 +266,7 @@ public class TestPcapSummary extends TestCase {
 		assertThat(ret.getSrcPort().getPort(), is(46793));
 		assertThat(ret.getDtoi(), is(1381670318L));
 		assertThat(ret.getIpDest().getIpAddr(), is("192.168.1.68"));
-		assertThat(ret.getIpSrc().getIpAddr(), is("192.168.1.102"));
+		assertThat(ret.getSrcIp().getIpAddr(), is("192.168.1.102"));
 		assertThat(ret.getLength(), is(52));
 		Device device = template.fetch(ret.getToDevice());
 		assertNotNull(device);
