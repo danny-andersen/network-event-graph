@@ -1,6 +1,6 @@
 <div class="row-fluid">
   <div class="span10" >
-    <h4>Port Usage</h4>
+    <h4>PortUsage</h4>
   </div>
 </div>
 <div class="row-fluid" >
@@ -18,7 +18,8 @@
         Show by session usage</button>
    </div>
 </div>
-    <p><button class="btn" ng-click="getPortUsage(activeTab, true)"><i class="icon-refresh"></i></button> Port Usage by {{usageType}} {{timePhrase}}</p>
+<div ng-show="showTable">
+    <p><button class="btn" ng-click="getPortUsage(activeTab, true)"><i class="icon-refresh"></i></button> Port Usage by {{usageColumn}} {{timePhrase}}</p>
   <div class="btn-group">
       <button class="btn btn-primary" ng-click="showSessionTable()">Table</button>
       <button class="btn btn-primary" ng-click="showSessionChart('circle')">Circles</button>
@@ -33,7 +34,7 @@
       </tr>
       <tr ng-repeat="port in ports">
         <td >{{port.port.port}}</td>
-        <td ><a href="#/sessionDetail?port={{port.port.port}}&start={{sessionParams.start}}&end={{sessionParams.end}}">{{port.deviceCount}}</a></td>
+        <td ><a href="#/sessionDetail?port={{port.port.port}}&start={{sessionParams.start}}&end={{sessionParams.end}}">{{port.count}}</a></td>
       </tr>
     </table>
 </div>
