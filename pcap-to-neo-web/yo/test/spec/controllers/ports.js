@@ -35,10 +35,20 @@ describe('Controller: PortsCtrl', function () {
     };
 
     var ports = [{
-      id: 1
+      "sessionCount": 300,
+      "deviceCount": 0,
+      "port": {
+        "portId": 31,
+        "port": 1900
+      }
     }, {
-      id: 2
-    }];
+      "sessionCount": 100,
+      "deviceCount": 0,
+      "port": {
+        "portId": 31,
+        "port": 100
+      }
+    }]
 
     mockBackend.expectGET('/pcap-to-neo-web/rest/port/usage/session?minPort=' + scope.startPort + '&maxPort=' + scope.endPort + '&startDate=' + scope.sessionParams.start + '&endDate=' + scope.sessionParams.end).respond(ports);
 
@@ -51,7 +61,15 @@ describe('Controller: PortsCtrl', function () {
 
     mockBackend.flush();
 
+    scope.$apply();
+
     expect(scope.loading).toEqual(false);
+    expect(scope.usageColumn).toEqual("Session");
+    expect(scope.ports[0].count).toEqual(300);
+    expect(scope.ports[1].count).toEqual(100);
+    //Add count to expected result
+    ports[0].count = 300;
+    ports[1].count = 100;
     expect(scope.ports).toEqualData(ports);
 
   });
@@ -80,6 +98,7 @@ describe('Controller: PortsCtrl', function () {
     mockBackend.flush();
 
     expect(scope.loading).toEqual(false);
+    expect(scope.usageColumn).toEqual("Device");
     expect(scope.ports).toEqualData(ports);
 
   });
