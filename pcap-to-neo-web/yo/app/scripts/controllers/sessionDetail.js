@@ -41,7 +41,7 @@ angular.module('networkEventGraphApp')
           $scope.loading = false;
         });
       } else if ($scope.port !== undefined && $scope.port !== "") {
-        $scope.tableTitle = 'Sessions from port ' + $scope.port + ' ' + $scope.timePhrase;
+        $scope.tableTitle = 'Sessions from/to port ' + $scope.port + ' ' + $scope.timePhrase;
         if ($scope.protocol !== undefined && $scope.protocol !== "") {
           $scope.tableTitle = $scope.tableTitle + ' using protocol ' + $scope.protocol;
         }
