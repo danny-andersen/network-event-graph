@@ -29,7 +29,7 @@ describe('Controller: SessiondetailCtrl', function () {
     // mockBackend.flush();
   }));
 
-  it('should retrieve sessions', function () {
+  it('should retrieve sessions for an IP addr', function () {
     scope.start = 1000;
     scope.end = 2000;
     scope.srcAddr = '102.1.1.1';
@@ -53,6 +53,65 @@ describe('Controller: SessiondetailCtrl', function () {
     mockBackend.flush();
 
     expect(scope.loading).toEqual(false);
+    expect(scope.tableTitle).toContain("Sessions from ipaddr");
+    expect(scope.sessions).toEqualData(sessions);
+
+  });
+
+  it('should retrieve sessions for a device', function () {
+    scope.start = 1000;
+    scope.end = 2000;
+    scope.deviceId = '5';
+    scope.protocol = 'udp';
+
+    var sessions = [{
+      id: 1
+    }, {
+      id: 2
+    }];
+
+    mockBackend.expectGET('/pcap-to-neo-web/rest/session/ip/detail/device/' + scope.deviceId + '?startdate=' + scope.start + '&enddate=' + scope.end + '&protocol=' + scope.protocol).respond(sessions);
+
+    expect(scope.loading).toEqual(false);
+
+    //Call method under test
+    scope.setSessions();
+
+    expect(scope.loading).toEqual(true);
+    mockBackend.flush();
+
+    expect(scope.loading).toEqual(false);
+    expect(scope.tableTitle).toContain("Sessions from device");
+    expect(scope.tableTitle).toContain("using protocol " + scope.protocol);
+    expect(scope.sessions).toEqualData(sessions);
+
+  });
+
+  it('should retrieve sessions for a port', function () {
+    scope.start = 1000;
+    scope.end = 2000;
+    scope.port = '500';
+    scope.protocol = 'tcp';
+
+    var sessions = [{
+      id: 1
+    }, {
+      id: 2
+    }];
+
+    mockBackend.expectGET('/pcap-to-neo-web/rest/session/ip/detail/port/' + scope.port + '?startdate=' + scope.start + '&enddate=' + scope.end + '&protocol=' + scope.protocol).respond(sessions);
+
+    expect(scope.loading).toEqual(false);
+
+    //Call method under test
+    scope.setSessions();
+
+    expect(scope.loading).toEqual(true);
+    mockBackend.flush();
+
+    expect(scope.loading).toEqual(false);
+    expect(scope.tableTitle).toContain("Sessions from/to port");
+    expect(scope.tableTitle).toContain("using protocol " + scope.protocol);
     expect(scope.sessions).toEqualData(sessions);
 
   });
