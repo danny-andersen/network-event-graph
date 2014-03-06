@@ -42,4 +42,5 @@ public interface ProtocolRepository extends GraphRepository<Protocol>{
 			"RETURN proto, count(s) as numSessions " +
 			"ORDER BY numSessions DESC")
 	public Iterable<Map<String, Object>> findProtocolUsageByDevice(Device device, long startTime, long endTime);
+
 }

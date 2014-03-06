@@ -35,6 +35,10 @@ angular.module('networkEventGraphApp', ['ui.bootstrap', 'ngResource', 'menuContr
         templateUrl: 'views/ports.html',
         controller: 'portsCtrl'
       })
+      .when('/protocols', {
+        templateUrl: 'views/protocols.html',
+        controller: 'protocolsCtrl'
+      })
       .otherwise({
         redirectTo: '/devices'
       });
