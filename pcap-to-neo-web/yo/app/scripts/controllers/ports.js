@@ -7,6 +7,8 @@ angular.module('networkEventGraphApp')
     $scope.loading = false;
     $scope.protoLoading = false;
     $scope.showTable = false;
+    $scope.displayChoices = false;
+    $scope.displayType = 'table';
     $scope.sessionParams = {};
     $scope.refreshSessions = false;
     var getProtocolUsage = function (portNum, port) {
@@ -31,8 +33,10 @@ angular.module('networkEventGraphApp')
     $scope.getPortUsage = function () {
       // $scope.usageColumn = $scope.usageType.slice(0, 1).toUpperCase() + $scope.usageType.slice(1, $scope.usageType.length);
       $scope.loading = true;
-      $scope.showTable = true;
       $scope.ports = [];
+      if ($scope.displayType === 'table') {
+        $scope.showSessionTable();
+      }
       portService.portUsage.query({
         'usageType': 'session',
         'startPort': $scope.startPort,
@@ -67,46 +71,36 @@ angular.module('networkEventGraphApp')
       });
     };
 
+    $scope.showSessionTable = function () {
+      $scope.showTable = true;
+      $scope.showChart = false;
+      $scope.displayChoices = true;
+      $scope.displayType = 'table';
+    };
+
     $scope.showSessionChart = function (type) {
-      //TODO Change this for ports
       $scope.showTable = false;
-      $scope.showGraph = false;
       $scope.showChart = true;
-      $scope.currentChartType = type;
+      $scope.displayChoices = true;
+      $scope.displayType = type;
       var i, j, points = [];
-      for (i = 0; i < $scope.currentSessions.length; i++) {
-        var session = $scope.currentSessions[i];
-        var ip, found = false;
-        if (session.srcIpAddr !== $scope.ipAddress) {
-          ip = session.srcIpAddr;
-        } else {
-          ip = session.destIpAddr;
-        }
-        for (j = 0; j < points.length; j++) {
-          if (points[j].label.search(ip) !== -1) {
-            points[j].size += session.numSessions;
-            points[j].label = ip + '\n' + points[j].size + ' sessions';
-            found = true;
-          }
-        }
-        if (!found) {
+      if ($scope.ports !== undefined) {
+        for (i = 0; i < $scope.ports.length; i++) {
+          var port = $scope.ports[i];
+          var ip, found = false;
           points.push({
-            'label': ip + '\n' + session.numSessions + ' sessions',
-            'size': session.numSessions
+            'label': port.port + '(' + port.sessionCount + ')',
+            'title': 'Port: ' + port.port + ' Sessions:' + port.sessionCount + '\nDevices: ' + port.deviceCount + '\nProtocols: ' + port.protocols,
+            'size': port.sessionCount
           });
         }
-      }
-      var selector = ' #sessionChart';
-      if ($scope.direction === 'from/to') {
-        selector = '.all' + selector;
-      } else {
-        selector = '.' + $scope.direction + selector;
-      }
-      if ($scope.currentSessions.length > 0) {
-        if (type === 'bubble') {
-          chartService.drawBubble(selector, 500, 500, points);
-        } else if (type === 'circle') {
-          chartService.drawCircles(selector, 500, 500, points);
+        var selector = ' #sessionChart';
+        if (points.length > 0) {
+          if (type === 'bubble') {
+            chartService.drawBubble(selector, 700, 700, points);
+          } else if (type === 'circle') {
+            chartService.drawCircles(selector, 700, 700, points);
+          }
         }
       }
     };
