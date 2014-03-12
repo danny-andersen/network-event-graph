@@ -29,6 +29,17 @@
           </tr>
         </table>
 		</tab>
+    <tab heading="Ports used by host" select="setPorts()" active="navTabs.tabs[navTabs.portTab].active" >
+      <p><button class="btn" ng-click="setPorts()"><i class="icon-refresh"></i></button> Ports used by device {{timePhrase}}</p>
+      <img src="images/loader.gif" ng-show="loading" />
+        <table class="table table-striped table-bordered" ng-hide="loading">
+          <tr><th>Port</th><th>Num Sessions</th></tr>
+          <tr ng-repeat="port in detail.device.ports">
+            <td>{{port.port.port}}</td>
+            <td ><a href="#/sessionDetail/?deviceId={{$parent.sessionParams.deviceId}}&start={{sessionParams.start}}&end={{sessionParams.end}}&protocol={{proto.protocol.name}}">{{port.sessionCount}}</a></td>
+          </tr>
+        </table>
+    </tab>
     <tab heading="Websites Visited from {{webAddress}}" select="setSessions(navTabs.webTab)" active="navTabs.tabs[navTabs.webTab].active">
     		<h3>Websites visited from {{webAddress}}</h3>
     		<br />

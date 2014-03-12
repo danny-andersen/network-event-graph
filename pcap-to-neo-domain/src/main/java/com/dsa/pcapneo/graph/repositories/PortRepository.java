@@ -5,6 +5,7 @@ import java.util.Map;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.GraphRepository;
 
+import com.dsa.pcapneo.domain.graph.Device;
 import com.dsa.pcapneo.domain.graph.Port;
 
 public interface PortRepository extends GraphRepository<Port> {
@@ -39,4 +40,12 @@ public interface PortRepository extends GraphRepository<Port> {
 			"RETURN port, COUNT(DISTINCT d) as numDevices " +
 			"ORDER BY numDevices DESC")
 	public Iterable<Map<String, Object>> findAllPortDeviceUsage();
+
+	@Query ("START dev=node({0}) " +
+			"MATCH dev-[:CONNECTS_TO_DEVICE|CONNECTS_FROM_DEVICE]-s-" +
+			"[:CONNECTS_FROM_PORT|CONNECTS_TO_PORT]-port " +
+			"WHERE s.startTime >= {1} AND s.startTime <= {2} " +
+			"RETURN port, COUNT(DISTINCT s) as numSessions " +
+			"ORDER BY numSessions DESC")
+	public Iterable<Map<String, Object>> findPortUsageOfDevice(Device device, long startTime, long endTime);
 }

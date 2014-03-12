@@ -8,14 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.support.Neo4jTemplate;
 import org.springframework.stereotype.Component;
 
+import com.dsa.pcapneo.domain.graph.Device;
 import com.dsa.pcapneo.domain.graph.Port;
 import com.dsa.pcapneo.domain.session.PortUsage;
+import com.dsa.pcapneo.graph.repositories.DeviceRepository;
 import com.dsa.pcapneo.graph.repositories.PortRepository;
 
 @Component
 public class PortRetrievalService {
 	@Autowired Neo4jTemplate template;
-	@Autowired PortRepository repo; 
+	@Autowired PortRepository repo;
+	@Autowired DeviceRepository devRepo;
 
 	/**
 	 * Find the most used ports, i.e. the ones with the most sessions 
@@ -35,6 +38,12 @@ public class PortRetrievalService {
 	 */
 	public PortUsage[] getMostUsedPortsByRange(int minPort, int maxPort, long startDate, long endDate) {
 		Iterable<Map<String, Object>> ps = repo.findPortRangeUsage(minPort, maxPort, startDate, endDate);
+		return convertIterableToPortUsage(ps);
+	}
+	
+	public PortUsage[] getPortUsageOfDevice(long deviceId, long startDate, long endDate) {
+		Device dev = devRepo.findByDeviceId(deviceId);
+		Iterable<Map<String, Object>> ps = repo.findPortUsageOfDevice(dev, startDate, endDate);
 		return convertIterableToPortUsage(ps);
 	}
 	

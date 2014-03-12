@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($scope, $window, $timeout, webSitesByIp, webSitesByHostname, ipSessionService, graphService, chartService, protocolService) {
+angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($scope, $window, $timeout, webSitesByIp, webSitesByHostname, ipSessionService, graphService, chartService, protocolService, portService) {
   $scope.showTable = true;
   $scope.showGraph = false;
   $scope.showChart = false;
@@ -39,12 +39,16 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
   $scope.loading = false;
   $scope.navTabs = {};
   $scope.navTabs.protoTab = 1;
-  $scope.navTabs.webTab = 2;
-  $scope.navTabs.allTab = 3;
-  $scope.navTabs.fromTab = 4;
-  $scope.navTabs.toTab = 5;
+  $scope.navTabs.portTab = 2;
+  $scope.navTabs.webTab = 3;
+  $scope.navTabs.allTab = 4;
+  $scope.navTabs.fromTab = 5;
+  $scope.navTabs.toTab = 6;
   $scope.navTabs.tabs = [{
     active: true,
+    url: ''
+  }, {
+    active: false,
     url: ''
   }, {
     active: false,
@@ -77,6 +81,18 @@ angular.module('networkEventGraphApp').controller('sessionTabCtrl', function ($s
     $scope.loading = true;
     setTimePhrase();
     $scope.$parent.detail.device.protocols = protocolService.protocolUsageByDevice.query({
+      'deviceId': $scope.$parent.detail.id,
+      'startTime': $scope.sessionParams.start,
+      'endTime': $scope.sessionParams.end
+    }, function () {
+      $scope.loading = false;
+    });
+  };
+
+  $scope.setPorts = function () {
+    $scope.loading = true;
+    setTimePhrase();
+    $scope.$parent.detail.device.ports = portService.portUsageOfDevice.query({
       'deviceId': $scope.$parent.detail.id,
       'startTime': $scope.sessionParams.start,
       'endTime': $scope.sessionParams.end

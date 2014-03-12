@@ -130,8 +130,12 @@ public class DeviceResource extends Resource {
 	@ApiOperation(value="Find all devices that have used a particular protocol", notes="")
 	@GET
 	public Device[] getDevicesUsingProtocol(@PathParam("protocol") String protocol,
-			@QueryParam("startDate") String startDate,
-			@QueryParam("endDate") String endDate) {
+			@ApiParam(value="start date", required = false)
+			@QueryParam("startDate") 
+			String startDate,
+			@ApiParam(value="end date", required = false)
+			@QueryParam("endDate") 
+			String endDate) {
 		long start = System.currentTimeMillis();
 		Device[] devices = deviceService.getDevicesUsingProtocol(protocol, parseDateString(startDate, 0), parseDateString(endDate, new Date().getTime()));
 		log.info(String.format("Retrieved %d devices using protocol %s in %d ms",
