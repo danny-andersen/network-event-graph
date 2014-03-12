@@ -13,10 +13,11 @@ import org.springframework.stereotype.Component;
 import com.dsa.pcapneo.domain.graph.Device;
 import com.dsa.pcapneo.domain.graph.IpAddress;
 import com.dsa.pcapneo.domain.graph.Port;
-import com.dsa.pcapneo.domain.session.PortUsage;
+import com.dsa.pcapneo.domain.graph.Protocol;
 import com.dsa.pcapneo.graph.repositories.DeviceRepository;
 import com.dsa.pcapneo.graph.repositories.IpAddressRepository;
 import com.dsa.pcapneo.graph.repositories.PortRepository;
+import com.dsa.pcapneo.graph.repositories.ProtocolRepository;
 
 @Component
 public class DeviceRetrievalService {
@@ -24,6 +25,7 @@ public class DeviceRetrievalService {
 	@Autowired DeviceRepository repo;
 	@Autowired IpAddressRepository ipaddrRepo;
 	@Autowired PortRepository portRepo;
+	@Autowired ProtocolRepository protocolRepo;
 	
 	public Device[] getDevicesByHostname(String hostname) {
 		Device[] devices = null;
@@ -78,12 +80,32 @@ public class DeviceRetrievalService {
 		return devSet.toArray(new Device[devSet.size()]);
 	}
 
+	public Device[] getDevicesUsingProtocol(String protocol, long start, long end) {
+		Set<Device> devSet = getDeviceSet();
+		if (protocol != null) {
+			//Find matching protos
+			Iterable<Protocol> protos = protocolRepo.findProtocolByName(protocol);
+			for (Protocol proto : protos) {
+				Iterable<Map<String, Object>> results = repo.getDevicesConnectedViaProtocol(proto, start, end);
+				if (results != null) {
+					for (Map<String, Object> res: results) {
+						Device dev = template.convert(res.get("device"), Device.class);
+						devSet.add(dev);
+					}
+				}
+			}
+		}
+		return devSet.toArray(new Device[devSet.size()]);
+	}
+
 	public Device[] getDevicesUsingPort(int portNo, long startDate, long endDate) {
 		Set<Device> devSet = getDeviceSet();
 		Iterable<Port> port = portRepo.findByPort(portNo);
-		Iterable<Map<String, Object>> devIter = repo.getDevicesUsingPort(port.iterator().next(), startDate, endDate);
-		for (Map<String, Object> dev : devIter) {
-			devSet.add(template.convert(dev.get("device"), Device.class));
+		if (port != null && port.iterator().hasNext()) {
+			Iterable<Map<String, Object>> devIter = repo.getDevicesUsingPort(port.iterator().next(), startDate, endDate);
+			for (Map<String, Object> dev : devIter) {
+				devSet.add(template.convert(dev.get("device"), Device.class));
+			}
 		}
 		return devSet.toArray(new Device[devSet.size()]);
 	}

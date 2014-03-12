@@ -48,13 +48,102 @@ describe('Controller: DevicesCtrl', function () {
     //Call method undertest
     $scope.getDevices();
     expect($scope.data.loading).toBe(true);
-    expect($scope.data.query).toBe('Ipaddr: 192.168.*');
+    expect($scope.data.query).toBe('Ipaddr: 192.168.* ');
 
     mockBackend.flush();
 
     expect($scope.data.loading).toBe(false);
     expect(devModel.getQuery()).toBe($scope.data.query);
     expect(devModel.getDevices()).toEqualData(devices);
+
+  });
+
+  it('should retrieve devices by a port and set the deviceModel', function () {
+    $scope.port = "53";
+    var devices = [{
+      deviceId: 1
+    }, {
+      deviceId: 2
+    }];
+
+    mockBackend.expectGET('/pcap-to-neo-web/rest/device/port/' + $scope.port).respond(devices);
+    expect($scope.data.loading).toBe(false);
+    expect($scope.data.query).toBe('');
+    expect($scope.data.devices).toBeUndefined();
+
+    //Call method undertest
+    $scope.getDevices();
+    expect($scope.data.loading).toBe(true);
+    expect($scope.data.query).toBe('Port: 53 ');
+
+    mockBackend.flush();
+
+    expect($scope.data.loading).toBe(false);
+    expect(devModel.getQuery()).toBe($scope.data.query);
+    expect(devModel.getDevices()).toEqualData(devices);
+
+  });
+
+  it('should retrieve devices by a protcol and set the deviceModel', function () {
+    $scope.protocol = "udp";
+    var devices = [{
+      deviceId: 1
+    }, {
+      deviceId: 2
+    }];
+
+    mockBackend.expectGET('/pcap-to-neo-web/rest/device/protocol/' + $scope.protocol).respond(devices);
+    expect($scope.data.loading).toBe(false);
+    expect($scope.data.query).toBe('');
+    expect($scope.data.devices).toBeUndefined();
+
+    //Call method undertest
+    $scope.getDevices();
+    expect($scope.data.loading).toBe(true);
+    expect($scope.data.query).toBe('Protocol: udp');
+
+    mockBackend.flush();
+
+    expect($scope.data.loading).toBe(false);
+    expect(devModel.getQuery()).toBe($scope.data.query);
+    expect(devModel.getDevices()).toEqualData(devices);
+
+  });
+
+  it('should retrieve devices by an ipaddr and protocol and set the deviceModel', function () {
+    $scope.ipaddr = "192.168.1.1";
+    var devicesIp = [{
+      deviceId: 1
+    }, {
+      deviceId: 2
+    }];
+    $scope.protocol = "udp";
+    var devicesProto = [{
+      deviceId: 1
+    }, {
+      deviceId: 3
+    }];
+
+    var devicesResult = [{
+      deviceId: 1
+    }];
+
+    mockBackend.expectGET('/pcap-to-neo-web/rest/device/ipaddr/' + $scope.ipaddr).respond(devicesIp);
+    mockBackend.expectGET('/pcap-to-neo-web/rest/device/protocol/' + $scope.protocol).respond(devicesProto);
+    expect($scope.data.loading).toBe(false);
+    expect($scope.data.query).toBe('');
+    expect($scope.data.devices).toBeUndefined();
+
+    //Call method undertest
+    $scope.getDevices();
+    expect($scope.data.loading).toBe(true);
+    expect($scope.data.query).toBe('Ipaddr: 192.168.1.1 Protocol: udp');
+
+    mockBackend.flush();
+
+    expect($scope.data.loading).toBe(false);
+    expect(devModel.getQuery()).toBe($scope.data.query);
+    expect(devModel.getDevices()).toEqualData(devicesResult);
 
   });
 

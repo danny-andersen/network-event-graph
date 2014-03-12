@@ -16,6 +16,24 @@ angular.module('networkEventGraphApp').service('deviceModel', function deviceMod
   this.setDevices = function (devices) {
     this.devices = devices;
   };
+  this.intersectDevices = function (devices) {
+    //Set devices to the intersection of the two sets of devices
+    var i, j, intersect;
+    intersect = [];
+    if (this.devices === undefined || this.devices.length === 0) {
+      this.devices = devices;
+    } else {
+      for (i = 0; i < this.devices.length; i++) {
+        //If device is present in incoming set add it to the result
+        for (j = 0; j < devices.length; j++) {
+          if (this.devices[i].deviceId === devices[j].deviceId) {
+            intersect.push(this.devices[i]);
+          }
+        }
+      }
+      this.devices = intersect;
+    }
+  };
   this.setDeviceDetail = function (deviceId, device) {
     this.deviceDetails[deviceId] = device;
   };

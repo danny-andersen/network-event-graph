@@ -7,16 +7,47 @@ angular.module('networkEventGraphApp').controller('DevicesCtrl', function ($scop
   $scope.data.query = deviceModel.getQuery();
   $scope.data.devices = deviceModel.getDevices();
   var setDevices = function (devices) {
-    $scope.data.loading = false;
     deviceModel.setQuery($scope.data.query);
-    deviceModel.setDevices(devices);
+    deviceModel.intersectDevices(devices);
+    $scope.filterCount--;
+    if ($scope.filterCount === 0) {
+      $scope.data.loading = false;
+      $scope.data.devices = deviceModel.getDevices();
+    }
   };
   $scope.getDevices = function () {
     $scope.data.loading = true;
-    $scope.data.query = 'Ipaddr: ' + $scope.ipaddr;
-    $scope.data.devices = deviceService.deviceByIpAddr.query({
-      'ipAddr': $scope.ipaddr
-    }, setDevices);
+    $scope.data.devices = [];
+    $scope.data.query = '';
+    $scope.filterCount = 0;
+    deviceModel.setDevices([]);
+    if ($scope.ipaddr !== undefined && $scope.ipaddr !== '') {
+      $scope.filterCount++;
+      $scope.data.query = 'Ipaddr: ' + $scope.ipaddr + ' ';
+      deviceService.deviceByIpAddr.query({
+        'ipAddr': $scope.ipaddr
+      }, function (devices) {
+        setDevices(devices);
+      });
+    }
+    if ($scope.port !== undefined && $scope.port !== '') {
+      $scope.filterCount++;
+      $scope.data.query = $scope.data.query + 'Port: ' + $scope.port + ' ';
+      $scope.data.devices = deviceService.deviceByPort.query({
+        'port': $scope.port
+      }, function (devices) {
+        setDevices(devices);
+      });
+    }
+    if ($scope.protocol !== undefined && $scope.protocol !== '') {
+      $scope.filterCount++;
+      $scope.data.query = $scope.data.query + 'Protocol: ' + $scope.protocol;
+      $scope.data.devices = deviceService.deviceByProtocol.query({
+        'protocol': $scope.protocol
+      }, function (devices) {
+        setDevices(devices);
+      });
+    }
   };
   $scope.getLocalDevices = function () {
     $scope.data.loading = true;

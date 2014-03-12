@@ -20,6 +20,8 @@ angular.module('networkEventGraphApp').service('deviceService', function ($resou
   });
 
   this.deviceByIpAddr = $resource('/pcap-to-neo-web/rest/device/ipaddr/:ipAddr', {});
+  this.deviceByPort = $resource('/pcap-to-neo-web/rest/device/port/:port', {});
+  this.deviceByProtocol = $resource('/pcap-to-neo-web/rest/device/protocol/:protocol', {});
 
   this.deviceDetailById = $resource('/pcap-to-neo-web/rest/device/detail/:deviceId', {});
 });
