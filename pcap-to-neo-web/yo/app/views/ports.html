@@ -32,7 +32,7 @@
       </tr>
       <tr ng-repeat="port in ports">
         <td >{{port.port}}</td>
-        <td ><a href="#/sessionDetail?port={{port.port}}&start={{sessionParams.start}}&end={{sessionParams.end}}">{{port.deviceCount}}</a></td>
+        <td ><a href="#/devices?port={{port.port}}&start={{sessionParams.start}}&end={{sessionParams.end}}">{{port.deviceCount}}</a></td>
         <td ><a href="#/sessionDetail?port={{port.port}}&start={{sessionParams.start}}&end={{sessionParams.end}}">{{port.sessionCount}}</a></td>
         <td>{{port.protocols}}</td>
       </tr>

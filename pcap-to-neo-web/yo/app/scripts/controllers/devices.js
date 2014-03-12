@@ -1,16 +1,17 @@
 /*jslint white:true */
 'use strict';
 
-angular.module('networkEventGraphApp').controller('DevicesCtrl', function ($scope, deviceModel, deviceService) {
+angular.module('networkEventGraphApp').controller('DevicesCtrl', function ($scope, $routeParams, deviceModel, deviceService) {
   $scope.data = {};
   $scope.data.loading = false;
   $scope.data.query = deviceModel.getQuery();
   $scope.data.devices = deviceModel.getDevices();
+  $scope.port = $routeParams.port;
   var setDevices = function (devices) {
     deviceModel.setQuery($scope.data.query);
     deviceModel.intersectDevices(devices);
     $scope.filterCount--;
-    if ($scope.filterCount === 0) {
+    if ($scope.filterCount <= 0) {
       $scope.data.loading = false;
       $scope.data.devices = deviceModel.getDevices();
     }
@@ -51,11 +52,13 @@ angular.module('networkEventGraphApp').controller('DevicesCtrl', function ($scop
   };
   $scope.getLocalDevices = function () {
     $scope.data.loading = true;
+    $scope.filterCount = 1;
     $scope.data.query = 'All Local devices';
     $scope.data.devices = deviceService.localDevices.query({}, setDevices);
   };
   $scope.getRemoteDevices = function () {
     $scope.data.loading = true;
+    $scope.filterCount = 1;
     $scope.data.query = 'All Remote devices';
     $scope.data.devices = deviceService.remoteDevices.query({}, setDevices);
   };
@@ -65,4 +68,7 @@ angular.module('networkEventGraphApp').controller('DevicesCtrl', function ($scop
       'name': 'Device(id=' + deviceId + ')'
     });
   };
+  if ($scope.port !== undefined && $scope.port !== '') {
+    $scope.getDevices();
+  }
 });
