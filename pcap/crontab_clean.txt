@@ -1,0 +1,1 @@
+0,15,30,45 * * * * find /home/danny/pcapIn/pcap -type f -size 0 -exec rm '{}' ';'
