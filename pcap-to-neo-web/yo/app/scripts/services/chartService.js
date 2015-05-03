@@ -42,7 +42,7 @@ angular.module('networkEventGraphApp').service('chartService', function () {
       });
     nodes.append('title')
       .text(function (p) {
-        return (p.label);
+        return (p.title === undefined ? p.label : p.title);
       });
     nodes.append('circle')
       .attr('r', function (p) {
@@ -77,7 +77,8 @@ angular.module('networkEventGraphApp').service('chartService', function () {
     for (i = 0; i < points.length; i++) {
       root.children.push({
         name: points[i].label,
-        value: points[i].size
+        value: points[i].size,
+        title: points[i].title === undefined ? points[i].label : points[i].title
       });
     }
     return root;
@@ -102,7 +103,7 @@ angular.module('networkEventGraphApp').service('chartService', function () {
       });
     node.append('title')
       .text(function (d) {
-        return (d.name);
+        return (d.title);
       });
     node.append('circle')
       .attr('r', function (d) {

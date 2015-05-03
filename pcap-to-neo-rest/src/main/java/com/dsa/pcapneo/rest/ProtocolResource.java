@@ -32,7 +32,7 @@ public class ProtocolResource extends Resource {
 	
 	@GET
 	@Path("/usage")
-	@ApiOperation(value="Find Protocol usage for a protocol by number of IP sessions for a port and time range", notes="Returns ports and number of sessions used in desc order")
+	@ApiOperation(value="Find Protocol usage for a protocol name by number of IP sessions for a time range", notes="Returns ports and number of sessions used in desc order")
 	public ProtocolUsage[] findProtocolUsage(
 			@ApiParam(value="protocol", required = false)
 			@QueryParam("protocol") String protocol,
@@ -66,7 +66,7 @@ public class ProtocolResource extends Resource {
 			@QueryParam("startDate") 
 			String startDate,
 			@ApiParam(value="end date", required = false)
-			@QueryParam("endDate") 
+			@QueryParam("endDate")
 			String endDate
 			) {
 		long start = System.currentTimeMillis();
@@ -80,7 +80,7 @@ public class ProtocolResource extends Resource {
 
 	@GET
 	@Path("/usage/device")
-	@ApiOperation(value="Find Protocol usage for a port by number of IP sessions for a port and time range", notes="Returns ports and number of sessions used in desc order")
+	@ApiOperation(value="Find Protocol usage for a device by number of IP sessions for a port and time range", notes="Returns ports and number of sessions used in desc order")
 	public ProtocolUsage[] findProtocolUsageByDevice(
 			@ApiParam(value="device id", required = true)
 			@QueryParam("deviceId") long deviceId,

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import com.dsa.pcapneo.domain.graph.Device;
 import com.dsa.pcapneo.domain.graph.HttpSession;
 import com.dsa.pcapneo.domain.graph.IpSession;
+import com.dsa.pcapneo.domain.graph.Port;
 import com.dsa.pcapneo.domain.graph.SessionSummary;
 import com.dsa.pcapneo.graph.repositories.SessionRepository.SessionQueryType;
 
@@ -24,18 +25,65 @@ public class SessionRepoImpl {
 	@Autowired HttpSessionRepository httpRepo;
 	@Autowired IpSessionRepository ipRepo;
 	@Autowired SessionRepository repo;
+	@Autowired PortRepository portRepo;
 
 
 	public List<IpSession> getIpSessionsByIpAddr(String ipAddr, String destIp, long startTime, long endTime) {
 		Iterable<IpSession> iter;
 		if (destIp != null && !destIp.isEmpty()) {
-			iter = ipRepo.getIpSessionsByIpAddr(ipAddr, destIp, startTime, endTime);
+			iter = ipRepo.getIpSessionsByIpAddrs(ipAddr, destIp, startTime, endTime);
 		} else {
 			iter = ipRepo.getIpSessionsByIpAddr(ipAddr, startTime, endTime);
 		}
 		List<IpSession> sessList = new ArrayList<IpSession>();
 		for (IpSession session : iter) {
 			sessList.add(session);
+		}
+		return sessList;
+	}
+
+	public List<IpSession> getIpSessionsByIpAddrAndProtocol(String ipAddr, String destIp, String protocol, long startTime, long endTime) {
+		Iterable<IpSession> iter;
+		if (destIp != null && !destIp.isEmpty()) {
+			iter = ipRepo.getIpSessionsByIpAddrsAndProtocol(ipAddr, destIp, protocol, startTime, endTime);
+		} else {
+			iter = ipRepo.getIpSessionsByIpAddrAndProtocol(ipAddr, protocol, startTime, endTime);
+		}
+		List<IpSession> sessList = new ArrayList<IpSession>();
+		for (IpSession session : iter) {
+			sessList.add(session);
+		}
+		return sessList;
+	}
+
+	public List<IpSession> getIpSessionsByPort(int portNo, long startTime, long endTime) {
+		List<IpSession> sessList = null;
+		Iterable<Port> ports = portRepo.findByPort(portNo);
+		if (ports != null) {
+			Port port = ports.iterator().next();
+			if (port != null) {
+				Iterable<IpSession> iter = ipRepo.getIpSessionsByPort(port, startTime, endTime);
+				sessList = new ArrayList<IpSession>();
+				for (IpSession session : iter) {
+					sessList.add(session);
+				}
+			}
+		}
+		return sessList;
+	}
+
+	public List<IpSession> getIpSessionsByPortAndProtocol(int portNo, String protocol, long startTime, long endTime) {
+		Iterable<Port> ports = portRepo.findByPort(portNo);
+		List<IpSession> sessList = null;
+		if (ports != null) {
+			Port port = ports.iterator().next();
+			if (port != null) {
+				Iterable<IpSession> iter = ipRepo.getIpSessionsByPortAndProtocol(port, protocol, startTime, endTime);
+				sessList = new ArrayList<IpSession>();
+				for (IpSession session : iter) {
+					sessList.add(session);
+				}
+			}
 		}
 		return sessList;
 	}
@@ -73,10 +121,38 @@ public class SessionRepoImpl {
 	
 	public List<IpSession> getIpSessionsByDeviceId(long deviceId, long destId, long startTime, long endTime) {
 		Iterable<IpSession> iter;
-		if (destId != -1 || destId != 0) {
+		if (destId != -1 && destId != 0) {
 			iter = ipRepo.getIpSessionsByDeviceIds(deviceId, destId, startTime, endTime);
 		} else {
 			iter = ipRepo.getIpSessionsByDevice(deviceId, startTime, endTime);
+		}
+		List<IpSession> sessList = new ArrayList<IpSession>();
+		for (IpSession session : iter) {
+			sessList.add(session);
+		}
+		return sessList;
+	}
+	
+	public List<IpSession> getIpSessionsByDeviceIdAndPort(long deviceId, long destId, int port, long startTime, long endTime) {
+		Iterable<IpSession> iter;
+		if (destId != -1 && destId != 0) {
+			iter = ipRepo.getIpSessionsByDeviceIdsAndPort(deviceId, destId, port, startTime, endTime);
+		} else {
+			iter = ipRepo.getIpSessionsByDeviceAndPort(deviceId, port, startTime, endTime);
+		}
+		List<IpSession> sessList = new ArrayList<IpSession>();
+		for (IpSession session : iter) {
+			sessList.add(session);
+		}
+		return sessList;
+	}
+
+	public List<IpSession> getIpSessionsByDeviceIdProtocol(long deviceId, long destId, String protocol, long startTime, long endTime) {
+		Iterable<IpSession> iter;
+		if (destId != -1 && destId != 0) {
+			iter = ipRepo.getIpSessionsByDeviceIdsAndProtocol(deviceId, destId, protocol, startTime, endTime);
+		} else {
+			iter = ipRepo.getIpSessionsByDeviceAndProtocol(deviceId, protocol, startTime, endTime);
 		}
 		List<IpSession> sessList = new ArrayList<IpSession>();
 		for (IpSession session : iter) {

@@ -1,6 +1,6 @@
 <div>
   <img src="images/loader.gif" ng-show="loading" />
-  <h2 ng-bind="detail.device.hostName"></h2>
+  <h3 ng-bind="detail.device.hostName"></h3>
   <h4 ng-show="hasDescription">Description</h4>
   <p ng-bind="detail.device.description"></p>
 </div>
@@ -16,22 +16,42 @@
 <br/>
 <div ng-controller="sessionTabCtrl" >
   <tabset >
-  	<tab heading="Protocols used by host" active="navTabs.tabs[navTabs.protoTab].active" >
-  		<li ng-repeat="proto in detail.device.protocols">
-			{{proto.name}}
-	   	</li>
+    <tab heading="Select a Tab:" >
+    </tab>
+  	<tab heading="Protocols used by host" select="setProtocols()" active="navTabs.tabs[navTabs.protoTab].active" >
+      <p><button class="btn" ng-click="setProtocols()"><i class="icon-refresh"></i></button> Protocols used by device {{timePhrase}}</p>
+      <img src="images/loader.gif" ng-show="loading" />
+        <table class="table table-striped table-bordered" ng-hide="loading">
+          <tr><th>Protocol</th><th>Num Sessions</th></tr>
+          <tr ng-repeat="proto in detail.device.protocols">
+            <td>{{proto.protocol.name}}</td>
+            <td ><a href="#/sessionDetail/?deviceId={{$parent.sessionParams.deviceId}}&start={{sessionParams.start}}&end={{sessionParams.end}}&protocol={{proto.protocol.name}}">{{proto.sessionCount}}</a></td>
+          </tr>
+        </table>
 		</tab>
+    <tab heading="Ports used by host" select="setPorts()" active="navTabs.tabs[navTabs.portTab].active" >
+      <p><button class="btn" ng-click="setPorts()"><i class="icon-refresh"></i></button> Ports used by device {{timePhrase}}</p>
+      <img src="images/loader.gif" ng-show="loading" />
+        <table class="table table-striped table-bordered" ng-hide="loading">
+          <tr><th>Port</th><th>Num Sessions</th></tr>
+          <tr ng-repeat="port in detail.device.ports">
+            <td>{{port.port.port}}</td>
+            <td ><a href="#/sessionDetail/?deviceId={{$parent.sessionParams.deviceId}}&start={{sessionParams.start}}&end={{sessionParams.end}}&protocol={{proto.protocol.name}}">{{port.sessionCount}}</a></td>
+          </tr>
+        </table>
+    </tab>
     <tab heading="Websites Visited from {{webAddress}}" select="setSessions(navTabs.webTab)" active="navTabs.tabs[navTabs.webTab].active">
     		<h3>Websites visited from {{webAddress}}</h3>
     		<br />
     		<img src="images/loader.gif" ng-show="loading" />
-    		<table class="table table-striped table-bordered">
+    		<table class="table table-striped table-bordered" >
     			<tr><th>Address</th><th>Uri</th><th>Referers</th><th>Devices</th></tr>
     			<tr ng-repeat="website in detail.device.websites" >
     				<td>{{website.address}}</td>
     				<td><ul class="list-unstyled" ng-repeat="uri in website.uris">{{uri.path}}</ul></td>
     				<td><ul class="list-unstyled" ng-repeat="referer in website.referers">{{refer.address}}</ul></td>
     				<td><ul class="list-unstyled" ng-repeat="device in website.devices">{{device.hostName}}</ul></td>
+          </tr>
     		</table>
     </tab>
     <tab heading="All Sessions" select="setSessions(navTabs.allTab)" active="navTabs.tabs[navTabs.allTab].active" >

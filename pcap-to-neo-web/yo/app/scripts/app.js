@@ -19,7 +19,7 @@ angular.module('networkEventGraphApp', ['ui.bootstrap', 'ngResource', 'menuContr
         templateUrl: 'views/device.html',
         controller: 'DeviceCtrl'
       })
-      .when('/sessionDetail/:srcIpAddr', {
+      .when('/sessionDetail', {
         templateUrl: 'views/sessionDetail.html',
         controller: 'sessionDetailCtrl'
       })
@@ -30,6 +30,14 @@ angular.module('networkEventGraphApp', ['ui.bootstrap', 'ngResource', 'menuContr
       .when('/device/graph/:ipAddr/:direction?start=:start&end=:end', {
         templateUrl: 'views/deviceGraph.html',
         controller: 'deviceGraphCtrl'
+      })
+      .when('/ports', {
+        templateUrl: 'views/ports.html',
+        controller: 'portsCtrl'
+      })
+      .when('/protocols', {
+        templateUrl: 'views/protocols.html',
+        controller: 'protocolsCtrl'
       })
       .otherwise({
         redirectTo: '/devices'

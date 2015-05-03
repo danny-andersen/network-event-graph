@@ -8,6 +8,7 @@ controller('menuCtrl', function ($scope) {
   $scope.items = {};
   $scope.sessionMenuId = 0;
   $scope.deviceMenuId = 1;
+  $scope.portMenuId = 2;
   $scope.items.menuItems = [];
   $scope.items.menuItems[$scope.sessionMenuId] = {
     'href': '#/allSessionGraph',
@@ -19,4 +20,9 @@ controller('menuCtrl', function ($scope) {
     'name': 'Devices'
   };
   $scope.items[$scope.items.menuItems[$scope.deviceMenuId].name] = [];
+  $scope.items.menuItems[$scope.portMenuId] = {
+    'href': '#/ports',
+    'name': 'Ports'
+  };
+  $scope.items[$scope.items.menuItems[$scope.portMenuId].name] = [];
 });

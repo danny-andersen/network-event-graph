@@ -19,6 +19,7 @@ angular.module('networkEventGraphApp').controller('DeviceCtrl', function ($scope
 
   $scope.setDeviceDetailById = function (deviceId) {
     $scope.detail.id = deviceId;
+    $scope.sessionParams.deviceId = deviceId;
     $scope.detail.device = deviceModel.getDeviceDetail($scope.detail.id);
     if ($scope.detail.device === undefined) {
       $scope.loading = true;

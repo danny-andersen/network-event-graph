@@ -44,7 +44,7 @@ public class LoadPcapSummaryFile {
 		PcapSummaryLoadService graphInserter = context.getBean(PcapSummaryLoadService.class);
 		GraphDatabaseService graphDb = context.getBean(GraphDatabaseService.class);
 		BufferedReader reader = new BufferedReader(new FileReader(file));
-		graphInserter.parseFile(reader);
+		graphInserter.parseFile(file.getName(), reader);
 		reader.close();
 	}
 }

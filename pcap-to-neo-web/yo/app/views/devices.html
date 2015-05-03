@@ -1,11 +1,14 @@
-<h2>Enter Device Selection Criteria</h2>
-Enter IpAddr Filter:<input type="search" ng-model="ipaddr" ></input><button class="btn btn-primary" ng-click="getDevices()">Find Devices</button>
-<br>
+<h3>Find Devices</h3>
+Enter IpAddr Filter: <input type="search" ng-model="ipaddr" ></input><br />
+Enter Port Used Filter: <input type="search" ng-model="port" ></input><br />
+Enter Protocol Used Filter: <input type="search" ng-model="protocol" ></input>
+<br/>
+<button class="btn btn-primary" ng-click="getDevices()">Find Devices</button>
 <div class="btn-group">
-    <button class="btn btn-primary" ng-click="getLocalDevices()">Show All Local Devices</button>
-    <button class="btn btn-primary" ng-click="getRemoteDevices()">Show All Remote Devices</button>
+    <button class="btn btn-primary" ng-click="getLocalDevices()">Find All Local Devices</button>
+    <button class="btn btn-primary" ng-click="getRemoteDevices()">Find All Remote Devices</button>
 </div>
-<br>
+<br />
 <p>Query: {{data.query}}</p>
 <img src="images/loader.gif" ng-show="data.loading" />
 <table class="table">

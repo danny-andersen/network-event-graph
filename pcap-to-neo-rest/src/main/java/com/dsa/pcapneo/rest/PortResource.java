@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -21,8 +22,8 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
 @Component
-@Path("/port")
-@Api(value="/port", description="Find and retrieve Port usage")
+@Path("/port/usage")
+@Api(value="/port/usage", description="Find and retrieve Port usage")
 @Produces(MediaType.APPLICATION_JSON)
 public class PortResource extends Resource {
 	private static final Log log = LogFactory.getLog(DeviceResource.class);
@@ -31,14 +32,14 @@ public class PortResource extends Resource {
 	PortRetrievalService portService;
 
 	@GET
-	@Path("/session/usage")
+	@Path("/session")
 	@ApiOperation(value="Find Port usage by number of IP sessions for a port and time range", notes="Returns ports and number of sessions used in desc order")
 	public PortUsage[] getPortBySessionUsage(
 			@ApiParam(value="bottom of port range (0 if not set)", required = false)
 			@DefaultValue("0") @QueryParam("minPort") 
 			int minPort, 
 			@ApiParam(value="top of port range (65536 if not set)", required = false)
-			@DefaultValue("65536") @QueryParam("maxPort") 
+			@DefaultValue("65535") @QueryParam("maxPort") 
 			int maxPort,
 			@ApiParam(value="start date", required = false)
 			@QueryParam("startDate") 
@@ -61,7 +62,7 @@ public class PortResource extends Resource {
 	}
 
 	@GET
-	@Path("/device/usage")
+	@Path("/device")
 	@ApiOperation(value="Find Port usage by number of devices it is connected to for a port and time range", notes="Returns ports and number of sessions used in desc order")
 	public PortUsage[] getPortByDeviceUsage(
 			@ApiParam(value="bottom of port range (0 if not set)", required = false)
@@ -89,4 +90,27 @@ public class PortResource extends Resource {
 				ports.length, minPort, maxPort, System.currentTimeMillis() - start));
 		return ports;
 	}
+	
+	@GET
+	@Path("/device/{deviceId}")
+	@ApiOperation(value="Find Port usage for a device by number of IP sessions for a time range", notes="Returns ports and number of sessions used by device in desc order")
+	public PortUsage[] findPortUsageOfDevice(
+			@ApiParam(value="device id", required = true)
+			@PathParam("deviceId") long deviceId,
+			@ApiParam(value="start date", required = false)
+			@QueryParam("startDate") 
+			String startDate,
+			@ApiParam(value="end date", required = false)
+			@QueryParam("endDate") 
+			String endDate
+			) {
+		long start = System.currentTimeMillis();
+		PortUsage[] pu = null;
+		pu = portService.getPortUsageOfDevice(deviceId, parseDateString(startDate, 0), parseDateString(endDate, new Date().getTime()));
+		log.info(String.format(
+				"Retrieved %d ports and usage for device: %s in %d ms",
+				pu.length, deviceId, System.currentTimeMillis() - start));
+		return pu;
+	}
+
 }

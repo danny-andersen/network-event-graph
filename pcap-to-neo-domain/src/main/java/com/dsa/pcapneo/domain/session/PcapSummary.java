@@ -68,8 +68,13 @@ public class PcapSummary {
 		}
 		if (parts.length > 2 && parts[2] != null && !parts[2].isEmpty()) {
 			this.setIpSrc(parts[2]);
-			this.setIpDest(parts[3]);
-			next = 4;
+			if (parts.length > 3 && parts[3] != null && !parts[3].isEmpty()) {
+				this.setIpDest(parts[3]);
+				next = 4;
+			} else {
+				//broken session
+				return;
+			}
 		}
 		if (parts.length > next && parts[next] != null && !parts[next].isEmpty()) {
 			this.setLength(Integer.parseInt(parts[next]));

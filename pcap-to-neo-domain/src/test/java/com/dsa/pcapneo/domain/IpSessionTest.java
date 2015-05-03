@@ -53,14 +53,14 @@ public class IpSessionTest {
 		session.setLength(1024);
 		IpAddress ip = new IpAddress("192.168.1.1");
 		ip = template.save(ip);
-		session.setIpSrc(ip);
+		session.setSrcIp(ip);
 		Long sessionId = template.save(session).getSessionId();
 		Assert.assertNotNull(sessionId);
 		IpSession retrieved = template.findOne(sessionId, IpSession.class);
 		Assert.assertNotNull(retrieved);
 		assertThat(retrieved.getLength(), is(1024));
 		assertThat(retrieved.getProtocolNumber(), is(17));
-		assertThat(retrieved.getIpSrc().getIpAddr(), is("192.168.1.1"));
+		assertThat(retrieved.getSrcIp().getIpAddr(), is("192.168.1.1"));
 	}
 
 	@Test
@@ -72,7 +72,7 @@ public class IpSessionTest {
 		session.setStartTime(new Date().getTime());
 		session.setProtocolNumber(17);
 		session.setLength(1024);
-		session.setIpSrc(factory.getIpAddress("192.168.1.1"));
+		session.setSrcIp(factory.getIpAddress("192.168.1.1"));
 		session.setIpDest(factory.getIpAddress("12.1.1.1"));
 		session.setSrcPort(factory.getPort("24555"));
 		session.setDestPort(factory.getPort("80"));
@@ -87,9 +87,9 @@ public class IpSessionTest {
 			rproto.add(p.getName());
 		}
 		assertThat(rproto, hasItems(protos));
-		assertThat(retrieved.getIpSrc().getIpAddr(), is("192.168.1.1"));
+		assertThat(retrieved.getSrcIp().getIpAddr(), is("192.168.1.1"));
 		assertThat(retrieved.getIpDest().getIpAddr(), is("12.1.1.1"));
-		assertThat(retrieved.getIpSrc().getLocation().name(), is("LOCAL"));
+		assertThat(retrieved.getSrcIp().getLocation().name(), is("LOCAL"));
 		assertThat(retrieved.getIpDest().getLocation().name(), is("REMOTE"));
 		assertThat(retrieved.getSrcPort().getPort(), is(24555));
 		assertThat(retrieved.getDestPort().getPort(), is(80));

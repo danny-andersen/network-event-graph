@@ -64,7 +64,7 @@ public class TestPcapSummary extends TestCase {
 		assertThat(ret.getSrcPort().getPort(), is(38314));
 		assertThat(ret.getDtoi(), is(1367956351L));
 		assertThat(ret.getIpDest().getIpAddr(), is("31.13.72.33"));
-		assertThat(ret.getIpSrc().getIpAddr(), is("192.168.1.79"));
+		assertThat(ret.getSrcIp().getIpAddr(), is("192.168.1.79"));
 		assertThat(ret.getLength(), is(433));
 		//Check web site set
 		WebSite site = template.fetch(ret.getWebSite());
@@ -128,7 +128,7 @@ public class TestPcapSummary extends TestCase {
 		assertThat(ret.getSrcPort().getPort(), is(17500));
 		assertThat(ret.getDtoi(), is(1367871079L));
 		assertThat(ret.getIpDest().getIpAddr(), is("192.168.1.255"));
-		assertThat(ret.getIpSrc().getIpAddr(), is("192.168.1.82"));
+		assertThat(ret.getSrcIp().getIpAddr(), is("192.168.1.82"));
 		assertThat(ret.getLength(), is(140));
 		assertThat(ret.getProtocolNumber(), is(17));
 		List<String> protos = new ArrayList<String>();
@@ -182,7 +182,7 @@ public class TestPcapSummary extends TestCase {
 		Long id = template.save(session).getSessionId();
 		assertEquals(session.getClass(), IpSession.class);
 		IpSession ret = template.findOne(id, IpSession.class);
-		assertThat(ret.getIpSrc().getIpAddr(), is("192.168.1.72"));
+		assertThat(ret.getSrcIp().getIpAddr(), is("192.168.1.72"));
 		assertThat(ret.getIpDest().getIpAddr(), is("224.0.0.22"));
 		assertThat(ret.getLength(), is(40));
 		assertThat(ret.getDtoi(), is(1367871239L));
@@ -221,6 +221,32 @@ public class TestPcapSummary extends TestCase {
 	
 	@Test
 	@Transactional
+	public void parseVeryShortSession2() {
+		String pcapStr = "1392757512.818971000,eth:ip:tcp:ssh,19";
+		
+		PcapSummary pcap = null;
+		try {
+			pcap = new PcapSummary(pcapStr);
+		} catch (Exception e) {
+			log.error("Failed to parse pcap str: ", e);
+			Assert.fail("Failed to parse pcap str: " + e);
+		}
+		Session session = sessionFactory.createSession(pcap);
+		assertNotNull(session);
+		//Persist session
+		Long id = template.save(session).getSessionId();
+		assertEquals(session.getClass(), IpSession.class);
+		IpSession ret = template.findOne(id, IpSession.class);
+		assertThat(ret.getDtoi(), is(1392757512L));
+		List<String> protos = new ArrayList<String>();
+		for (Protocol proto : template.fetch(ret.getProtocols())) {
+			protos.add(proto.getName());
+		}
+		assertThat(protos, hasItems("eth","ip","tcp", "ssh"));
+	}
+
+	@Test
+	@Transactional
 	public void parseWithHostnames() {
 		String pcapStr = "1381670318.287555000,eth:ip:tcp,192.168.1.102,192.168.1.68,52,6,46793,22,,,,,192.168.1.102,192.168.1.68";
 		PcapSummary pcap = null;
@@ -240,14 +266,14 @@ public class TestPcapSummary extends TestCase {
 		assertThat(ret.getSrcPort().getPort(), is(46793));
 		assertThat(ret.getDtoi(), is(1381670318L));
 		assertThat(ret.getIpDest().getIpAddr(), is("192.168.1.68"));
-		assertThat(ret.getIpSrc().getIpAddr(), is("192.168.1.102"));
+		assertThat(ret.getSrcIp().getIpAddr(), is("192.168.1.102"));
 		assertThat(ret.getLength(), is(52));
 		Device device = template.fetch(ret.getToDevice());
 		assertNotNull(device);
-		assertTrue(device.getHostName(), device.getHostName().contains("192.168.1.68") || device.getHostName().contains("aspberry"));
+		assertNotNull(device.getHostName());
 		device = template.fetch(ret.getFromDevice());
 		assertNotNull(device);
-		assertTrue(device.getHostName(), device.getHostName().contains("192.168.1.102") || device.getHostName().contains("ubuntu"));
+		assertNotNull(device.getHostName());
 	}
 
 	//	@Test

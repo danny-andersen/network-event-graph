@@ -261,4 +261,53 @@ public class PortRepositoryTest {
 		assertThat(devs.get(1), is(2));
 		assertThat(devs.get(2), is(2));
 	}
+
+	@Test
+	@Transactional
+	public void findPortUsageOfDevice() {
+		Device device = new Device("test1", template.save(new DeviceType(
+				"laptop")), template.save(new User("user1")));
+		Device dev2 = new Device("test2",
+				template.save(new DeviceType("laptop")),
+				template.save(new User("user1")));
+		Device dev3 = new Device("test3", template.save(new DeviceType(
+				"netbook")), template.save(new User("user1")));
+		Port port = template.save(new Port(1000));
+		Port port2 = template.save(new Port(2000));
+		Port port3 = template.save(new Port(3000));
+		Port port4 = template.save(new Port(900));
+
+		IpSession ip = new IpSession(this.factory);
+		ip.setDestPort(port);
+		ip.setSrcPort(port2);
+		ip.setToDevice(device);
+		ip.setFromDevice(dev2);
+		template.save(ip);
+		ip = new IpSession(this.factory);
+		ip.setDestPort(port);
+		ip.setSrcPort(port3);
+		ip.setToDevice(device);
+		ip.setFromDevice(dev3);
+		template.save(ip);
+		ip = new IpSession(this.factory);
+		ip.setDestPort(port);
+		ip.setSrcPort(port3);
+		ip.setToDevice(device);
+		ip.setFromDevice(dev3);
+		template.save(ip);
+		Iterable<Map<String,Object>> res = portRepository.findPortUsageOfDevice(device, 0, new Date().getTime());
+		List<Integer> ports = new ArrayList<Integer>();
+		List<Integer> sessions = new ArrayList<Integer>();
+		for (Map<String,Object> r : res) {
+			Port p = template.convert(r.get("port"), Port.class);
+			ports.add(p.getPort());
+			sessions.add(template.convert(r.get("numSessions"), Integer.class));
+		}
+		assertThat(ports.size(), is(3));
+		assertThat(ports.get(0), is(port.getPort()));
+		assertThat(ports, hasItems(1000, 2000, 3000));
+		assertThat(sessions.get(0), is(3));
+		assertThat(sessions.get(1), is(2));
+		assertThat(sessions.get(2), is(1));
+	}
 }
