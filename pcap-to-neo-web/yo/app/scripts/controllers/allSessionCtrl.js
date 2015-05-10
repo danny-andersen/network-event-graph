@@ -82,7 +82,7 @@ angular.module('networkEventGraphApp').controller('allSessionCtrl', function ($s
         'type': 'danger'
       }];
     };
-    //Assume total requests equals the numbe of devices (one ipaddr per)
+    //Assume total requests equals the number of devices (one ipaddr per)
     $scope.totalRequests = devices.length;
     for (i = 0; i < devices.length; i++) {
       ipaddrs = devices[i].ipaddr;

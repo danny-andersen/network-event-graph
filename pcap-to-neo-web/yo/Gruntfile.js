@@ -138,11 +138,13 @@ module.exports = function (grunt) {
       makeSigmaMin: { // Target
         options: { // Options
           stdout: true,
+          stderr: true,
           execOptions: {
             cwd: '<%= yeoman.app %>/bower_components/sigma'
           }
         },
-        command: 'make minify-simple; cp build/sigma.min.js sigma.js'
+        //command: 'make minify-simple; cp build/sigma.min.js sigma.js'
+        command: 'grunt build; cp build/sigma.min.js sigma.js; cd plugins/sigma.layout.forceAtlas2; grunt'
       }
     },
     coffee: {

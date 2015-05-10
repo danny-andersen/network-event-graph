@@ -2,6 +2,7 @@
 
 angular.module('networkEventGraphApp').service('graphService', function () {
   var sigInst;
+  var sigGraph;
   var colours = {
     from: '#0f0',
     to: '#f00',
@@ -15,7 +16,8 @@ angular.module('networkEventGraphApp').service('graphService', function () {
       return;
     }
     if (nodes[coreIpAddr] === undefined) {
-      sigInst.addNode(coreIpAddr, {
+      sigGraph.addNode({
+        id: coreIpAddr,
         label: coreIpAddr,
         x: 0.5,
         y: 0.5,
@@ -53,7 +55,8 @@ angular.module('networkEventGraphApp').service('graphService', function () {
       var srcIp = session.srcIpAddr;
       var size = session.numSessions * sizeScale;
       if (nodes[srcIp] === undefined) {
-        sigInst.addNode(srcIp, {
+        sigGraph.addNode({
+          id: srcIp,
           label: session.srcHostname === null ? session.srcIpAddr : session.srcHostName,
           x: Math.random(),
           y: Math.random(),
@@ -64,7 +67,8 @@ angular.module('networkEventGraphApp').service('graphService', function () {
       }
       var destIp = session.destIpAddr;
       if (nodes[destIp] === undefined) {
-        sigInst.addNode(destIp, {
+        sigGraph.addNode({
+          id: destIp,
           label: session.destHostname === null ? destIp : session.destHostName,
           x: Math.random(),
           y: Math.random(),
@@ -75,13 +79,17 @@ angular.module('networkEventGraphApp').service('graphService', function () {
       }
       var edge = srcIp + '-' + destIp;
       if (edges[edge] === undefined) {
-        sigInst.addEdge(edge, srcIp, destIp);
+        sigGraph.addEdge({
+          id: edge,
+          source: srcIp,
+          target: destIp
+        });
         edges[edge] = true;
       }
     }
-    sigInst.draw();
-    sigInst.bind('downnodes', function (event) {
-      var ipAddr = event.content;
+    sigInst.refresh();
+    sigInst.bind('clickNodes', function (event) {
+      var ipAddr = event.data.node[0].id;
       var path = '#/ipaddr/' + ipAddr;
       var inMenu = false;
       $scope.items.Devices.forEach(function (item) {
@@ -109,7 +117,8 @@ angular.module('networkEventGraphApp').service('graphService', function () {
       for (j = 0; j < ipaddrs.length; j++) {
         ipAddr = ipaddrs[j].ipAddr;
         if (nodes[ipAddr] === undefined) {
-          sigInst.addNode(ipAddr, {
+          sigGraph.addNode({
+            id: ipAddr,
             label: ipAddr,
             x: Math.random(),
             y: Math.random(),
@@ -124,23 +133,35 @@ angular.module('networkEventGraphApp').service('graphService', function () {
 
   this.initGraph = function (id) {
     //Reset graph by removing and then adding element
-    $(id + '#sessionGraph').remove();
-    $(id + '#sessionGraphParent').html('<div class="sigma-graph" id="sessionGraph" />');
-    var element = $(id + '#sessionGraph')[0];
-    sigInst = sigma.init(element);
-    sigInst.emptyGraph();
-    sigInst.refresh();
-    sigInst.drawingProperties({
+//    $(id + '#sessionGraph').remove();
+//    $(id + '#sessionGraphParent').html('<div class="sigma-graph" id="sessionGraph" />');
+//    var element = $(id + '#sessionGraph')[0];
+//    sigInst = sigma.init(element);
+    // sigInst.emptyGraph();
+    // sigInst.refresh();
+    // sigInst.drawingProperties({
+    //   defaultLabelColor: '#fff',
+    //   edgeColor: 'default',
+    //   defaultEdgeColor: '#aaa',
+    //   labelThreshold: 5
+    //   // defaultEdgeType: 'curve'
+    // });
+    if (sigInst !== undefined) {
+       sigInst.kill();
+    }
+    sigInst = new sigma('sessionGraph');
+    sigInst.settings({
       defaultLabelColor: '#fff',
       edgeColor: 'default',
       defaultEdgeColor: '#aaa',
       labelThreshold: 5
       // defaultEdgeType: 'curve'
     });
+    sigGraph = sigInst.graph;
   };
 
   this.filterSessions = function (direction) {
-    sigInst.iterNodes(function (node) {
+    sigGraph.nodes().forEach(function (node) {
       if (node.color === colours.device) {
         //leave this one
         node.hidden = false;
@@ -173,7 +194,7 @@ angular.module('networkEventGraphApp').service('graphService', function () {
         break;
       }
     });
-    sigInst.draw();
+    sigInst.refresh();
   };
 
   this.showGraph = function (id, $scope, $window, sessions, coreIpAddr) {
