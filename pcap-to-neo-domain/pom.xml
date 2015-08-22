@@ -70,7 +70,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
-				<version>1.0</version>
+				<version>1.7</version> <!-- Required for Java 8, 1.6 used for Java 7 -->
 				<configuration>
 					<outxml>true</outxml>
 					<aspectLibraries>
@@ -83,8 +83,8 @@
 							<artifactId>spring-data-neo4j</artifactId>
 						</aspectLibrary>
 					</aspectLibraries>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 				<executions>
 					<execution>
@@ -98,12 +98,12 @@
 					<dependency>
 						<groupId>org.aspectj</groupId>
 						<artifactId>aspectjrt</artifactId>
-						<version>1.6.12</version>
+						<version>1.8.1</version>
 					</dependency>
 					<dependency>
 						<groupId>org.aspectj</groupId>
 						<artifactId>aspectjtools</artifactId>
-						<version>1.6.12</version>
+						<version>1.8.1</version>
 					</dependency>
 				</dependencies>
 			</plugin>
