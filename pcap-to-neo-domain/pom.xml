@@ -70,7 +70,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
-				<version>1.7</version> <!-- Required for Java 8, 1.6 used for Java 7 -->
+				<version>1.8</version> <!-- Required for Java 8, 1.6 used for Java 7 -->
 				<configuration>
 					<outxml>true</outxml>
 					<aspectLibraries>
@@ -85,15 +85,8 @@
 					</aspectLibraries>
 					<source>1.8</source>
 					<target>1.8</target>
+					<complianceLevel>1.8</complianceLevel>
 				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>compile</goal>
-							<goal>test-compile</goal>
-						</goals>
-					</execution>
-				</executions>
 				<dependencies>
 					<dependency>
 						<groupId>org.aspectj</groupId>

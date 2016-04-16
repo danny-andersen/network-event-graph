@@ -40,6 +40,6 @@ angular.module('networkEventGraphApp', ['ui.bootstrap', 'ngResource', 'menuContr
         controller: 'protocolsCtrl'
       })
       .otherwise({
-        redirectTo: '/devices'
+        redirectTo: '/allSessionGraph'
       });
   });
