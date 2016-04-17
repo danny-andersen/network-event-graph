@@ -18,9 +18,10 @@ import com.dsa.pcapneo.domain.graph.IpSession;
 import com.dsa.pcapneo.domain.graph.SessionSummary;
 import com.dsa.pcapneo.graph.repositories.SessionRepository.SessionQueryType;
 import com.dsa.pcapneo.service.SessionRetrievalService;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Component
 @Path("/session/ip")

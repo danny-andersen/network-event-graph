@@ -259,20 +259,19 @@ module.exports = function (grunt) {
     copy: {
       dist: {
         files: [{
-          expand: true,
-          dot: true,
           cwd: '<%= yeoman.app %>',
-          dest: '<%= yeoman.dist %>',
-          src: [
-            '*.{ico,png,txt}',
-            '.htaccess',
-            'bower_components/**/*',
-            'images/{,*/}*.{gif,webp}',
-            'styles/fonts/*'
-          ]
+          dest: '<%= yeoman.app %>/WEB-INF/',
+          src: ['../src/main/webapp/WEB-INF/*']
         }, {
           expand: true,
           cwd: '.tmp/images',
+          dest: '<%= yeoman.dist %>/images',
+          src: [
+            'generated/*'
+          ]
+        }, {
+          expand: true,
+          cwd: '<%= yeoman.app %>',
           dest: '<%= yeoman.dist %>/images',
           src: [
             'generated/*'

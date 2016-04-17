@@ -9,7 +9,8 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import com.dsa.pcapneo.domain.session.PcapSummary;
 import com.dsa.pcapneo.graph.repositories.SessionArtefactFactory;
-import com.wordnik.swagger.annotations.ApiModel;
+
+import io.swagger.annotations.ApiModel;
 
 @ApiModel(value="Details of an IP packet sent between two IP addresses")
 @NodeEntity

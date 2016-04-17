@@ -29,7 +29,17 @@
 	</camel:camelContext>
 	
 	<bean id="pcapImportBean" class="com.dsa.pcapneo.service.PcapSummaryLoadService" />
-	
+ 	<bean id="apiListingResource" class="io.swagger.jaxrs.listing.ApiListingResource"/>
+    <bean id="swaggerSerializers" class="io.swagger.jaxrs.listing.SwaggerSerializers" scope="singleton"/>	
+    <bean id="beanConfig" class="io.swagger.jaxrs.config.BeanConfig">
+        <property name="title" value="Network Event Graph"/>
+        <property name="version" value="1.0.0" />
+        <property name="schemes" value="http" />
+        <property name="host" value="localhost:8080" />
+        <property name="basePath" value="/pcap-to-neo-web/rest"/>
+        <property name="resourcePackage" value="io.swagger.resources,com.dsa.pcapneo.rest"/>
+        <property name="scan" value="true"/>
+    </bean>
 <!-- 
 	<bean id="neo4jTransactionManagerService"
 		class="org.neo4j.kernel.impl.transaction.SpringTransactionManager">

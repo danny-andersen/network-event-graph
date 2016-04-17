@@ -15,10 +15,14 @@
 	<servlet>
 		<servlet-name>PcapNeoJerseyServlet</servlet-name>
 		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
-		<init-param>
-			<param-name>com.sun.jersey.config.property.packages</param-name>
-			<param-value>org.codehaus.jackson.jaxrs;com.wordnik.swagger.jersey.listing</param-value>
-		</init-param>
+	    <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+	            <param-value>
+	                io.swagger.jaxrs.json,
+	                io.swagger.jaxrs.listing,
+	                org.codehaus.jackson.jaxrs
+	            </param-value>
+       	</init-param>
 		<init-param>
 			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
 			<param-value>true</param-value>
@@ -29,6 +33,7 @@
 		<servlet-name>PcapNeoJerseyServlet</servlet-name>
 		<url-pattern>/rest/*</url-pattern>
 	</servlet-mapping>
+<!-- 
 	<servlet>
 		<servlet-name>JerseyJaxrsConfig</servlet-name>
 		<servlet-class>com.wordnik.swagger.jersey.config.JerseyJaxrsConfig</servlet-class>
@@ -42,4 +47,5 @@
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
+ -->
 </web-app>
